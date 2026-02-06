@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  /* IMDB-inspired dark theme */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #222222;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a1;
+  --text-muted: #6b6b6b;
+  
+  /* State colors */
+  --fresh: #22c55e;
+  --stable: #f59e0b;
+  --at-risk: #ef4444;
+  --stale: #6b7280;
+  --invalidated: #374151;
+  
+  /* Accent */
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  
+  /* Gauge gradients */
+  --gauge-high: #22c55e;
+  --gauge-medium: #f59e0b;
+  --gauge-low: #ef4444;
+}
+
+@theme inline {
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Confidence gauge animation */
+@keyframes gauge-fill {
+  from {
+    stroke-dashoffset: 314;
+  }
+}
+
+.gauge-circle {
+  animation: gauge-fill 1s ease-out forwards;
+}
+
+/* Card glow effects based on state */
+.card-fresh {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+  border-color: var(--fresh);
+}
+
+.card-stable {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+  border-color: var(--stable);
+}
+
+.card-at-risk {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  border-color: var(--at-risk);
+}
+
+.card-stale {
+  box-shadow: 0 0 20px rgba(107, 114, 128, 0.15);
+  border-color: var(--stale);
+}
+
+/* Pulse animation for at-risk decisions */
+@keyframes pulse-risk {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.pulse-risk {
+  animation: pulse-risk 2s ease-in-out infinite;
+}
