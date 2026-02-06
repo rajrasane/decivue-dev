@@ -50,13 +50,20 @@ The system tracks how decision reliability evolves through:
 
 ## Setup
 
-### 1. Install dependencies
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/rajrasane/decivue-dev.git
+cd decivue
+```
+
+### 2. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. Environment variables
+### 3. Environment variables
 
 Create `.env.local`:
 
@@ -66,7 +73,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 GEMINI_API_KEY=your_gemini_key
 ```
 
-### 3. Database
+### 4. Database
 
 Schema overview:
 
@@ -74,7 +81,7 @@ Schema overview:
 
 Run [`docs/schema.sql`](docs/schema.sql) in Supabase SQL Editor to create the tables.
 
-### 4. Run
+### 5. Run
 
 ```bash
 pnpm dev
@@ -91,13 +98,32 @@ src/
 │   ├── decision/[id]/page.tsx      # Decision detail
 │   └── api/detect-conflicts/       # Gemini AI endpoint
 ├── components/
+│   ├── decision/                   # Detail page components
+│   │   ├── ConflictsSection.tsx
+│   │   ├── DangerZone.tsx
+│   │   ├── DecisionDetails.tsx
+│   │   ├── InfoCards.tsx
+│   │   └── SignalsSection.tsx
+│   ├── ui/tooltip.tsx              # UI primitives
+│   ├── AddSignalModal.tsx
 │   ├── ConfidenceGauge.tsx
+│   ├── CreateDecisionForm.tsx
+│   ├── DecisionCard.tsx
+│   ├── DeleteConfirmModal.tsx
+│   ├── DismissSignalModal.tsx
+│   ├── EditDecisionModal.tsx
+│   ├── ErrorBoundary.tsx
 │   ├── HistoryTimeline.tsx
-│   └── decision/                   # Detail page components
+│   ├── SiteFooter.tsx
+│   └── SiteHeader.tsx
 ├── hooks/
-│   └── useDecision.ts
+│   └── useDecision.ts              # Data fetching
 ├── lib/
 │   ├── decision-intelligence.ts    # Core algorithms
+│   └── supabase/                   # DB clients
+└── types/
+    └── decision.ts                 # TypeScript types
+```
 │   └── supabase/
 └── types/
     └── decision.ts

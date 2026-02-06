@@ -3,26 +3,22 @@
 import { useState, useEffect } from 'react'
 import { X, Plus, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { Decision } from '@/types/decision'
 
-interface EditDecisionModalProps {
-    decision: Decision
+interface CreateDecisionModalProps {
     onClose: () => void
     onSuccess: () => void
 }
 
-export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecisionModalProps) {
-    const [statement, setStatement] = useState(decision.statement)
-    const [confidence, setConfidence] = useState(decision.initial_confidence)
-    const [risk, setRisk] = useState<Decision['perceived_risk']>(decision.perceived_risk)
-    const [assumptions, setAssumptions] = useState<string[]>(
-        decision.logic.length > 0 ? decision.logic : ['']
-    )
+export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalProps) {
+    const [statement, setStatement] = useState('')
+    const [confidence, setConfidence] = useState(85)
+    const [risk, setRisk] = useState<'low' | 'medium' | 'high' | 'critical'>('medium')
+    const [assumptions, setAssumptions] = useState<string[]>([''])
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [conflictWarning, setConflictWarning] = useState<string | null>(null)
 
     const supabase = createClient()
 
-    // Close on ESC
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose()
@@ -48,119 +44,53 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
         if (!statement.trim()) return
 
         setIsSubmitting(true)
+        setConflictWarning(null)
 
         const filteredAssumptions = assumptions.filter(a => a.trim())
 
-        // Determine what changed for the summary
-        const changes: string[] = []
-        if (statement !== decision.statement) changes.push('statement')
-        if (confidence !== decision.initial_confidence) changes.push('confidence')
-        if (risk !== decision.perceived_risk) changes.push('risk level')
-        if (JSON.stringify(filteredAssumptions) !== JSON.stringify(decision.logic)) {
-            const added = filteredAssumptions.filter(a => !decision.logic.includes(a))
-            const removed = decision.logic.filter(a => !filteredAssumptions.includes(a))
-
-            if (added.length > 0) changes.push(`added ${added.length} assumption${added.length > 1 ? 's' : ''}`)
-            if (removed.length > 0) changes.push(`removed ${removed.length} assumption${removed.length > 1 ? 's' : ''}`)
-
-            // If just editing text (same count but different content implies modification)
-            if (added.length === 0 && removed.length === 0) {
-                changes.push('modified assumptions')
-            }
-        }
-
-        const changeSummary = changes.length > 0
-            ? `Updated: ${changes.join(', ')}`
-            : 'Reviewed without changes'
-
         try {
-            // Create history entry first
-            await supabase.from('decision_history').insert({
-                decision_id: decision.id,
-                action_type: 'edited',
-                previous_state: {
-                    statement: decision.statement,
-                    initial_confidence: decision.initial_confidence,
-                    perceived_risk: decision.perceived_risk,
-                    logic: decision.logic,
-                },
-                new_state: {
-                    statement: statement.trim(),
-                    initial_confidence: confidence,
-                    perceived_risk: risk,
-                    logic: filteredAssumptions,
-                },
-                change_summary: changeSummary,
+            const conflictRes = await fetch('/api/detect-conflicts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    newDecisionStatement: statement,
+                    newDecisionLogic: filteredAssumptions,
+                }),
             })
 
-            // Update the decision
-            const { error } = await supabase
+            const { conflicts } = await conflictRes.json()
+
+            const { data: newDecision, error } = await supabase
                 .from('decisions')
-                .update({
+                .insert({
                     statement: statement.trim(),
                     initial_confidence: confidence,
-                    perceived_risk: risk,
                     logic: filteredAssumptions,
-                    last_reviewed_at: new Date().toISOString(),
+                    perceived_risk: risk,
                 })
-                .eq('id', decision.id)
+                .select()
+                .single()
 
             if (error) throw error
 
-            // Re-check conflicts if statement or assumptions changed
-            if (statement.trim() !== decision.statement ||
-                JSON.stringify(filteredAssumptions) !== JSON.stringify(decision.logic)) {
-                // Clear old conflicts involving this decision
-                await supabase.from('decision_conflicts')
-                    .delete()
-                    .or(`decision_a.eq.${decision.id},decision_b.eq.${decision.id}`)
-
-                // Detect new conflicts with updated content
-                try {
-                    const res = await fetch('/api/detect-conflicts', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            newDecisionStatement: statement.trim(),
-                            newDecisionLogic: filteredAssumptions,
-                        }),
+            if (conflicts && conflicts.length > 0) {
+                for (const conflict of conflicts) {
+                    await supabase.from('decision_conflicts').insert({
+                        decision_a: newDecision.id,
+                        decision_b: conflict.decision_id,
+                        conflict_explanation: conflict.explanation,
                     })
-                    const { conflicts } = await res.json()
-                    if (conflicts?.length > 0) {
-                        for (const conflict of conflicts) {
-                            if (conflict.decision_id !== decision.id) {
-                                await supabase.from('decision_conflicts').insert({
-                                    decision_a: decision.id,
-                                    decision_b: conflict.decision_id,
-                                    conflict_explanation: conflict.explanation,
-                                })
-                            }
-                        }
-                    }
-                } catch {
-                    // Non-blocking: don't fail the edit if conflict detection fails
                 }
+                setConflictWarning(`${conflicts.length} potential conflict(s) detected with existing decisions.`)
             }
 
             onSuccess()
         } catch (error) {
-            console.error('Error updating decision:', error)
+            console.error('Error creating decision:', error)
         } finally {
             setIsSubmitting(false)
         }
     }
-
-    // Check if there are actual changes
-    const hasChanges = (() => {
-        const filteredCurrentAssumptions = assumptions.filter(a => a.trim())
-        // Simple JSON comparison for arrays works here as order matters
-        return (
-            statement.trim() !== decision.statement ||
-            confidence !== decision.initial_confidence ||
-            risk !== decision.perceived_risk ||
-            JSON.stringify(filteredCurrentAssumptions) !== JSON.stringify(decision.logic)
-        )
-    })()
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -171,8 +101,8 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                 {/* Fixed Header */}
                 <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/5 shrink-0">
                     <div>
-                        <h2 className="text-lg sm:text-xl font-semibold">Revise Decision</h2>
-                        <p className="text-xs sm:text-sm text-(--text-muted) mt-0.5">Update confidence, risk, or assumptions</p>
+                        <h2 className="text-lg sm:text-xl font-semibold">New Decision</h2>
+                        <p className="text-xs sm:text-sm text-(--text-muted) mt-0.5">Document a decision to track over time</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -188,14 +118,14 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                     {/* Scroll container */}
                     <div className="flex-1 min-h-0 relative">
                         <div className="absolute inset-0 overflow-y-auto scrollbar-thin px-5 sm:px-6 py-5">
-                            <form id="edit-decision-form" onSubmit={handleSubmit} className="space-y-5">
+                            <form id="create-decision-form" onSubmit={handleSubmit} className="space-y-5">
                                 {/* Statement */}
                                 <div>
-                                    <label htmlFor="edit-statement" className="block text-sm font-medium text-(--text-secondary) mb-2">
+                                    <label htmlFor="decision-statement" className="block text-sm font-medium text-(--text-secondary) mb-2">
                                         Decision Statement
                                     </label>
                                     <textarea
-                                        id="edit-statement"
+                                        id="decision-statement"
                                         value={statement}
                                         onChange={(e) => setStatement(e.target.value)}
                                         placeholder="What decision was made?…"
@@ -210,11 +140,11 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
 
                                 {/* Confidence slider */}
                                 <div>
-                                    <label htmlFor="edit-confidence" className="block text-sm font-medium text-(--text-secondary) mb-2">
-                                        Confidence Level: <span className="text-white">{confidence}%</span>
+                                    <label htmlFor="confidence-slider" className="block text-sm font-medium text-(--text-secondary) mb-2">
+                                        Initial Confidence: <span className="text-white">{confidence}%</span>
                                     </label>
                                     <input
-                                        id="edit-confidence"
+                                        id="confidence-slider"
                                         type="range"
                                         min="0"
                                         max="100"
@@ -292,6 +222,14 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                                         </button>
                                     </div>
                                 </div>
+
+                                {/* Conflict warning */}
+                                {conflictWarning && (
+                                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm flex items-start gap-3">
+                                        <span className="text-lg">⚠️</span>
+                                        <span>{conflictWarning}</span>
+                                    </div>
+                                )}
                             </form>
                         </div>
                     </div>
@@ -300,8 +238,8 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                     <div className="border-t border-white/5 shrink-0 px-5 sm:px-6 py-4">
                         <button
                             type="submit"
-                            form="edit-decision-form"
-                            disabled={isSubmitting || !statement.trim() || !hasChanges}
+                            form="create-decision-form"
+                            disabled={isSubmitting || !statement.trim()}
                             className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10
                                 text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed
                                 flex items-center justify-center gap-2"
@@ -309,10 +247,10 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                             {isSubmitting ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
-                                    Saving changes…
+                                    Checking for conflicts…
                                 </>
                             ) : (
-                                'Save Changes'
+                                'Create Decision'
                             )}
                         </button>
                     </div>

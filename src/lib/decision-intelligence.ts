@@ -1,71 +1,38 @@
 import { Decision } from '@/types/decision'
 import { differenceInDays } from 'date-fns'
 
-/**
- * Calculate current confidence based on time decay
- * Formula: initial_confidence - (days_old × decay_rate)
- * 
- * Decay rates based on risk:
- * - low: 0.5% per day
- * - medium: 1% per day
- * - high: 2% per day
- * - critical: 3% per day
- */
+// Decay rates: low 0.5%, medium 1%, high 2%, critical 3% per day
+const DECAY_RATES = {
+    low: 0.5,
+    medium: 1,
+    high: 2,
+    critical: 3,
+}
+
 export function calculateCurrentConfidence(decision: Decision): number {
     const daysSinceReview = differenceInDays(
         new Date(),
         new Date(decision.last_reviewed_at)
     )
 
-    const decayRates = {
-        low: 0.5,
-        medium: 1,
-        high: 2,
-        critical: 3,
-    }
+    const decay = daysSinceReview * DECAY_RATES[decision.perceived_risk]
+    const confidence = decision.initial_confidence - decay
 
-    const decayRate = decayRates[decision.perceived_risk]
-    const decayAmount = daysSinceReview * decayRate
-
-    const currentConfidence = Math.max(
-        0,
-        decision.initial_confidence - decayAmount
-    )
-
-    return Math.round(currentConfidence)
+    return Math.max(0, Math.round(confidence))
 }
 
-/**
- * Determine lifecycle state based on current confidence AND time
- * - Fresh: Recently reviewed (within 7 days) AND confidence >= 70%
- * - Stable: Reviewed within 14 days AND confidence >= 50%
- * - At Risk: Confidence 30-49% OR reviewed 14-30 days ago
- * - Stale: Confidence < 30% OR not reviewed in 30+ days
- * - Invalidated: Confidence < 15%
- */
 export function determineLifecycleState(
     currentConfidence: number,
     daysSinceReview: number
 ): Decision['lifecycle_state'] {
-    // Invalidated - very low confidence
     if (currentConfidence < 15) return 'invalidated'
-
-    // Fresh - recently reviewed with good confidence
     if (daysSinceReview <= 7 && currentConfidence >= 70) return 'fresh'
-
-    // Stable - reasonably recent with decent confidence
     if (daysSinceReview <= 14 && currentConfidence >= 50) return 'stable'
-
-    // At Risk - starting to age or confidence dropping
     if (currentConfidence >= 15 && daysSinceReview <= 60) return 'at_risk'
-
-    // Stale - old or low confidence
+    
     return 'stale'
 }
 
-/**
- * Generate insight message based on decision state
- */
 export function generateInsight(
     decision: Decision,
     currentConfidence: number,
@@ -77,28 +44,25 @@ export function generateInsight(
         new Date(decision.last_reviewed_at)
     )
 
-    // High priority alerts
     if (currentConfidence < 40) {
-        return `Critical: Confidence has dropped to ${currentConfidence}%. This decision urgently needs review.`
+        return `Critical: Confidence has dropped to ${currentConfidence}%. Recommended action: Revise this decision with updated assumptions.`
     }
 
     if (conflictsCount > 0) {
-        return `Warning: ${conflictsCount} conflicting decision${conflictsCount > 1 ? 's' : ''} detected. Review for potential contradictions.`
+        return `Warning: ${conflictsCount} conflicting decision${conflictsCount > 1 ? 's' : ''} detected. Recommended action: Review for contradictions and consider revising.`
     }
 
-    // Medium priority
     if (daysSinceReview > 14) {
-        return `Attention: No review in ${daysSinceReview} days. Original assumptions may no longer hold.`
+        return `Attention: No review in ${daysSinceReview} days. Original assumptions may no longer hold. Recommended action: Review and Reaffirm if still valid.`
     }
 
     if (signalsCount > 0) {
-        return `${signalsCount} signal${signalsCount > 1 ? 's' : ''} detected. External changes may affect this decision.`
+        return `${signalsCount} signal${signalsCount > 1 ? 's' : ''} detected. External changes may affect this decision. Recommended action: Review the signals and Revise if needed.`
     }
 
     if (currentConfidence < 60) {
-        return `Confidence has decayed to ${currentConfidence}%. Consider reviewing soon.`
+        return `Confidence has decayed to ${currentConfidence}%. Recommended action: Reaffirm to reset freshness, or Revise if conditions changed.`
     }
 
-    // All good
-    return `Decision is ${currentConfidence}% confident and stable.`
+    return `Decision is ${currentConfidence}% confident and stable. No action needed.`
 }

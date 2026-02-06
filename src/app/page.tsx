@@ -15,8 +15,8 @@ import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
 import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
 
-const CreateDecisionForm = dynamic(
-  () => import('@/components/CreateDecisionForm').then(m => ({ default: m.CreateDecisionForm })),
+const CreateDecisionModal = dynamic(
+  () => import('@/components/CreateDecisionModal').then(m => ({ default: m.CreateDecisionModal })),
   { loading: () => null }
 )
 
@@ -203,9 +203,9 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Create form modal */}
+      {/* Create decision modal */}
       {showCreateForm && (
-        <CreateDecisionForm
+        <CreateDecisionModal
           onClose={() => setShowCreateForm(false)}
           onSuccess={() => {
             setShowCreateForm(false)
