@@ -24,9 +24,9 @@ export function HistoryTimeline({ history }: HistoryTimelineProps) {
     return (
         <div className="relative pl-6">
             {/* Vertical git-style line */}
-            <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-(--bg-secondary)" />
+            <div className="absolute left-1.75 top-2 bottom-2 w-0.5 bg-(--bg-secondary)" />
 
-            <div className="space-y-4">
+            <div className={`space-y-4 ${isExpanded ? 'max-h-100 overflow-y-auto pr-2 custom-scrollbar' : ''}`}>
                 {displayedHistory.map((entry, index) => (
                     <div key={entry.id} className="relative">
                         {/* Commit dot */}
@@ -43,14 +43,24 @@ export function HistoryTimeline({ history }: HistoryTimelineProps) {
                         </div>
                     </div>
                 ))}
+
+                {/* Bottom Collapse inside scroll container so it flows naturally */}
+                {hasMore && isExpanded && (
+                    <button
+                        onClick={() => setIsExpanded(false)}
+                        className="pt-2 text-xs text-(--text-muted) hover:text-foreground transition-colors flex items-center gap-1"
+                    >
+                        Show less
+                    </button>
+                )}
             </div>
 
-            {hasMore && (
+            {hasMore && !isExpanded && (
                 <button
-                    onClick={() => setIsExpanded(!isExpanded)}
+                    onClick={() => setIsExpanded(true)}
                     className="mt-4 text-xs text-(--text-muted) hover:text-foreground transition-colors flex items-center gap-1"
                 >
-                    {isExpanded ? 'Show less' : `Show ${history.length - MAX_ITEMS} more changes`}
+                    Show {history.length - MAX_ITEMS} more changes
                 </button>
             )}
         </div>

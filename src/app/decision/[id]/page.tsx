@@ -24,6 +24,7 @@ import {
     X,
     Trash2,
     Pencil,
+    Edit2,
     History,
 } from 'lucide-react'
 
@@ -141,28 +142,25 @@ export default function DecisionDetailPage() {
         if (!decision) return
         setIsReaffirming(true)
 
-        const newConfidence = Math.min(100, decision.initial_confidence + 10)
+        // Reaffirming only updates the timestamp (freshness), verifying the current confidence is still valid.
+        // It does NOT artificially boost the score anymore.
 
-        // Create history entry
         await supabase.from('decision_history').insert({
             decision_id: decision.id,
-            action_type: 'reaffirmed',
+            action_type: 'reaffirm',
             previous_state: {
-                initial_confidence: decision.initial_confidence,
                 last_reviewed_at: decision.last_reviewed_at,
             },
             new_state: {
-                initial_confidence: newConfidence,
                 last_reviewed_at: new Date().toISOString(),
             },
-            change_summary: `Decision reaffirmed. Confidence boosted from ${decision.initial_confidence}% to ${newConfidence}%.`,
+            change_summary: `Decision reaffirmed. Freshness confirmed.`,
         })
 
         await supabase
             .from('decisions')
             .update({
                 last_reviewed_at: new Date().toISOString(),
-                initial_confidence: newConfidence,
             })
             .eq('id', decision.id)
 
@@ -191,7 +189,7 @@ export default function DecisionDetailPage() {
             // Create history entry
             await supabase.from('decision_history').insert({
                 decision_id: decision.id,
-                action_type: 'signal_added',
+                action_type: 'signal_dismissed', // Changed from 'signal_added' to 'signal_dismissed' for accuracy
                 previous_state: { signal_type: signalToDismiss.signal_type, description: signalToDismiss.description },
                 new_state: null,
                 change_summary: `Dismissed signal: ${signalToDismiss.description}`,
@@ -253,7 +251,11 @@ export default function DecisionDetailPage() {
                     <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
                         {/* Main gauge */}
                         <div className="shrink-0">
-                            <ConfidenceGauge value={currentConfidence} size="lg" />
+                            <ConfidenceGauge
+                                value={currentConfidence}
+                                size="lg"
+                                customColor={currentConfidence >= 70 ? 'var(--fresh)' : undefined}
+                            />
                         </div>
 
                         {/* Content */}
@@ -287,7 +289,7 @@ export default function DecisionDetailPage() {
                             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                                 <button
                                     onClick={handleReaffirm}
-                                    disabled={isReaffirming}
+                                    disabled={isReaffirming || currentConfidence === 100}
                                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-foreground text-background 
                     hover:bg-white/90 transition-colors disabled:opacity-50 font-medium"
                                 >
@@ -300,16 +302,17 @@ export default function DecisionDetailPage() {
                                 </button>
                                 <button
                                     onClick={() => setShowEditModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 
-                    hover:bg-amber-500/30 transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-(--bg-secondary) text-(--text-secondary) 
+                    hover:bg-(--bg-secondary)/80 transition-colors font-medium border border-(--border-primary)"
                                 >
-                                    <Pencil size={16} />
+                                    <Edit2 size={16} />
                                     Revise
                                 </button>
+
                                 <button
                                     onClick={() => setShowAddSignal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-(--bg-secondary) 
-                    text-(--text-secondary) hover:bg-(--bg-card-hover) transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 
+                    hover:bg-amber-500/20 transition-colors font-medium border border-amber-500/10"
                                 >
                                     <Plus size={16} />
                                     Add Signal
@@ -375,7 +378,7 @@ export default function DecisionDetailPage() {
                             value={timeHealth}
                             size="sm"
                             showLabel={false}
-                            customColor={timeHealth === 100 ? 'var(--text-muted)' : undefined}
+                            customColor={timeHealth >= 70 ? 'var(--text-muted)' : undefined}
                         />
                         <p className="text-sm font-medium mt-2">{timeHealth}%</p>
                         <p className="text-xs text-(--text-muted)">Time Health</p>
@@ -385,7 +388,7 @@ export default function DecisionDetailPage() {
                             value={assumptionHealth}
                             size="sm"
                             showLabel={false}
-                            customColor={assumptionHealth === 100 ? 'var(--text-muted)' : undefined}
+                            customColor={assumptionHealth >= 70 ? 'var(--text-muted)' : undefined}
                         />
                         <p className="text-sm font-medium mt-2">{assumptionHealth}%</p>
                         <p className="text-xs text-(--text-muted)">Assumptions</p>
@@ -395,13 +398,18 @@ export default function DecisionDetailPage() {
                             value={conflictRisk}
                             size="sm"
                             showLabel={false}
-                            customColor={conflictRisk === 100 ? 'var(--text-muted)' : undefined}
+                            customColor={conflictRisk >= 70 ? 'var(--text-muted)' : undefined}
                         />
                         <p className="text-sm font-medium mt-2">{conflictRisk}%</p>
                         <p className="text-xs text-(--text-muted)">Conflict Health</p>
                     </div>
                     <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge value={decision.initial_confidence} size="sm" showLabel={false} />
+                        <ConfidenceGauge
+                            value={decision.initial_confidence}
+                            size="sm"
+                            showLabel={false}
+                            customColor={decision.initial_confidence >= 70 ? 'var(--text-muted)' : undefined}
+                        />
                         <p className="text-sm font-medium mt-2">{decision.initial_confidence}%</p>
                         <p className="text-xs text-(--text-muted)">Initial Conf.</p>
                     </div>
@@ -499,7 +507,7 @@ export default function DecisionDetailPage() {
                         <History size={18} className="text-(--accent)" />
                         Decision History
                     </h2>
-                    <div className="max-h-[300px] overflow-y-auto pr-2 no-scrollbar">
+                    <div className="">
                         <HistoryTimeline history={history} />
                     </div>
                 </div>

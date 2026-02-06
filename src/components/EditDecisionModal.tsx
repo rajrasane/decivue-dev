@@ -40,9 +40,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
     }
 
     const removeAssumption = (index: number) => {
-        if (assumptions.length > 1) {
-            setAssumptions(assumptions.filter((_, i) => i !== index))
-        }
+        setAssumptions(assumptions.filter((_, i) => i !== index))
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -117,9 +115,22 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
         }
     }
 
+    // Check if there are actual changes
+    const hasChanges = (() => {
+        const filteredCurrentAssumptions = assumptions.filter(a => a.trim())
+        // Simple JSON comparison for arrays works here as order matters
+        return (
+            statement.trim() !== decision.statement ||
+            confidence !== decision.initial_confidence ||
+            risk !== decision.perceived_risk ||
+            JSON.stringify(filteredCurrentAssumptions) !== JSON.stringify(decision.logic)
+        )
+    })()
+
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-(--bg-card) rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="bg-(--bg-card) rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto
+                [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {/* Header - matches CreateDecisionForm */}
                 <div className="flex items-center justify-between p-6 border-b border-(--bg-secondary)">
                     <h2 className="text-xl font-semibold">Revise Decision</h2>
@@ -146,7 +157,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                             placeholder="What decision was made?…"
                             autoComplete="off"
                             className="w-full px-4 py-3 rounded-xl bg-(--bg-secondary) border border-transparent 
-                focus:border-(--accent) focus:outline-none resize-none text-foreground
+                focus:border-white focus:outline-none focus:ring-0 resize-none text-foreground
                 placeholder:text-(--text-muted)"
                             rows={3}
                             required
@@ -156,7 +167,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                     {/* Confidence slider */}
                     <div>
                         <label htmlFor="edit-confidence" className="block text-sm font-medium text-(--text-secondary) mb-2">
-                            Confidence Level: <span className="text-(--accent)">{confidence}%</span>
+                            Confidence Level: <span className="text-white">{confidence}%</span>
                         </label>
                         <input
                             id="edit-confidence"
@@ -165,7 +176,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                             max="100"
                             value={confidence}
                             onChange={(e) => setConfidence(Number(e.target.value))}
-                            className="w-full accent-(--accent)"
+                            className="w-full accent-white"
                         />
                         <div className="flex justify-between text-xs text-(--text-muted) mt-1">
                             <span>0% Uncertain</span>
@@ -187,7 +198,10 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                                     className={`
                     py-2 px-3 rounded-lg text-sm font-medium capitalize transition-all
                     ${risk === level
-                                            ? 'bg-(--accent) text-white'
+                                            ? level === 'low' ? 'bg-emerald-500/90 text-white'
+                                                : level === 'medium' ? 'bg-amber-500/90 text-white'
+                                                    : level === 'high' ? 'bg-orange-500/90 text-white'
+                                                        : 'bg-red-500/90 text-white'
                                             : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover)'
                                         }
                   `}
@@ -212,25 +226,23 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                                         onChange={(e) => updateAssumption(index, e.target.value)}
                                         placeholder={`Assumption ${index + 1}`}
                                         className="flex-1 px-4 py-2 rounded-lg bg-(--bg-secondary) border border-transparent 
-                      focus:border-(--accent) focus:outline-none text-foreground
+                      focus:border-white focus:outline-none text-foreground
                       placeholder:text-(--text-muted)"
                                     />
-                                    {assumptions.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => removeAssumption(index)}
-                                            aria-label={`Remove assumption ${index + 1}`}
-                                            className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"
-                                        >
-                                            <X size={18} />
-                                        </button>
-                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeAssumption(index)}
+                                        aria-label={`Remove assumption ${index + 1}`}
+                                        className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"
+                                    >
+                                        <X size={18} />
+                                    </button>
                                 </div>
                             ))}
                             <button
                                 type="button"
                                 onClick={addAssumption}
-                                className="flex items-center gap-2 text-sm text-(--accent) hover:underline"
+                                className="flex items-center gap-2 text-sm text-white hover:underline"
                             >
                                 <Plus size={16} /> Add assumption
                             </button>
@@ -240,9 +252,9 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                     {/* Submit */}
                     <button
                         type="submit"
-                        disabled={isSubmitting || !statement.trim()}
-                        className="w-full py-3 rounded-xl bg-(--accent) hover:bg-(--accent-hover) 
-              text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+                        disabled={isSubmitting || !statement.trim() || !hasChanges}
+                        className="w-auto px-8 py-2 rounded-xl bg-white hover:bg-gray-200 block mx-auto
+              text-black font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? (
