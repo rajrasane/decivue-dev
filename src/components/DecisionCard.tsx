@@ -27,11 +27,11 @@ const stateLabels = {
 }
 
 const stateColors = {
-    fresh: 'bg-green-500/20 text-green-400 border-green-500/30',
-    stable: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    at_risk: 'bg-red-500/20 text-red-400 border-red-500/30',
-    stale: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-    invalidated: 'bg-gray-600/20 text-gray-500 border-gray-600/30',
+    fresh: 'bg-green-500/10 text-green-400',
+    stable: 'bg-amber-500/10 text-amber-400',
+    at_risk: 'bg-red-500/10 text-red-400',
+    stale: 'bg-gray-500/10 text-gray-400',
+    invalidated: 'bg-gray-600/10 text-gray-300',
 }
 
 export function DecisionCard({
@@ -59,7 +59,7 @@ export function DecisionCard({
         <div
             onClick={handleClick}
             className={`
-        relative p-6 rounded-2xl border cursor-pointer
+        relative p-6 rounded-2xl border border-(--bg-secondary) cursor-pointer
         bg-(--bg-card) hover:bg-(--bg-card-hover)
         transition-all duration-300 ${cardClass}
       `}

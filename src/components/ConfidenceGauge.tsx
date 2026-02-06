@@ -4,12 +4,14 @@ interface ConfidenceGaugeProps {
     value: number
     size?: 'sm' | 'md' | 'lg'
     showLabel?: boolean
+    customColor?: string
 }
 
 export function ConfidenceGauge({
     value,
     size = 'md',
-    showLabel = true
+    showLabel = true,
+    customColor
 }: ConfidenceGaugeProps) {
     const sizes = {
         sm: { width: 80, stroke: 6, fontSize: 'text-lg' },
@@ -25,6 +27,7 @@ export function ConfidenceGauge({
 
     // Color based on value
     const getColor = () => {
+        if (customColor) return customColor
         if (value >= 70) return 'var(--fresh)'
         if (value >= 40) return 'var(--stable)'
         return 'var(--at-risk)'

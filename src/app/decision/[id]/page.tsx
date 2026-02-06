@@ -233,25 +233,21 @@ export default function DecisionDetailPage() {
 
     // Calculate sub-gauges
     const timeHealth = Math.max(0, 100 - daysSinceReview * 5)
-    const assumptionHealth = decision.logic.length > 0 ? 75 : 50 // Simplified
+    const assumptionHealth = decision.logic.length >= 3 ? 100 : decision.logic.length > 0 ? 75 : 50
     const conflictRisk = conflicts.length > 0 ? Math.max(20, 100 - conflicts.length * 30) : 100
 
     return (
         <div className="min-h-screen bg-background">
-            {/* Header */}
-            <header className="border-b border-(--bg-secondary)">
-                <div className="max-w-5xl mx-auto px-6 py-4">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="flex items-center gap-2 text-(--text-secondary) hover:text-foreground transition-colors"
-                    >
-                        <ArrowLeft size={18} />
-                        Back to Dashboard
-                    </button>
-                </div>
-            </header>
+
 
             <main className="max-w-5xl mx-auto px-6 py-8">
+                <button
+                    onClick={() => router.push('/')}
+                    className="flex items-center gap-2 text-(--text-secondary) hover:text-foreground transition-colors mb-6"
+                >
+                    <ArrowLeft size={18} />
+                    Back to Dashboard
+                </button>
                 {/* Hero section with main gauge */}
                 <div className="bg-(--bg-card) rounded-2xl p-8 mb-6">
                     <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
@@ -292,8 +288,8 @@ export default function DecisionDetailPage() {
                                 <button
                                     onClick={handleReaffirm}
                                     disabled={isReaffirming}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500/20 text-green-400 
-                    hover:bg-green-500/30 transition-colors disabled:opacity-50"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-foreground text-background 
+                    hover:bg-white/90 transition-colors disabled:opacity-50 font-medium"
                                 >
                                     {isReaffirming ? (
                                         <RefreshCw size={16} className="animate-spin" />
@@ -375,17 +371,32 @@ export default function DecisionDetailPage() {
                 {/* Sub-gauges row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge value={timeHealth} size="sm" showLabel={false} />
+                        <ConfidenceGauge
+                            value={timeHealth}
+                            size="sm"
+                            showLabel={false}
+                            customColor={timeHealth === 100 ? 'var(--text-muted)' : undefined}
+                        />
                         <p className="text-sm font-medium mt-2">{timeHealth}%</p>
                         <p className="text-xs text-(--text-muted)">Time Health</p>
                     </div>
                     <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge value={assumptionHealth} size="sm" showLabel={false} />
+                        <ConfidenceGauge
+                            value={assumptionHealth}
+                            size="sm"
+                            showLabel={false}
+                            customColor={assumptionHealth === 100 ? 'var(--text-muted)' : undefined}
+                        />
                         <p className="text-sm font-medium mt-2">{assumptionHealth}%</p>
                         <p className="text-xs text-(--text-muted)">Assumptions</p>
                     </div>
                     <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge value={conflictRisk} size="sm" showLabel={false} />
+                        <ConfidenceGauge
+                            value={conflictRisk}
+                            size="sm"
+                            showLabel={false}
+                            customColor={conflictRisk === 100 ? 'var(--text-muted)' : undefined}
+                        />
                         <p className="text-sm font-medium mt-2">{conflictRisk}%</p>
                         <p className="text-xs text-(--text-muted)">Conflict Health</p>
                     </div>
@@ -488,10 +499,12 @@ export default function DecisionDetailPage() {
                         <History size={18} className="text-(--accent)" />
                         Decision History
                     </h2>
-                    <div className="max-h-[300px] overflow-y-auto pr-2">
+                    <div className="max-h-[300px] overflow-y-auto pr-2 no-scrollbar">
                         <HistoryTimeline history={history} />
                     </div>
                 </div>
+
+                <hr className="border-(--bg-secondary) my-12" />
 
                 {/* Danger Zone */}
                 <div className="mt-8">

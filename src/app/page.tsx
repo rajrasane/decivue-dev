@@ -100,75 +100,40 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-(--bg-secondary)">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Custom Decivue Logo */}
-            <div className="relative w-9 h-9 flex items-center justify-center">
-              <svg viewBox="0 0 40 40" className="w-9 h-9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Outer ring with gradient */}
-                <defs>
-                  <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="var(--accent)" />
-                    <stop offset="100%" stopColor="#60a5fa" />
-                  </linearGradient>
-                </defs>
-                <circle cx="20" cy="20" r="18" stroke="url(#logoGradient)" strokeWidth="2" fill="none" />
-                {/* Decision fork - stylized "D" with branches */}
-                <path
-                  d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28"
-                  stroke="url(#logoGradient)"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                {/* Decision nodes */}
-                <circle cx="22" cy="12" r="3" fill="var(--accent)" />
-                <circle cx="22" cy="28" r="3" fill="#60a5fa" />
-                <circle cx="14" cy="20" r="2.5" fill="var(--accent)" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-bold">Decivue</h1>
-            <span className="text-xs text-(--text-muted) px-2 py-0.5 rounded bg-(--bg-secondary)">
-              Decision Intelligence
-            </span>
-          </div>
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-(--accent) hover:bg-(--accent-hover) 
-              text-white font-medium transition-colors"
-          >
-            <Plus size={18} />
-            New Decision
-          </button>
-        </div>
-      </header>
+
 
       {/* Main content */}
       <main className="max-w-6xl mx-auto px-6 py-8">
         {/* Stats bar */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-6">
-            <div>
-              <span className="text-3xl font-bold">{decisions.length}</span>
-              <span className="text-(--text-muted) ml-2">Total Decisions</span>
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <h2 className="text-xl font-bold mb-1 text-foreground">Overview</h2>
+            <div className="flex items-center gap-4 text-sm text-(--text-muted)">
+              <span>{decisions.length} Decision{decisions.length !== 1 ? 's' : ''}</span>
+              {atRiskCount > 0 && (
+                <span className="text-red-400 font-medium">{atRiskCount} Action Needed</span>
+              )}
             </div>
-            {atRiskCount > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30">
-                <span className="text-red-400 font-bold">{atRiskCount}</span>
-                <span className="text-red-400 text-sm">Need Review</span>
-              </div>
-            )}
           </div>
-          <button
-            onClick={loadDecisions}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
-              hover:bg-(--bg-secondary) transition-colors"
-          >
-            <RefreshCw size={16} />
-            Refresh
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-foreground text-background hover:bg-white/90 
+                font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+            >
+              <Plus size={18} />
+              New Decision
+            </button>
+            <button
+              onClick={loadDecisions}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
+                hover:bg-(--bg-secondary) transition-colors cursor-pointer"
+            >
+              <RefreshCw size={16} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {/* Decisions grid */}

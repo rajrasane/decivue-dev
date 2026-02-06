@@ -30,8 +30,8 @@
 @theme inline {
   --color-background: var(--bg-primary);
   --color-foreground: var(--text-primary);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 body {
@@ -70,26 +70,7 @@ body {
   animation: gauge-fill 1s ease-out forwards;
 }
 
-/* Card glow effects based on state */
-.card-fresh {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
-  border-color: var(--fresh);
-}
-
-.card-stable {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
-  border-color: var(--stable);
-}
-
-.card-at-risk {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
-  border-color: var(--at-risk);
-}
-
-.card-stale {
-  box-shadow: 0 0 20px rgba(107, 114, 128, 0.15);
-  border-color: var(--stale);
-}
+/* Card glow effects remove - Clean styling applied via utility classes if needed */
 
 /* Pulse animation for at-risk decisions */
 @keyframes pulse-risk {
@@ -143,4 +124,16 @@ input#delete-confirm:focus-visible {
 /* Disable body scroll when modal is open */
 body.modal-open {
   overflow: hidden;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
