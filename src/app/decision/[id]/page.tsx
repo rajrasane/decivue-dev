@@ -59,7 +59,7 @@ export default function DecisionDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="h-[calc(100dvh-4rem)] md:h-[calc(100dvh-5rem)] bg-background flex items-center justify-center">
                 <Spinner size={32} />
             </div>
         )
@@ -67,7 +67,7 @@ export default function DecisionDetailPage() {
 
     if (!decision) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="h-[calc(100dvh-4rem)] md:h-[calc(100dvh-5rem)] bg-background flex items-center justify-center">
                 <p className="text-(--text-muted)">Decision not found</p>
             </div>
         )

@@ -80,7 +80,7 @@ export function DecisionCard({
             tabIndex={0}
             aria-label={`View decision: ${decision.statement}`}
             className={cn(
-                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) transition-all duration-300 p-4 sm:p-6 mb-4 sm:mb-0 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2",
+                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) transition-all duration-300 p-4 sm:p-6 mb-2 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2",
                 (lifecycleState === 'at_risk' || lifecycleState === 'invalidated')
                     ? "border-red-500/40 shadow-[0_0_15px_-5px_rgba(239,68,68,0.2)]"
                     : "border-(--bg-secondary)"
@@ -133,25 +133,30 @@ export function DecisionCard({
                     </p>
 
                     {/* Meta info */}
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-(--text-muted)">
-                        <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-x-3 sm:gap-x-4 text-xs text-(--text-muted)">
+                        <div className="flex items-center gap-1.5 shrink-0">
                             <Clock size={14} />
-                            <span>
-                                {daysSinceReview === 0
-                                    ? 'Reviewed today'
-                                    : `${daysSinceReview}d since review`}
-                            </span>
+                            {daysSinceReview === 0
+                                ? <>
+                                    <span className="sm:hidden">Today</span>
+                                    <span className="hidden sm:inline">Reviewed today</span>
+                                </>
+                                : <>
+                                    <span className="sm:hidden">{daysSinceReview}d ago</span>
+                                    <span className="hidden sm:inline">{daysSinceReview}d since review</span>
+                                </>
+                            }
                         </div>
 
                         {signalsCount > 0 && (
-                            <div className="flex items-center gap-1.5 text-amber-400">
+                            <div className="flex items-center gap-1 shrink-0 text-amber-400">
                                 <AlertTriangle size={14} />
                                 <span>{signalsCount} signal{signalsCount > 1 ? 's' : ''}</span>
                             </div>
                         )}
 
                         {conflictsCount > 0 && (
-                            <div className="flex items-center gap-1.5 text-red-400">
+                            <div className="flex items-center gap-1 shrink-0 text-red-400">
                                 <GitCompare size={14} />
                                 <span>{conflictsCount} conflict{conflictsCount > 1 ? 's' : ''}</span>
                             </div>

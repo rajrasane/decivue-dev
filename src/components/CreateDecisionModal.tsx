@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Plus, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { ConfidenceSlider } from '@/components/ConfidenceSlider'
 
 interface CreateDecisionModalProps {
     onClose: () => void
@@ -139,24 +140,11 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                 </div>
 
                                 {/* Confidence slider */}
-                                <div>
-                                    <label htmlFor="confidence-slider" className="block text-sm font-medium text-(--text-secondary) mb-2">
-                                        Initial Confidence: <span className="text-white">{confidence}%</span>
-                                    </label>
-                                    <input
-                                        id="confidence-slider"
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value={confidence}
-                                        onChange={(e) => setConfidence(Number(e.target.value))}
-                                        className="w-full accent-white"
-                                    />
-                                    <div className="flex justify-between text-xs text-(--text-muted) mt-1">
-                                        <span>0% Uncertain</span>
-                                        <span>100% Certain</span>
-                                    </div>
-                                </div>
+                                <ConfidenceSlider
+                                    id="confidence-slider"
+                                    value={confidence}
+                                    onChange={setConfidence}
+                                />
 
                                 {/* Risk level */}
                                 <div>
@@ -170,13 +158,14 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                                 type="button"
                                                 onClick={() => setRisk(level)}
                                                 className={`
-                                                    py-2 px-3 rounded-lg text-xs sm:text-sm font-medium capitalize transition-all
+                                                    py-2 px-3 rounded-lg text-xs sm:text-sm font-medium capitalize transition-colors
+                                                    outline-none focus-visible:outline-none
                                                     ${risk === level
                                                         ? level === 'low' ? 'bg-emerald-500/90 text-white'
                                                             : level === 'medium' ? 'bg-amber-500/90 text-white'
                                                                 : level === 'high' ? 'bg-orange-500/90 text-white'
                                                                     : 'bg-red-500/90 text-white'
-                                                        : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover)'
+                                                        : 'bg-white/[0.06] text-(--text-secondary) hover:bg-white/[0.1]'
                                                     }
                                                 `}
                                             >

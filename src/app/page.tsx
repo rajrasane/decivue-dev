@@ -151,7 +151,7 @@ export default function Dashboard() {
 
         {/* Decisions grid */}
         {isLoading ? (
-          <div className="min-h-[50vh] flex items-center justify-center">
+          <div className="h-[calc(100dvh-16rem)] flex items-center justify-center">
             <Spinner size={32} />
           </div>
         ) : decisions.length === 0 ? (
