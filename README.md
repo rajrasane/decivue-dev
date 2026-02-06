@@ -132,11 +132,7 @@ src/
 │   ├── decision-intelligence.ts    # Core algorithms
 │   └── supabase/                   # DB clients
 └── types/
-    └── decision.ts                 # TypeScript types
-```
-│   └── supabase/
-└── types/
-    └── decision.ts
+    └── decision.ts                 # TypeScript
 ```
 
 ## How It Works
@@ -177,11 +173,7 @@ return 'at_risk'
 
 
 ![Dashboard](docs/screenshots/dashboard.png)  
-![Detail](docs/screenshots/detail.png) <hr> <br>
-![Modal1](docs/screenshots/modal1.png)
-![Modal2](docs/screenshots/modal2.png)
-![Modal3](docs/screenshots/modal3.png)
-
+![Detail](docs/screenshots/detail.png)
 ---
 
 Built for Alphabyte 3.0 Hackathon | Problem Statement 6
