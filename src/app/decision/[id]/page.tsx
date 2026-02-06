@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
-import { Decision, DecisionSignal, DecisionConflict } from '@/types/decision'
+import { Decision, DecisionSignal, DecisionConflict, DecisionHistory } from '@/types/decision'
 import { ConfidenceGauge } from '@/components/ConfidenceGauge'
+import { HistoryTimeline } from '@/components/HistoryTimeline'
 import {
     calculateCurrentConfidence,
     determineLifecycleState,
     generateInsight,
 } from '@/lib/decision-intelligence'
-import { differenceInDays, format } from 'date-fns'
+import { differenceInCalendarDays, format } from 'date-fns'
 import {
     ArrowLeft,
     Clock,
@@ -21,7 +23,14 @@ import {
     CheckCircle,
     X,
     Trash2,
+    Pencil,
+    History,
 } from 'lucide-react'
+
+const EditDecisionModal = dynamic(
+    () => import('@/components/EditDecisionModal').then(m => ({ default: m.EditDecisionModal })),
+    { loading: () => null }
+)
 
 const stateLabels = {
     fresh: 'Fresh',
@@ -45,23 +54,28 @@ export default function DecisionDetailPage() {
     const [decision, setDecision] = useState<Decision | null>(null)
     const [signals, setSignals] = useState<DecisionSignal[]>([])
     const [conflicts, setConflicts] = useState<(DecisionConflict & { other_decision?: Decision })[]>([])
+    const [history, setHistory] = useState<DecisionHistory[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [isReaffirming, setIsReaffirming] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [showAddSignal, setShowAddSignal] = useState(false)
+    const [showEditModal, setShowEditModal] = useState(false)
+
+    const [signalToDismiss, setSignalToDismiss] = useState<DecisionSignal | null>(null)
+    const [isDismissing, setIsDismissing] = useState(false)
 
     const supabase = createClient()
 
     // Lock body scroll when modal is open
     useEffect(() => {
-        if (showDeleteConfirm || showAddSignal) {
+        if (showDeleteConfirm || showAddSignal || showEditModal || signalToDismiss) {
             document.body.classList.add('modal-open')
         } else {
             document.body.classList.remove('modal-open')
         }
         return () => document.body.classList.remove('modal-open')
-    }, [showDeleteConfirm, showAddSignal])
+    }, [showDeleteConfirm, showAddSignal, showEditModal, signalToDismiss])
 
     const loadDecision = async () => {
         const id = params.id as string
@@ -105,6 +119,15 @@ export default function DecisionDetailPage() {
                 )
                 setConflicts(enrichedConflicts)
             }
+
+            // Load history
+            const { data: historyData } = await supabase
+                .from('decision_history')
+                .select('*')
+                .eq('decision_id', id)
+                .order('created_at', { ascending: false })
+
+            setHistory(historyData || [])
         }
 
         setIsLoading(false)
@@ -118,11 +141,28 @@ export default function DecisionDetailPage() {
         if (!decision) return
         setIsReaffirming(true)
 
+        const newConfidence = Math.min(100, decision.initial_confidence + 10)
+
+        // Create history entry
+        await supabase.from('decision_history').insert({
+            decision_id: decision.id,
+            action_type: 'reaffirmed',
+            previous_state: {
+                initial_confidence: decision.initial_confidence,
+                last_reviewed_at: decision.last_reviewed_at,
+            },
+            new_state: {
+                initial_confidence: newConfidence,
+                last_reviewed_at: new Date().toISOString(),
+            },
+            change_summary: `Decision reaffirmed. Confidence boosted from ${decision.initial_confidence}% to ${newConfidence}%.`,
+        })
+
         await supabase
             .from('decisions')
             .update({
                 last_reviewed_at: new Date().toISOString(),
-                initial_confidence: Math.min(100, decision.initial_confidence + 10),
+                initial_confidence: newConfidence,
             })
             .eq('id', decision.id)
 
@@ -143,6 +183,32 @@ export default function DecisionDetailPage() {
         router.push('/')
     }
 
+    const handleDismissSignal = async () => {
+        if (!signalToDismiss || !decision || isDismissing) return
+
+        setIsDismissing(true)
+        try {
+            // Create history entry
+            await supabase.from('decision_history').insert({
+                decision_id: decision.id,
+                action_type: 'signal_added',
+                previous_state: { signal_type: signalToDismiss.signal_type, description: signalToDismiss.description },
+                new_state: null,
+                change_summary: `Dismissed signal: ${signalToDismiss.description}`,
+            })
+
+            // Delete the signal
+            await supabase.from('decision_signals').delete().eq('id', signalToDismiss.id)
+
+            setSignalToDismiss(null)
+            await loadDecision()
+        } catch (error) {
+            console.error('Error dismissing signal:', error)
+        } finally {
+            setIsDismissing(false)
+        }
+    }
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
@@ -160,10 +226,10 @@ export default function DecisionDetailPage() {
     }
 
     const currentConfidence = calculateCurrentConfidence(decision)
-    const daysSinceReview = differenceInDays(new Date(), new Date(decision.last_reviewed_at))
+    const daysSinceReview = differenceInCalendarDays(new Date(), new Date(decision.last_reviewed_at))
     const lifecycleState = determineLifecycleState(currentConfidence, daysSinceReview)
     const insight = generateInsight(decision, currentConfidence, signals.length, conflicts.length)
-    const daysSinceCreated = differenceInDays(new Date(), new Date(decision.created_at))
+    const daysSinceCreated = differenceInCalendarDays(new Date(), new Date(decision.created_at))
 
     // Calculate sub-gauges
     const timeHealth = Math.max(0, 100 - daysSinceReview * 5)
@@ -235,6 +301,14 @@ export default function DecisionDetailPage() {
                                         <CheckCircle size={16} />
                                     )}
                                     Reaffirm
+                                </button>
+                                <button
+                                    onClick={() => setShowEditModal(true)}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 
+                    hover:bg-amber-500/30 transition-colors"
+                                >
+                                    <Pencil size={16} />
+                                    Revise
                                 </button>
                                 <button
                                     onClick={() => setShowAddSignal(true)}
@@ -352,13 +426,17 @@ export default function DecisionDetailPage() {
                                 <Clock size={16} className="text-(--text-muted)" />
                                 <span className="text-(--text-muted)">Created:</span>
                                 <span>{format(new Date(decision.created_at), 'MMM d, yyyy')}</span>
-                                <span className="text-(--text-muted)">({daysSinceCreated}d ago)</span>
+                                <span className="text-(--text-muted)">
+                                    {daysSinceCreated === 0 ? '(Today)' : daysSinceCreated === 1 ? '(Yesterday)' : `(${daysSinceCreated} days ago)`}
+                                </span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
                                 <RefreshCw size={16} className="text-(--text-muted)" />
                                 <span className="text-(--text-muted)">Last reviewed:</span>
                                 <span>{format(new Date(decision.last_reviewed_at), 'MMM d, yyyy')}</span>
-                                <span className="text-(--text-muted)">({daysSinceReview}d ago)</span>
+                                <span className="text-(--text-muted)">
+                                    {daysSinceReview === 0 ? '(Today)' : daysSinceReview === 1 ? '(Yesterday)' : `(${daysSinceReview} days ago)`}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -376,20 +454,44 @@ export default function DecisionDetailPage() {
                             {signals.map((signal) => (
                                 <div
                                     key={signal.id}
-                                    className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20"
+                                    className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-3 group"
                                 >
-                                    <p className="text-sm text-amber-400 uppercase tracking-wider mb-1">
-                                        {signal.signal_type.replace('_', ' ')}
-                                    </p>
-                                    <p className="text-(--text-secondary)">{signal.description}</p>
-                                    <p className="text-xs text-(--text-muted) mt-1">
-                                        {format(new Date(signal.created_at), 'MMM d, yyyy')}
-                                    </p>
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest leading-none mb-1">
+                                                {signal.signal_type.replace('_', ' ')}
+                                            </span>
+                                            <span className="text-sm text-(--text-secondary) leading-snug">
+                                                {signal.description}
+                                            </span>
+                                        </div>
+                                        <span className="text-[10px] text-(--text-muted) whitespace-nowrap pt-3">
+                                            {format(new Date(signal.created_at), 'MMM d')}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => setSignalToDismiss(signal)}
+                                        className="p-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-500/60 hover:text-amber-500 transition-all shrink-0"
+                                        aria-label="Dismiss signal"
+                                    >
+                                        <X size={14} />
+                                    </button>
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
+
+                {/* Decision History Timeline */}
+                <div className="mt-6 bg-(--bg-card) rounded-xl p-6">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <History size={18} className="text-(--accent)" />
+                        Decision History
+                    </h2>
+                    <div className="max-h-[300px] overflow-y-auto pr-2">
+                        <HistoryTimeline history={history} />
+                    </div>
+                </div>
 
                 {/* Danger Zone */}
                 <div className="mt-8">
@@ -440,6 +542,45 @@ export default function DecisionDetailPage() {
                     }}
                 />
             )}
+
+            {/* Edit Decision Modal */}
+            {showEditModal && (
+                <EditDecisionModal
+                    decision={decision}
+                    onClose={() => setShowEditModal(false)}
+                    onSuccess={() => {
+                        setShowEditModal(false)
+                        loadDecision()
+                    }}
+                />
+            )}
+
+            {/* Dismiss Signal Confirmation */}
+            {signalToDismiss && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+                    <div className="bg-(--bg-card) rounded-2xl w-full max-w-sm p-6">
+                        <h2 className="text-lg font-semibold mb-2">Dismiss Signal?</h2>
+                        <p className="text-sm text-(--text-secondary) mb-6">
+                            This will remove the signal from this decision.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setSignalToDismiss(null)}
+                                className="flex-1 py-2.5 rounded-lg bg-(--bg-secondary) hover:bg-(--bg-card-hover) text-foreground font-medium transition-colors"
+                            >
+                                No
+                            </button>
+                            <button
+                                onClick={handleDismissSignal}
+                                disabled={isDismissing}
+                                className="flex-1 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isDismissing ? 'Removing...' : 'Yes, remove'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
@@ -478,6 +619,16 @@ function AddSignalModal({
             decision_id: decisionId,
             signal_type: signalType,
             description: description.trim(),
+        })
+
+        // Create history entry for the signal
+        const typeLabel = signalType.replace(/_/g, ' ')
+        await supabase.from('decision_history').insert({
+            decision_id: decisionId,
+            action_type: 'signal_added',
+            previous_state: null,
+            new_state: { signal_type: signalType, description: description.trim() },
+            change_summary: `${typeLabel}: ${description.trim()}`,
         })
 
         onSuccess()
