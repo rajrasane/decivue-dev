@@ -60,13 +60,13 @@ export function DecisionCard({
             onClick={handleClick}
             className={`
         relative p-6 rounded-2xl border cursor-pointer
-        bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]
+        bg-(--bg-card) hover:bg-(--bg-card-hover)
         transition-all duration-300 ${cardClass}
       `}
         >
             <div className="flex gap-6">
                 {/* Confidence Gauge */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     <ConfidenceGauge value={currentConfidence} size="md" />
                 </div>
 
@@ -74,7 +74,7 @@ export function DecisionCard({
                 <div className="flex-1 min-w-0">
                     {/* Header with state badge */}
                     <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className="text-xl font-semibold text-[var(--text-primary)] line-clamp-2">
+                        <h3 className="text-xl font-semibold text-foreground line-clamp-2">
                             {decision.statement}
                         </h3>
                         <span className={`
@@ -86,12 +86,12 @@ export function DecisionCard({
                     </div>
 
                     {/* Insight message */}
-                    <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">
+                    <p className="text-sm text-(--text-secondary) mb-4 line-clamp-2">
                         {insight}
                     </p>
 
                     {/* Meta info */}
-                    <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
+                    <div className="flex items-center gap-4 text-xs text-(--text-muted)">
                         <div className="flex items-center gap-1.5">
                             <Clock size={14} />
                             <span>
@@ -122,13 +122,13 @@ export function DecisionCard({
                             {decision.logic.slice(0, 3).map((assumption, i) => (
                                 <span
                                     key={i}
-                                    className="px-2 py-0.5 rounded bg-[var(--bg-secondary)] text-xs text-[var(--text-muted)]"
+                                    className="px-2 py-0.5 rounded bg-(--bg-secondary) text-xs text-(--text-muted)"
                                 >
                                     {assumption}
                                 </span>
                             ))}
                             {decision.logic.length > 3 && (
-                                <span className="px-2 py-0.5 text-xs text-[var(--text-muted)]">
+                                <span className="px-2 py-0.5 text-xs text-(--text-muted)">
                                     +{decision.logic.length - 3} more
                                 </span>
                             )}

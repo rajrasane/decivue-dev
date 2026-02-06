@@ -99,20 +99,20 @@ export default function Dashboard() {
   }).length
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-[var(--bg-secondary)]">
+      <header className="border-b border-(--bg-secondary)">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Brain className="w-8 h-8 text-[var(--accent)]" />
+            <Brain className="w-8 h-8 text-(--accent)" />
             <h1 className="text-2xl font-bold">Decivue</h1>
-            <span className="text-xs text-[var(--text-muted)] px-2 py-0.5 rounded bg-[var(--bg-secondary)]">
+            <span className="text-xs text-(--text-muted) px-2 py-0.5 rounded bg-(--bg-secondary)">
               Decision Intelligence
             </span>
           </div>
           <button
             onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] 
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-(--accent) hover:bg-(--accent-hover) 
               text-white font-medium transition-colors"
           >
             <Plus size={18} />
@@ -128,7 +128,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-6">
             <div>
               <span className="text-3xl font-bold">{decisions.length}</span>
-              <span className="text-[var(--text-muted)] ml-2">Total Decisions</span>
+              <span className="text-(--text-muted) ml-2">Total Decisions</span>
             </div>
             {atRiskCount > 0 && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30">
@@ -139,8 +139,8 @@ export default function Dashboard() {
           </div>
           <button
             onClick={loadDecisions}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-[var(--text-secondary)] 
-              hover:bg-[var(--bg-secondary)] transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
+              hover:bg-(--bg-secondary) transition-colors"
           >
             <RefreshCw size={16} />
             Refresh
@@ -150,19 +150,19 @@ export default function Dashboard() {
         {/* Decisions grid */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full" />
+            <div className="animate-spin w-8 h-8 border-2 border-(--accent) border-t-transparent rounded-full" />
           </div>
         ) : decisions.length === 0 ? (
           <div className="text-center py-20">
-            <Brain className="w-16 h-16 mx-auto text-[var(--text-muted)] mb-4" />
+            <Brain className="w-16 h-16 mx-auto text-(--text-muted) mb-4" />
             <h2 className="text-xl font-semibold mb-2">No decisions yet</h2>
-            <p className="text-[var(--text-muted)] mb-6">
+            <p className="text-(--text-muted) mb-6">
               Start tracking your team&apos;s decisions to maintain awareness over time.
             </p>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--accent)] 
-                hover:bg-[var(--accent-hover)] text-white font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-(--accent) 
+                hover:bg-(--accent-hover) text-white font-medium transition-colors"
             >
               <Plus size={18} />
               Create First Decision

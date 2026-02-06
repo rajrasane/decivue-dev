@@ -61,7 +61,7 @@ export function ConfidenceGauge({
                     <span className={`font-bold ${fontSize}`} style={{ color: getColor() }}>
                         {value}%
                     </span>
-                    <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider">
+                    <span className="text-xs text-(--text-muted) uppercase tracking-wider">
                         Confidence
                     </span>
                 </div>

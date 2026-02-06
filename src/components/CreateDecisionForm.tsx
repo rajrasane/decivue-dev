@@ -100,14 +100,14 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="bg-(--bg-card) rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-[var(--bg-secondary)]">
+                <div className="flex items-center justify-between p-6 border-b border-(--bg-secondary)">
                     <h2 className="text-xl font-semibold">New Decision</h2>
                     <button
                         onClick={onClose}
                         aria-label="Close form"
-                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="p-2 rounded-lg hover:bg-(--bg-secondary) transition-colors"
                     >
                         <X size={20} />
                     </button>
@@ -117,7 +117,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {/* Statement */}
                     <div>
-                        <label htmlFor="decision-statement" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="decision-statement" className="block text-sm font-medium text-(--text-secondary) mb-2">
                             Decision Statement
                         </label>
                         <textarea
@@ -126,9 +126,9 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                             onChange={(e) => setStatement(e.target.value)}
                             placeholder="What decision was made?…"
                             autoComplete="off"
-                            className="w-full px-4 py-3 rounded-xl bg-[var(--bg-secondary)] border border-transparent 
-                focus:border-[var(--accent)] focus:outline-none resize-none text-[var(--text-primary)]
-                placeholder:text-[var(--text-muted)]"
+                            className="w-full px-4 py-3 rounded-xl bg-(--bg-secondary) border border-transparent 
+                focus:border-(--accent) focus:outline-none resize-none text-foreground
+                placeholder:text-(--text-muted)"
                             rows={3}
                             required
                         />
@@ -136,8 +136,8 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
 
                     {/* Confidence slider */}
                     <div>
-                        <label htmlFor="confidence-slider" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Initial Confidence: <span className="text-[var(--accent)]">{confidence}%</span>
+                        <label htmlFor="confidence-slider" className="block text-sm font-medium text-(--text-secondary) mb-2">
+                            Initial Confidence: <span className="text-(--accent)">{confidence}%</span>
                         </label>
                         <input
                             id="confidence-slider"
@@ -146,9 +146,9 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                             max="100"
                             value={confidence}
                             onChange={(e) => setConfidence(Number(e.target.value))}
-                            className="w-full accent-[var(--accent)]"
+                            className="w-full accent-(--accent)"
                         />
-                        <div className="flex justify-between text-xs text-[var(--text-muted)] mt-1">
+                        <div className="flex justify-between text-xs text-(--text-muted) mt-1">
                             <span>0% Uncertain</span>
                             <span>100% Certain</span>
                         </div>
@@ -156,7 +156,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
 
                     {/* Risk level */}
                     <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label className="block text-sm font-medium text-(--text-secondary) mb-2">
                             Perceived Risk
                         </label>
                         <div className="grid grid-cols-4 gap-2">
@@ -168,8 +168,8 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                                     className={`
                     py-2 px-3 rounded-lg text-sm font-medium capitalize transition-all
                     ${risk === level
-                                            ? 'bg-[var(--accent)] text-white'
-                                            : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
+                                            ? 'bg-(--accent) text-white'
+                                            : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover)'
                                         }
                   `}
                                 >
@@ -181,7 +181,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
 
                     {/* Assumptions */}
                     <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label className="block text-sm font-medium text-(--text-secondary) mb-2">
                             Key Assumptions
                         </label>
                         <div className="space-y-2">
@@ -192,9 +192,9 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                                         value={assumption}
                                         onChange={(e) => updateAssumption(index, e.target.value)}
                                         placeholder={`Assumption ${index + 1}`}
-                                        className="flex-1 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border border-transparent 
-                      focus:border-[var(--accent)] focus:outline-none text-[var(--text-primary)]
-                      placeholder:text-[var(--text-muted)]"
+                                        className="flex-1 px-4 py-2 rounded-lg bg-(--bg-secondary) border border-transparent 
+                      focus:border-(--accent) focus:outline-none text-foreground
+                      placeholder:text-(--text-muted)"
                                     />
                                     {assumptions.length > 1 && (
                                         <button
@@ -211,7 +211,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                             <button
                                 type="button"
                                 onClick={addAssumption}
-                                className="flex items-center gap-2 text-sm text-[var(--accent)] hover:underline"
+                                className="flex items-center gap-2 text-sm text-(--accent) hover:underline"
                             >
                                 <Plus size={16} /> Add assumption
                             </button>
@@ -229,7 +229,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                     <button
                         type="submit"
                         disabled={isSubmitting || !statement.trim()}
-                        className="w-full py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] 
+                        className="w-full py-3 rounded-xl bg-(--accent) hover:bg-(--accent-hover) 
               text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
                     >

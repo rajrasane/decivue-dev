@@ -145,16 +145,16 @@ export default function DecisionDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full" />
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="animate-spin w-8 h-8 border-2 border-(--accent) border-t-transparent rounded-full" />
             </div>
         )
     }
 
     if (!decision) {
         return (
-            <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
-                <p className="text-[var(--text-muted)]">Decision not found</p>
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <p className="text-(--text-muted)">Decision not found</p>
             </div>
         )
     }
@@ -171,13 +171,13 @@ export default function DecisionDetailPage() {
     const conflictRisk = conflicts.length > 0 ? Math.max(20, 100 - conflicts.length * 30) : 100
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)]">
+        <div className="min-h-screen bg-background">
             {/* Header */}
-            <header className="border-b border-[var(--bg-secondary)]">
+            <header className="border-b border-(--bg-secondary)">
                 <div className="max-w-5xl mx-auto px-6 py-4">
                     <button
                         onClick={() => router.push('/')}
-                        className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                        className="flex items-center gap-2 text-(--text-secondary) hover:text-foreground transition-colors"
                     >
                         <ArrowLeft size={18} />
                         Back to Dashboard
@@ -187,10 +187,10 @@ export default function DecisionDetailPage() {
 
             <main className="max-w-5xl mx-auto px-6 py-8">
                 {/* Hero section with main gauge */}
-                <div className="bg-[var(--bg-card)] rounded-2xl p-8 mb-6">
+                <div className="bg-(--bg-card) rounded-2xl p-8 mb-6">
                     <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
                         {/* Main gauge */}
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                             <ConfidenceGauge value={currentConfidence} size="lg" />
                         </div>
 
@@ -202,7 +202,7 @@ export default function DecisionDetailPage() {
                                 >
                                     {stateLabels[lifecycleState]}
                                 </span>
-                                <span className="text-[var(--text-muted)] text-sm">
+                                <span className="text-(--text-muted) text-sm">
                                     Risk: {decision.perceived_risk}
                                 </span>
                             </div>
@@ -215,7 +215,7 @@ export default function DecisionDetailPage() {
                                     ? 'bg-red-500/10 border border-red-500/30 text-red-400'
                                     : lifecycleState === 'stale'
                                         ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400'
-                                        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                                        : 'bg-(--bg-secondary) text-(--text-secondary)'
                                     }`}
                             >
                                 {insight}
@@ -238,8 +238,8 @@ export default function DecisionDetailPage() {
                                 </button>
                                 <button
                                     onClick={() => setShowAddSignal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-secondary)] 
-                    text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-(--bg-secondary) 
+                    text-(--text-secondary) hover:bg-(--bg-card-hover) transition-colors"
                                 >
                                     <Plus size={16} />
                                     Add Signal
@@ -256,19 +256,19 @@ export default function DecisionDetailPage() {
                             <GitCompare size={18} />
                             Conflicts Detected ({conflicts.length})
                         </h2>
-                        <p className="text-sm text-[var(--text-muted)] mb-4">
+                        <p className="text-sm text-(--text-muted) mb-4">
                             These decisions may contradict each other. Review and resolve as needed.
                         </p>
                         <div className="space-y-3">
                             {conflicts.map((conflict) => (
                                 <div
                                     key={conflict.id}
-                                    className="p-4 rounded-lg bg-[var(--bg-card)] border border-red-500/20"
+                                    className="p-4 rounded-lg bg-(--bg-card) border border-red-500/20"
                                 >
-                                    <p className="font-medium text-[var(--text-primary)] mb-1">
+                                    <p className="font-medium text-foreground mb-1">
                                         {conflict.other_decision?.statement || 'Unknown decision'}
                                     </p>
-                                    <p className="text-sm text-[var(--text-secondary)] mb-3">
+                                    <p className="text-sm text-(--text-secondary) mb-3">
                                         {conflict.conflict_explanation}
                                     </p>
                                     <div className="flex gap-2">
@@ -277,7 +277,7 @@ export default function DecisionDetailPage() {
                                                 await supabase.from('decision_conflicts').delete().eq('id', conflict.id)
                                                 loadDecision()
                                             }}
-                                            className="px-3 py-1.5 text-xs rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
+                                            className="px-3 py-1.5 text-xs rounded-lg bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover) transition-colors"
                                         >
                                             Dismiss (Keep Both)
                                         </button>
@@ -287,7 +287,7 @@ export default function DecisionDetailPage() {
                                                     window.open(`/decision/${conflict.other_decision.id}`, '_blank')
                                                 }
                                             }}
-                                            className="px-3 py-1.5 text-xs rounded-lg border border-[var(--text-muted)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                                            className="px-3 py-1.5 text-xs rounded-lg border border-(--text-muted) text-(--text-secondary) hover:bg-(--bg-secondary) transition-colors"
                                         >
                                             View Other Decision
                                         </button>
@@ -300,65 +300,65 @@ export default function DecisionDetailPage() {
 
                 {/* Sub-gauges row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-[var(--bg-card)] rounded-xl p-4 text-center">
+                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
                         <ConfidenceGauge value={timeHealth} size="sm" showLabel={false} />
                         <p className="text-sm font-medium mt-2">{timeHealth}%</p>
-                        <p className="text-xs text-[var(--text-muted)]">Time Health</p>
+                        <p className="text-xs text-(--text-muted)">Time Health</p>
                     </div>
-                    <div className="bg-[var(--bg-card)] rounded-xl p-4 text-center">
+                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
                         <ConfidenceGauge value={assumptionHealth} size="sm" showLabel={false} />
                         <p className="text-sm font-medium mt-2">{assumptionHealth}%</p>
-                        <p className="text-xs text-[var(--text-muted)]">Assumptions</p>
+                        <p className="text-xs text-(--text-muted)">Assumptions</p>
                     </div>
-                    <div className="bg-[var(--bg-card)] rounded-xl p-4 text-center">
+                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
                         <ConfidenceGauge value={conflictRisk} size="sm" showLabel={false} />
                         <p className="text-sm font-medium mt-2">{conflictRisk}%</p>
-                        <p className="text-xs text-[var(--text-muted)]">Conflict Health</p>
+                        <p className="text-xs text-(--text-muted)">Conflict Health</p>
                     </div>
-                    <div className="bg-[var(--bg-card)] rounded-xl p-4 text-center">
+                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
                         <ConfidenceGauge value={decision.initial_confidence} size="sm" showLabel={false} />
                         <p className="text-sm font-medium mt-2">{decision.initial_confidence}%</p>
-                        <p className="text-xs text-[var(--text-muted)]">Initial Conf.</p>
+                        <p className="text-xs text-(--text-muted)">Initial Conf.</p>
                     </div>
                 </div>
 
                 {/* Details grid */}
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* Assumptions */}
-                    <div className="bg-[var(--bg-card)] rounded-xl p-6">
+                    <div className="bg-(--bg-card) rounded-xl p-6">
                         <h2 className="text-lg font-semibold mb-4">Key Assumptions</h2>
                         {decision.logic.length > 0 ? (
                             <ul className="space-y-2">
                                 {decision.logic.map((assumption, i) => (
                                     <li
                                         key={i}
-                                        className="flex items-start gap-2 text-[var(--text-secondary)]"
+                                        className="flex items-start gap-2 text-(--text-secondary)"
                                     >
-                                        <span className="text-[var(--accent)]">•</span>
+                                        <span className="text-(--accent)">•</span>
                                         {assumption}
                                     </li>
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-[var(--text-muted)]">No assumptions recorded</p>
+                            <p className="text-(--text-muted)">No assumptions recorded</p>
                         )}
                     </div>
 
                     {/* Timeline */}
-                    <div className="bg-[var(--bg-card)] rounded-xl p-6">
+                    <div className="bg-(--bg-card) rounded-xl p-6">
                         <h2 className="text-lg font-semibold mb-4">Timeline</h2>
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 text-sm">
-                                <Clock size={16} className="text-[var(--text-muted)]" />
-                                <span className="text-[var(--text-muted)]">Created:</span>
+                                <Clock size={16} className="text-(--text-muted)" />
+                                <span className="text-(--text-muted)">Created:</span>
                                 <span>{format(new Date(decision.created_at), 'MMM d, yyyy')}</span>
-                                <span className="text-[var(--text-muted)]">({daysSinceCreated}d ago)</span>
+                                <span className="text-(--text-muted)">({daysSinceCreated}d ago)</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
-                                <RefreshCw size={16} className="text-[var(--text-muted)]" />
-                                <span className="text-[var(--text-muted)]">Last reviewed:</span>
+                                <RefreshCw size={16} className="text-(--text-muted)" />
+                                <span className="text-(--text-muted)">Last reviewed:</span>
                                 <span>{format(new Date(decision.last_reviewed_at), 'MMM d, yyyy')}</span>
-                                <span className="text-[var(--text-muted)]">({daysSinceReview}d ago)</span>
+                                <span className="text-(--text-muted)">({daysSinceReview}d ago)</span>
                             </div>
                         </div>
                     </div>
@@ -367,7 +367,7 @@ export default function DecisionDetailPage() {
 
                 {/* Signals section */}
                 {signals.length > 0 && (
-                    <div className="mt-6 bg-[var(--bg-card)] rounded-xl p-6">
+                    <div className="mt-6 bg-(--bg-card) rounded-xl p-6">
                         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                             <AlertTriangle size={18} className="text-amber-400" />
                             Signals ({signals.length})
@@ -381,8 +381,8 @@ export default function DecisionDetailPage() {
                                     <p className="text-sm text-amber-400 uppercase tracking-wider mb-1">
                                         {signal.signal_type.replace('_', ' ')}
                                     </p>
-                                    <p className="text-[var(--text-secondary)]">{signal.description}</p>
-                                    <p className="text-xs text-[var(--text-muted)] mt-1">
+                                    <p className="text-(--text-secondary)">{signal.description}</p>
+                                    <p className="text-xs text-(--text-muted) mt-1">
                                         {format(new Date(signal.created_at), 'MMM d, yyyy')}
                                     </p>
                                 </div>
@@ -395,10 +395,10 @@ export default function DecisionDetailPage() {
                 <div className="mt-8">
                     <h2 className="text-lg font-semibold text-red-400 mb-4">Danger Zone</h2>
                     <div className="border border-red-500/30 rounded-xl overflow-hidden">
-                        <div className="flex items-center justify-between p-4 bg-[var(--bg-card)]">
+                        <div className="flex items-center justify-between p-4 bg-(--bg-card)">
                             <div>
-                                <h3 className="font-medium text-[var(--text-primary)]">Delete this decision</h3>
-                                <p className="text-sm text-[var(--text-muted)]">
+                                <h3 className="font-medium text-foreground">Delete this decision</h3>
+                                <p className="text-sm text-(--text-muted)">
                                     Once you delete a decision, there is no going back. Please be certain.
                                 </p>
                             </div>
@@ -485,25 +485,25 @@ function AddSignalModal({
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-md">
-                <div className="flex items-center justify-between p-6 border-b border-[var(--bg-secondary)]">
+            <div className="bg-(--bg-card) rounded-2xl w-full max-w-md">
+                <div className="flex items-center justify-between p-6 border-b border-(--bg-secondary)">
                     <h2 className="text-lg font-semibold">Add Signal</h2>
-                    <button onClick={onClose} aria-label="Close modal" className="p-2 rounded-lg hover:bg-[var(--bg-secondary)]">
+                    <button onClick={onClose} aria-label="Close modal" className="p-2 rounded-lg hover:bg-(--bg-secondary)">
                         <X size={18} />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label htmlFor="signal-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="signal-type" className="block text-sm font-medium text-(--text-secondary) mb-2">
                             Signal Type
                         </label>
                         <select
                             id="signal-type"
                             value={signalType}
                             onChange={(e) => setSignalType(e.target.value as DecisionSignal['signal_type'])}
-                            className="w-full px-4 py-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)]
-                border border-transparent focus:border-[var(--accent)] focus:outline-none"
+                            className="w-full px-4 py-2 rounded-lg bg-(--bg-secondary) text-foreground
+                border border-transparent focus:border-(--accent) focus:outline-none"
                         >
                             <option value="external_change">External Change</option>
                             <option value="assumption_broken">Assumption Broken</option>
@@ -512,7 +512,7 @@ function AddSignalModal({
                     </div>
 
                     <div>
-                        <label htmlFor="signal-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="signal-description" className="block text-sm font-medium text-(--text-secondary) mb-2">
                             Description
                         </label>
                         <textarea
@@ -521,8 +521,8 @@ function AddSignalModal({
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="What changed or happened?…"
                             autoComplete="off"
-                            className="w-full px-4 py-3 rounded-lg bg-[var(--bg-secondary)] border border-transparent 
-                focus:border-[var(--accent)] focus:outline-none resize-none"
+                            className="w-full px-4 py-3 rounded-lg bg-(--bg-secondary) border border-transparent 
+                focus:border-(--accent) focus:outline-none resize-none"
                             rows={3}
                             required
                         />
@@ -531,7 +531,7 @@ function AddSignalModal({
                     <button
                         type="submit"
                         disabled={isSubmitting || !description.trim()}
-                        className="w-full py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] 
+                        className="w-full py-3 rounded-xl bg-(--accent) hover:bg-(--accent-hover) 
               text-white font-medium transition-colors disabled:opacity-50"
                     >
                         {isSubmitting ? 'Adding…' : 'Add Signal'}
@@ -575,14 +575,14 @@ function DeleteConfirmModal({
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-md">
+            <div className="bg-(--bg-card) rounded-2xl w-full max-w-md">
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-[var(--bg-secondary)]">
+                <div className="flex items-center justify-between p-4 border-b border-(--bg-secondary)">
                     <h2 className="font-semibold">Delete Decision</h2>
                     <button
                         onClick={onClose}
                         aria-label="Close modal"
-                        className="p-1 rounded hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="p-1 rounded hover:bg-(--bg-secondary) transition-colors"
                     >
                         <X size={18} />
                     </button>
@@ -590,12 +590,12 @@ function DeleteConfirmModal({
 
                 {/* Content */}
                 <div className="p-6">
-                    <p className="text-[var(--text-primary)] font-medium text-center mb-6">
+                    <p className="text-foreground font-medium text-center mb-6">
                         {decisionStatement}
                     </p>
 
-                    <p id="delete-instruction" className="text-[var(--text-secondary)] text-sm mb-3">
-                        To confirm, type <span className="font-medium text-[var(--text-primary)]">&ldquo;{confirmKeyword}&rdquo;</span> in the box below
+                    <p id="delete-instruction" className="text-(--text-secondary) text-sm mb-3">
+                        To confirm, type <span className="font-medium text-foreground">&ldquo;{confirmKeyword}&rdquo;</span> in the box below
                     </p>
 
                     <input
@@ -605,15 +605,15 @@ function DeleteConfirmModal({
                         onChange={(e) => setConfirmText(e.target.value)}
                         aria-describedby="delete-instruction"
                         autoComplete="off"
-                        className="w-full px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border border-red-500/50 
-                            focus:border-red-500 focus:outline-none text-[var(--text-primary)] mb-4"
+                        className="w-full px-4 py-2 rounded-lg bg-(--bg-secondary) border border-red-500/50 
+                            focus:border-red-500 focus:outline-none text-foreground mb-4"
                         autoFocus
                     />
 
                     <button
                         onClick={onConfirm}
                         disabled={!isConfirmed || isDeleting}
-                        className="w-full py-2.5 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-muted)]
+                        className="w-full py-2.5 rounded-lg bg-(--bg-secondary) text-(--text-muted)
                             transition-colors disabled:cursor-not-allowed
                             enabled:bg-red-500 enabled:text-white enabled:hover:bg-red-600"
                     >
