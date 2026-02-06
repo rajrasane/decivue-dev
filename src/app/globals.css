@@ -1,27 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  /* IMDB-inspired dark theme */
   --bg-primary: #0a0a0a;
   --bg-secondary: #141414;
   --bg-card: #1a1a1a;
   --bg-card-hover: #222222;
-  
+
   --text-primary: #ffffff;
   --text-secondary: #a1a1a1;
   --text-muted: #6b6b6b;
-  
+
   /* State colors */
   --fresh: #22c55e;
   --stable: #f59e0b;
   --at-risk: #ef4444;
   --stale: #6b7280;
   --invalidated: #374151;
-  
+
   /* Accent */
   --accent: #3b82f6;
   --accent-hover: #2563eb;
-  
+
   /* Gauge gradients */
   --gauge-high: #22c55e;
   --gauge-medium: #f59e0b;
@@ -94,9 +93,12 @@ body {
 
 /* Pulse animation for at-risk decisions */
 @keyframes pulse-risk {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
   }
+
   50% {
     box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
   }
@@ -104,4 +106,41 @@ body {
 
 .pulse-risk {
   animation: pulse-risk 2s ease-in-out infinite;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .gauge-circle {
+    animation: none;
+  }
+
+  .pulse-risk {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Accessibility: Focus States */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+/* Delete input - no focus ring */
+input#delete-confirm:focus-visible {
+  outline: none;
+}
+
+/* Disable body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
 }

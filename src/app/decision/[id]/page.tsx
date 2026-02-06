@@ -53,6 +53,16 @@ export default function DecisionDetailPage() {
 
     const supabase = createClient()
 
+    // Lock body scroll when modal is open
+    useEffect(() => {
+        if (showDeleteConfirm || showAddSignal) {
+            document.body.classList.add('modal-open')
+        } else {
+            document.body.classList.remove('modal-open')
+        }
+        return () => document.body.classList.remove('modal-open')
+    }, [showDeleteConfirm, showAddSignal])
+
     const loadDecision = async () => {
         const id = params.id as string
 
@@ -449,6 +459,15 @@ function AddSignalModal({
 
     const supabase = createClient()
 
+    // Close on ESC
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose()
+        }
+        window.addEventListener('keydown', handleEsc)
+        return () => window.removeEventListener('keydown', handleEsc)
+    }, [onClose])
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!description.trim()) return
@@ -469,17 +488,18 @@ function AddSignalModal({
             <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-md">
                 <div className="flex items-center justify-between p-6 border-b border-[var(--bg-secondary)]">
                     <h2 className="text-lg font-semibold">Add Signal</h2>
-                    <button onClick={onClose} className="p-2 rounded-lg hover:bg-[var(--bg-secondary)]">
+                    <button onClick={onClose} aria-label="Close modal" className="p-2 rounded-lg hover:bg-[var(--bg-secondary)]">
                         <X size={18} />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="signal-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Signal Type
                         </label>
                         <select
+                            id="signal-type"
                             value={signalType}
                             onChange={(e) => setSignalType(e.target.value as DecisionSignal['signal_type'])}
                             className="w-full px-4 py-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)]
@@ -492,13 +512,15 @@ function AddSignalModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="signal-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Description
                         </label>
                         <textarea
+                            id="signal-description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="What changed or happened?"
+                            placeholder="What changed or happened?…"
+                            autoComplete="off"
                             className="w-full px-4 py-3 rounded-lg bg-[var(--bg-secondary)] border border-transparent 
                 focus:border-[var(--accent)] focus:outline-none resize-none"
                             rows={3}
@@ -533,6 +555,15 @@ function DeleteConfirmModal({
 }) {
     const [confirmText, setConfirmText] = useState('')
 
+    // Close on ESC
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose()
+        }
+        window.addEventListener('keydown', handleEsc)
+        return () => window.removeEventListener('keydown', handleEsc)
+    }, [onClose])
+
     // Get first few words of decision as confirmation text (max 5 words, max 40 chars)
     const confirmKeyword = decisionStatement
         .split(' ')
@@ -550,6 +581,7 @@ function DeleteConfirmModal({
                     <h2 className="font-semibold">Delete Decision</h2>
                     <button
                         onClick={onClose}
+                        aria-label="Close modal"
                         className="p-1 rounded hover:bg-[var(--bg-secondary)] transition-colors"
                     >
                         <X size={18} />
@@ -562,14 +594,17 @@ function DeleteConfirmModal({
                         {decisionStatement}
                     </p>
 
-                    <p className="text-[var(--text-secondary)] text-sm mb-3">
+                    <p id="delete-instruction" className="text-[var(--text-secondary)] text-sm mb-3">
                         To confirm, type <span className="font-medium text-[var(--text-primary)]">&ldquo;{confirmKeyword}&rdquo;</span> in the box below
                     </p>
 
                     <input
+                        id="delete-confirm"
                         type="text"
                         value={confirmText}
                         onChange={(e) => setConfirmText(e.target.value)}
+                        aria-describedby="delete-instruction"
+                        autoComplete="off"
                         className="w-full px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border border-red-500/50 
                             focus:border-red-500 focus:outline-none text-[var(--text-primary)] mb-4"
                         autoFocus

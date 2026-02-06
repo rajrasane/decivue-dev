@@ -1,12 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Plus, Brain, RefreshCw } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
-import { CreateDecisionForm } from '@/components/CreateDecisionForm'
 import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
+
+const CreateDecisionForm = dynamic(
+  () => import('@/components/CreateDecisionForm').then(m => ({ default: m.CreateDecisionForm })),
+  { loading: () => null }
+)
 
 export default function Dashboard() {
   const [decisions, setDecisions] = useState<Decision[]>([])
@@ -16,6 +21,16 @@ export default function Dashboard() {
   const [showCreateForm, setShowCreateForm] = useState(false)
 
   const supabase = createClient()
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (showCreateForm) {
+      document.body.classList.add('modal-open')
+    } else {
+      document.body.classList.remove('modal-open')
+    }
+    return () => document.body.classList.remove('modal-open')
+  }, [showCreateForm])
 
   const loadDecisions = async () => {
     setIsLoading(true)

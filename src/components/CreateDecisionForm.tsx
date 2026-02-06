@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Plus, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -18,6 +18,15 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
     const [conflictWarning, setConflictWarning] = useState<string | null>(null)
 
     const supabase = createClient()
+
+    // Close on ESC
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose()
+        }
+        window.addEventListener('keydown', handleEsc)
+        return () => window.removeEventListener('keydown', handleEsc)
+    }, [onClose])
 
     const addAssumption = () => setAssumptions([...assumptions, ''])
 
@@ -97,6 +106,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                     <h2 className="text-xl font-semibold">New Decision</h2>
                     <button
                         onClick={onClose}
+                        aria-label="Close form"
                         className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                     >
                         <X size={20} />
@@ -107,13 +117,15 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {/* Statement */}
                     <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="decision-statement" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Decision Statement
                         </label>
                         <textarea
+                            id="decision-statement"
                             value={statement}
                             onChange={(e) => setStatement(e.target.value)}
-                            placeholder="What decision was made?"
+                            placeholder="What decision was made?…"
+                            autoComplete="off"
                             className="w-full px-4 py-3 rounded-xl bg-[var(--bg-secondary)] border border-transparent 
                 focus:border-[var(--accent)] focus:outline-none resize-none text-[var(--text-primary)]
                 placeholder:text-[var(--text-muted)]"
@@ -124,10 +136,11 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
 
                     {/* Confidence slider */}
                     <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="confidence-slider" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Initial Confidence: <span className="text-[var(--accent)]">{confidence}%</span>
                         </label>
                         <input
+                            id="confidence-slider"
                             type="range"
                             min="0"
                             max="100"
@@ -187,6 +200,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                                         <button
                                             type="button"
                                             onClick={() => removeAssumption(index)}
+                                            aria-label={`Remove assumption ${index + 1}`}
                                             className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"
                                         >
                                             <X size={18} />
@@ -229,7 +243,7 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                         )}
                     </button>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }
