@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+
 import { Plus, RefreshCw } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { Spinner } from '@/components/Spinner'
 import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
 import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
@@ -99,7 +101,7 @@ export default function Dashboard() {
   }).length
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
 
 
       {/* Main content */}
@@ -138,8 +140,8 @@ export default function Dashboard() {
 
         {/* Decisions grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 border-(--accent) border-t-transparent rounded-full" />
+          <div className="min-h-[50vh] flex items-center justify-center">
+            <Spinner size={32} />
           </div>
         ) : decisions.length === 0 ? (
           <div className="text-center py-20">

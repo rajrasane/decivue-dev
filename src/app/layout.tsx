@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -10,6 +11,11 @@ const sans = Plus_Jakarta_Sans({
 
 const mono = Geist_Mono({
   variable: "--font-mono",
+  subsets: ["latin"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
 });
 
@@ -25,11 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${sans.variable} ${mono.variable} antialiased`}
-      >
+      <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-screen`}>
         <SiteHeader />
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <SiteFooter />
       </body>
     </html>
   );

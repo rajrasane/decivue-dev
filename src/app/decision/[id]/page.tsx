@@ -26,7 +26,9 @@ import {
     Pencil,
     Edit2,
     History,
+    ChevronDown,
 } from 'lucide-react'
+import { Spinner } from '@/components/Spinner'
 
 const EditDecisionModal = dynamic(
     () => import('@/components/EditDecisionModal').then(m => ({ default: m.EditDecisionModal })),
@@ -210,7 +212,7 @@ export default function DecisionDetailPage() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-2 border-(--accent) border-t-transparent rounded-full" />
+                <Spinner size={32} />
             </div>
         )
     }
@@ -238,7 +240,7 @@ export default function DecisionDetailPage() {
         <div className="min-h-screen bg-background">
 
 
-            <main className="max-w-5xl mx-auto px-6 py-8">
+            <main className="max-w-6xl mx-auto px-6 py-8">
                 <button
                     onClick={() => router.push('/')}
                     className="flex items-center gap-2 text-(--text-secondary) hover:text-foreground transition-colors mb-6"
@@ -294,7 +296,7 @@ export default function DecisionDetailPage() {
                     hover:bg-white/90 transition-colors disabled:opacity-50 font-medium"
                                 >
                                     {isReaffirming ? (
-                                        <RefreshCw size={16} className="animate-spin" />
+                                        <Spinner size={16} color="var(--bg-primary)" />
                                     ) : (
                                         <CheckCircle size={16} />
                                     )}
@@ -670,17 +672,20 @@ function AddSignalModal({
                         <label htmlFor="signal-type" className="block text-sm font-medium text-(--text-secondary) mb-2">
                             Signal Type
                         </label>
-                        <select
-                            id="signal-type"
-                            value={signalType}
-                            onChange={(e) => setSignalType(e.target.value as DecisionSignal['signal_type'])}
-                            className="w-full px-4 py-2 rounded-lg bg-(--bg-secondary) text-foreground
-                border border-transparent focus:border-(--accent) focus:outline-none"
-                        >
-                            <option value="external_change">External Change</option>
-                            <option value="assumption_broken">Assumption Broken</option>
-                            <option value="team_feedback">Team Feedback</option>
-                        </select>
+                        <div className="relative">
+                            <select
+                                id="signal-type"
+                                value={signalType}
+                                onChange={(e) => setSignalType(e.target.value as DecisionSignal['signal_type'])}
+                                className="w-full px-4 py-3 rounded-xl bg-(--bg-secondary) text-foreground
+                                    border border-transparent focus:border-white/10 focus:outline-none appearance-none cursor-pointer"
+                            >
+                                <option value="external_change">External Change</option>
+                                <option value="assumption_broken">Assumption Broken</option>
+                                <option value="team_feedback">Team Feedback</option>
+                            </select>
+                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none" size={16} />
+                        </div>
                     </div>
 
                     <div>
@@ -703,10 +708,15 @@ function AddSignalModal({
                     <button
                         type="submit"
                         disabled={isSubmitting || !description.trim()}
-                        className="w-full py-3 rounded-xl bg-(--accent) hover:bg-(--accent-hover) 
-              text-white font-medium transition-colors disabled:opacity-50"
+                        className="w-full py-3 rounded-xl bg-foreground hover:bg-white/90 
+                            text-background font-semibold transition-colors disabled:opacity-50"
                     >
-                        {isSubmitting ? 'Adding…' : 'Add Signal'}
+                        {isSubmitting ? (
+                            <div className="flex items-center justify-center gap-2">
+                                <Spinner size={20} color="var(--bg-primary)" />
+                                <span>Adding...</span>
+                            </div>
+                        ) : 'Add Signal'}
                     </button>
                 </form>
             </div>
