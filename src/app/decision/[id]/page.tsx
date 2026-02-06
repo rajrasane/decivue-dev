@@ -240,10 +240,10 @@ export default function DecisionDetailPage() {
         <div className="min-h-screen bg-background">
 
 
-            <main className="max-w-6xl mx-auto px-6 py-8">
+            <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
                 <button
                     onClick={() => router.push('/')}
-                    className="flex items-center gap-2 text-(--text-secondary) hover:text-foreground transition-colors mb-6"
+                    className="flex items-center gap-2 text-(--text-secondary) hover:text-foreground transition-colors mb-4 md:mb-6"
                 >
                     <ArrowLeft size={18} />
                     Back to Dashboard
@@ -288,12 +288,12 @@ export default function DecisionDetailPage() {
                             </div>
 
                             {/* Action buttons */}
-                            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                            <div className="grid grid-cols-3 gap-2 md:flex md:gap-3 justify-center md:justify-start w-full md:w-auto">
                                 <button
                                     onClick={handleReaffirm}
                                     disabled={isReaffirming || currentConfidence === 100}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-foreground text-background 
-                    hover:bg-white/90 transition-colors disabled:opacity-50 font-medium"
+                                    className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-foreground text-background 
+                    hover:bg-white/90 transition-colors disabled:opacity-50 font-medium text-xs md:text-base"
                                 >
                                     {isReaffirming ? (
                                         <Spinner size={16} color="var(--bg-primary)" />
@@ -304,8 +304,8 @@ export default function DecisionDetailPage() {
                                 </button>
                                 <button
                                     onClick={() => setShowEditModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-(--bg-secondary) text-(--text-secondary) 
-                    hover:bg-(--bg-secondary)/80 transition-colors font-medium border border-(--border-primary)"
+                                    className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-(--bg-secondary) text-(--text-secondary) 
+                    hover:bg-(--bg-secondary)/80 transition-colors font-medium border border-(--border-primary) text-xs md:text-base"
                                 >
                                     <Edit2 size={16} />
                                     Revise
@@ -313,11 +313,11 @@ export default function DecisionDetailPage() {
 
                                 <button
                                     onClick={() => setShowAddSignal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 
-                    hover:bg-amber-500/20 transition-colors font-medium border border-amber-500/10"
+                                    className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 
+                    hover:bg-amber-500/20 transition-colors font-medium border border-amber-500/10 text-xs md:text-base"
                                 >
-                                    <Plus size={16} />
-                                    Add Signal
+                                    <AlertTriangle size={16} />
+                                    Signal
                                 </button>
                             </div>
                         </div>
@@ -520,8 +520,8 @@ export default function DecisionDetailPage() {
                 <div className="mt-8">
                     <h2 className="text-lg font-semibold text-red-400 mb-4">Danger Zone</h2>
                     <div className="border border-red-500/30 rounded-xl overflow-hidden">
-                        <div className="flex items-center justify-between p-4 bg-(--bg-card)">
-                            <div>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-(--bg-card) gap-4 sm:gap-0">
+                            <div className="mb-0 sm:mb-0">
                                 <h3 className="font-medium text-foreground">Delete this decision</h3>
                                 <p className="text-sm text-(--text-muted)">
                                     Once you delete a decision, there is no going back. Please be certain.
@@ -530,11 +530,11 @@ export default function DecisionDetailPage() {
                             <button
                                 onClick={() => setShowDeleteConfirm(true)}
                                 disabled={isDeleting}
-                                className="px-4 py-2 rounded-lg border border-red-500/50 text-red-400 
+                                className="w-full sm:w-auto px-4 py-2 rounded-lg border border-red-500/50 text-red-400 
                                     hover:bg-red-500/20 transition-colors text-sm font-medium
                                     disabled:opacity-50"
                             >
-                                {isDeleting ? 'Deleting…' : 'Delete this decision'}
+                                {isDeleting ? 'Deleting…' : 'Delete'}
                             </button>
                         </div>
                     </div>

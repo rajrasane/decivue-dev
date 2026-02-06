@@ -105,7 +105,7 @@ export default function Dashboard() {
 
 
       {/* Main content */}
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
         {/* Stats bar */}
         <div className="flex items-end justify-between mb-8">
           <div>
@@ -125,7 +125,8 @@ export default function Dashboard() {
                 font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
             >
               <Plus size={18} />
-              New Decision
+              <span className="inline sm:hidden">New</span>
+              <span className="hidden sm:inline">New Decision</span>
             </button>
             <button
               onClick={loadDecisions}

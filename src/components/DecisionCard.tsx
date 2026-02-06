@@ -59,12 +59,13 @@ export function DecisionCard({
         <div
             onClick={handleClick}
             className={`
-        relative p-6 rounded-2xl border border-(--bg-secondary) cursor-pointer
+        relative rounded-2xl border border-(--bg-secondary) cursor-pointer
         bg-(--bg-card) hover:bg-(--bg-card-hover)
         transition-all duration-300 ${cardClass}
+        p-4 sm:p-6 mb-4 sm:mb-0
       `}
         >
-            <div className="flex gap-6">
+            <div className="flex gap-4 sm:gap-6">
                 {/* Confidence Gauge */}
                 <div className="shrink-0">
                     <ConfidenceGauge value={currentConfidence} size="md" />
