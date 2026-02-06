@@ -55,9 +55,9 @@ export function DecisionCard({
     onClick
 }: DecisionCardProps) {
     const router = useRouter()
-    const currentConfidence = calculateCurrentConfidence(decision)
+    const currentConfidence = calculateCurrentConfidence(decision, signalsCount, conflictsCount)
     const daysSinceReview = differenceInDays(new Date(), new Date(decision.last_reviewed_at))
-    const lifecycleState = determineLifecycleState(currentConfidence, daysSinceReview)
+    const lifecycleState = determineLifecycleState(currentConfidence, daysSinceReview, signalsCount, conflictsCount)
     const insight = generateInsight(decision, currentConfidence, signalsCount, conflictsCount)
 
     const handleClick = () => {
@@ -149,10 +149,20 @@ export function DecisionCard({
                         </div>
 
                         {signalsCount > 0 && (
-                            <div className="flex items-center gap-1 shrink-0 text-amber-400">
-                                <AlertTriangle size={14} />
-                                <span>{signalsCount} signal{signalsCount > 1 ? 's' : ''}</span>
-                            </div>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className="flex items-center gap-1 shrink-0 text-amber-400">
+                                        <AlertTriangle size={14} />
+                                        {/* On mobile: hide text if conflicts also exist, show otherwise */}
+                                        <span className={conflictsCount > 0 ? 'hidden sm:inline' : ''}>
+                                            {signalsCount} signal{signalsCount > 1 ? 's' : ''}
+                                        </span>
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent className="sm:hidden">
+                                    <p>{signalsCount} signal{signalsCount > 1 ? 's' : ''}</p>
+                                </TooltipContent>
+                            </Tooltip>
                         )}
 
                         {conflictsCount > 0 && (

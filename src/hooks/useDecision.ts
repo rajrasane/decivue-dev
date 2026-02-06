@@ -53,15 +53,23 @@ export function useDecision(id: string) {
 
     const computed = useMemo(() => {
         if (!decision) return { currentConfidence: 0, daysSinceReview: 0, lifecycleState: 'fresh' as const, insight: '' }
-        const conf = calculateCurrentConfidence(decision)
+        const conf = calculateCurrentConfidence(decision, signals.length, conflicts.length)
         const days = differenceInCalendarDays(new Date(), new Date(decision.last_reviewed_at))
         return {
             currentConfidence: conf,
             daysSinceReview: days,
-            lifecycleState: determineLifecycleState(conf, days),
-            insight: generateInsight(decision, conf, signals.length, conflicts.length),
+            lifecycleState: determineLifecycleState(conf, days, signals.length, conflicts.length),
+            insight: generateInsight({
+                decision,
+                currentConfidence: conf,
+                signals,
+                conflicts,
+                conflictingDecisionStatements: conflicts
+                    .map(c => c.other_decision?.statement)
+                    .filter((s): s is string => !!s),
+            }),
         }
-    }, [decision, signals.length, conflicts.length])
+    }, [decision, signals, conflicts])
 
     const reaffirm = useCallback(async () => {
         if (!decision) return

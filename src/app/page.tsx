@@ -78,12 +78,16 @@ export default function Dashboard() {
   // Memoized sorted decisions - avoids recomputation on every render
   const sortedDecisions = useMemo(() => {
     return [...decisions].sort((a, b) => {
-      const confA = calculateCurrentConfidence(a)
-      const confB = calculateCurrentConfidence(b)
+      const signalsA = signalsCounts[a.id] || 0
+      const signalsB = signalsCounts[b.id] || 0
+      const conflictsA = conflictsCounts[a.id] || 0
+      const conflictsB = conflictsCounts[b.id] || 0
+      const confA = calculateCurrentConfidence(a, signalsA, conflictsA)
+      const confB = calculateCurrentConfidence(b, signalsB, conflictsB)
       const daysA = Math.floor((Date.now() - new Date(a.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
       const daysB = Math.floor((Date.now() - new Date(b.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-      const stateA = determineLifecycleState(confA, daysA)
-      const stateB = determineLifecycleState(confB, daysB)
+      const stateA = determineLifecycleState(confA, daysA, signalsA, conflictsA)
+      const stateB = determineLifecycleState(confB, daysB, signalsB, conflictsB)
 
       const priority = { at_risk: 0, stale: 1, stable: 2, fresh: 3, invalidated: 4 }
       if (priority[stateA] !== priority[stateB]) {
@@ -91,16 +95,18 @@ export default function Dashboard() {
       }
       return confA - confB
     })
-  }, [decisions])
+  }, [decisions, signalsCounts, conflictsCounts])
 
   // Memoized at-risk count
   const atRiskCount = useMemo(() => {
     return decisions.filter(d => {
-      const conf = calculateCurrentConfidence(d)
+      const signals = signalsCounts[d.id] || 0
+      const conflicts = conflictsCounts[d.id] || 0
+      const conf = calculateCurrentConfidence(d, signals, conflicts)
       const days = Math.floor((Date.now() - new Date(d.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-      return determineLifecycleState(conf, days) === 'at_risk'
+      return determineLifecycleState(conf, days, signals, conflicts) === 'at_risk'
     }).length
-  }, [decisions])
+  }, [decisions, signalsCounts, conflictsCounts])
 
   return (
     <div className="bg-background">

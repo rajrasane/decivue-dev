@@ -31,8 +31,18 @@ The system tracks how decision reliability evolves through:
 - High: 2% per day
 - Critical: 3% per day
 
-**Lifecycle States** — Decisions move through states based on confidence and time since last review:
-- Fresh → Stable → At Risk → Stale → Invalidated
+**Structural Penalties** — Active issues reduce confidence until resolved:
+- Each signal: -5% confidence
+- Each conflict: -10% confidence
+
+These penalties persist even after reaffirming — you must dismiss signals or resolve conflicts to restore full confidence.
+
+**Lifecycle States** — Decisions move through states based on confidence, time, and issues:
+- **Fresh** → ≥80% confidence, reviewed within 7 days, no issues
+- **Stable** → ≥60% confidence, minor issues (1-2 signals or 1 conflict)
+- **At Risk** → Multiple issues (3+ issue score) or confidence dropping
+- **Stale** → <40% confidence or >60 days without review
+- **Invalidated** → <15% confidence
 
 **Signals** — Users can report external changes that affect a decision (market shifts, team changes, budget constraints, etc.)
 
@@ -134,18 +144,28 @@ src/
 The core logic lives in `decision-intelligence.ts`:
 
 ```typescript
-// Confidence decays based on risk level
-currentConfidence = initialConfidence - (daysSinceReview * decayRate)
+// Confidence calculation includes structural penalties
+currentConfidence = initialConfidence 
+  - (daysSinceReview * decayRate)  // Time decay (reset by Reaffirm)
+  - (signalsCount * 5)              // Signal penalty (must dismiss to clear)
+  - (conflictsCount * 10)           // Conflict penalty (must resolve to clear)
 
-// State transitions based on confidence + time
+// State transitions based on confidence, time, AND issue count
+const issueScore = signalsCount + (conflictsCount * 2)
+
 if (confidence < 15) return 'invalidated'
-if (days <= 7 && confidence >= 70) return 'fresh'
-if (days <= 14 && confidence >= 50) return 'stable'
-if (confidence >= 15 && days <= 60) return 'at_risk'
-return 'stale'
+if (confidence < 40 || days > 60) return 'stale'
+if (issueScore >= 3) return 'at_risk'  // Too many issues
+if (issueScore === 0 && days <= 7 && confidence >= 80) return 'fresh'
+if (confidence >= 60 && days <= 30) return 'stable'
+return 'at_risk'
 ```
 
-Users can **Reaffirm** a decision to reset the decay timer, **Revise** to update the decision, or **Add Signals** to flag external changes.
+**Key Behavior:**
+- **Reaffirm** resets time decay only — signal/conflict penalties persist
+- **Dismiss Signal** removes a signal and restores 5% confidence
+- **Resolve Conflict** removes a conflict and restores 10% confidence
+- Many issues (3+ score) force "At Risk" state regardless of confidence
 
 ## Notes
 
