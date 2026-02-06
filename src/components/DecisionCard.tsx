@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { cn } from "@/lib/utils"
 import { Decision } from '@/types/decision'
 import { ConfidenceGauge } from './ConfidenceGauge'
 import {
@@ -8,7 +9,7 @@ import {
     determineLifecycleState,
     generateInsight
 } from '@/lib/decision-intelligence'
-import { differenceInDays, formatDistanceToNow } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 import { AlertTriangle, Clock, GitCompare, MessageSquare } from 'lucide-react'
 import {
     Tooltip,
@@ -59,10 +60,6 @@ export function DecisionCard({
     const lifecycleState = determineLifecycleState(currentConfidence, daysSinceReview)
     const insight = generateInsight(decision, currentConfidence, signalsCount, conflictsCount)
 
-    const cardClass = lifecycleState === 'at_risk'
-        ? 'card-at-risk pulse-risk'
-        : `card-${lifecycleState}`
-
     const handleClick = () => {
         if (onClick) onClick()
         router.push(`/decision/${decision.id}`)
@@ -71,12 +68,12 @@ export function DecisionCard({
     return (
         <div
             onClick={handleClick}
-            className={`
-        relative rounded-2xl border border-(--bg-secondary) cursor-pointer
-        bg-(--bg-card) hover:bg-(--bg-card-hover)
-        transition-all duration-300 ${cardClass}
-        p-4 sm:p-6 mb-4 sm:mb-0
-      `}
+            className={cn(
+                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) transition-all duration-300 p-4 sm:p-6 mb-4 sm:mb-0",
+                (lifecycleState === 'at_risk' || lifecycleState === 'invalidated')
+                    ? "border-red-500/40 shadow-[0_0_15px_-5px_rgba(239,68,68,0.2)]"
+                    : "border-(--bg-secondary)"
+            )}
         >
             <div className="flex gap-4 sm:gap-6">
                 {/* Confidence Gauge */}
@@ -156,16 +153,23 @@ export function DecisionCard({
                             {decision.logic.slice(0, 3).map((assumption, i) => (
                                 <span
                                     key={i}
-                                    className="px-2 py-0.5 rounded bg-(--bg-secondary) text-xs text-(--text-muted) truncate max-w-37.5 sm:max-w-50"
+                                    className={`
+                                        px-2 py-0.5 rounded bg-(--bg-secondary) text-xs text-(--text-muted) truncate 
+                                        max-w-37.5 sm:max-w-50
+                                        ${i >= 1 ? 'hidden sm:inline-block' : ''}
+                                    `}
                                 >
                                     {assumption}
                                 </span>
                             ))}
-                            {decision.logic.length > 3 && (
-                                <span className="px-2 py-0.5 text-xs text-(--text-muted)">
-                                    +{decision.logic.length - 3} more
-                                </span>
-                            )}
+                            {/* Mobile "+ more" */}
+                            <span className="sm:hidden px-1 py-0.5 text-xs text-(--text-muted)">
+                                {decision.logic.length > 1 && `+${decision.logic.length - 1}`}
+                            </span>
+                            {/* Desktop "+ more" */}
+                            <span className="hidden sm:inline px-1 py-0.5 text-xs text-(--text-muted)">
+                                {decision.logic.length > 3 && `+${decision.logic.length - 3} more`}
+                            </span>
                         </div>
                     )}
                 </div>
