@@ -79,69 +79,64 @@ export function AddSignalModal({
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 flex flex-col">
-                    {/* Scroll container */}
-                    <div className="flex-1 min-h-0 relative">
-                        <div className="absolute inset-0 overflow-y-auto scrollbar-thin px-5 sm:px-6 py-5">
-                            <form id="add-signal-form" onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label htmlFor="signal-type" className="block text-sm font-medium text-(--text-secondary) mb-2">
-                                        Signal Type
-                                    </label>
-                                    <div className="relative">
-                                        <select
-                                            id="signal-type"
-                                            value={signalType}
-                                            onChange={(e) => setSignalType(e.target.value as DecisionSignal['signal_type'])}
-                                            className="w-full px-4 py-3 rounded-xl bg-(--bg-secondary) text-foreground
-                                                border border-transparent focus:border-white/10 focus:outline-none appearance-none cursor-pointer"
-                                        >
-                                            <option value="external_change">External Change</option>
-                                            <option value="assumption_broken">Assumption Broken</option>
-                                            <option value="team_feedback">Team Feedback</option>
-                                        </select>
-                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none" size={16} />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label htmlFor="signal-description" className="block text-sm font-medium text-(--text-secondary) mb-2">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        id="signal-description"
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
-                                        placeholder="What changed or happened?…"
-                                        autoComplete="off"
-                                        className="w-full px-4 py-3 rounded-lg bg-(--bg-secondary) border border-transparent 
-                                            focus:border-white/20 focus:outline-none resize-none text-foreground
-                                            placeholder:text-(--text-muted)"
-                                        rows={3}
-                                        required
-                                    />
-                                </div>
-                            </form>
+                <div className="overflow-y-auto scrollbar-thin px-5 sm:px-6 py-5">
+                    <form id="add-signal-form" onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label htmlFor="signal-type" className="block text-sm font-medium text-(--text-secondary) mb-2">
+                                Signal Type
+                            </label>
+                            <div className="relative">
+                                <select
+                                    id="signal-type"
+                                    value={signalType}
+                                    onChange={(e) => setSignalType(e.target.value as DecisionSignal['signal_type'])}
+                                    className="w-full px-4 py-3 rounded-xl bg-(--bg-secondary) text-foreground
+                                        border border-transparent focus:border-white/10 focus:outline-none appearance-none cursor-pointer"
+                                >
+                                    <option value="external_change">External Change</option>
+                                    <option value="assumption_broken">Assumption Broken</option>
+                                    <option value="team_feedback">Team Feedback</option>
+                                </select>
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none" size={16} />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Fixed Footer */}
-                    <div className="border-t border-white/5 shrink-0 px-5 sm:px-6 py-4">
-                        <button
-                            type="submit"
-                            form="add-signal-form"
-                            disabled={isSubmitting || !description.trim()}
-                            className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10
-                                text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                        >
-                            {isSubmitting ? (
-                                <div className="flex items-center justify-center gap-2">
-                                    <Spinner size={20} color="white" />
-                                    <span>Adding…</span>
-                                </div>
-                            ) : 'Add Signal'}
-                        </button>
-                    </div>
+                        <div>
+                            <label htmlFor="signal-description" className="block text-sm font-medium text-(--text-secondary) mb-2">
+                                Description
+                            </label>
+                            <textarea
+                                id="signal-description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="What changed or happened?…"
+                                autoComplete="off"
+                                className="w-full px-4 py-3 rounded-lg bg-(--bg-secondary) border border-transparent 
+                                    focus:border-white/20 focus:outline-none resize-none text-foreground
+                                    placeholder:text-(--text-muted)"
+                                rows={3}
+                                required
+                            />
+                        </div>
+                    </form>
+                </div>
+
+                {/* Fixed Footer */}
+                <div className="border-t border-white/5 shrink-0 px-5 sm:px-6 py-4">
+                    <button
+                        type="submit"
+                        form="add-signal-form"
+                        disabled={isSubmitting || !description.trim()}
+                        className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10
+                            text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                        {isSubmitting ? (
+                            <div className="flex items-center justify-center gap-2">
+                                <Spinner size={20} color="white" />
+                                <span>Adding…</span>
+                            </div>
+                        ) : 'Add Signal'}
+                    </button>
                 </div>
             </div>
         </div>
