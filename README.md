@@ -129,10 +129,12 @@ Users can **Reaffirm** a decision to reset the decay timer, **Revise** to update
 
 ## Screenshots
 
-| Dashboard | Decision Detail |
-|-----------|-----------------|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Detail](docs/screenshots/detail.png) |
 
+![Dashboard](docs/screenshots/dashboard.png)  
+![Detail](docs/screenshots/detail.png) <hr> <br>
+![Modal1](docs/screenshots/modal1.png)
+![Modal2](docs/screenshots/modal2.png)
+![Modal3](docs/screenshots/modal3.png)
 
 ---
 
