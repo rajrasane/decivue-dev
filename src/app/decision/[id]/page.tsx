@@ -28,6 +28,11 @@ import {
     History,
     ChevronDown,
 } from 'lucide-react'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Spinner } from '@/components/Spinner'
 
 const EditDecisionModal = dynamic(
@@ -289,36 +294,58 @@ export default function DecisionDetailPage() {
 
                             {/* Action buttons */}
                             <div className="grid grid-cols-3 gap-2 md:flex md:gap-3 justify-center md:justify-start w-full md:w-auto">
-                                <button
-                                    onClick={handleReaffirm}
-                                    disabled={isReaffirming || currentConfidence === 100}
-                                    className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-foreground text-background 
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={handleReaffirm}
+                                            disabled={isReaffirming || currentConfidence === 100}
+                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-foreground text-background 
                     hover:bg-white/90 transition-colors disabled:opacity-50 font-medium text-xs md:text-base"
-                                >
-                                    {isReaffirming ? (
-                                        <Spinner size={16} color="var(--bg-primary)" />
-                                    ) : (
-                                        <CheckCircle size={16} />
-                                    )}
-                                    Reaffirm
-                                </button>
-                                <button
-                                    onClick={() => setShowEditModal(true)}
-                                    className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-(--bg-secondary) text-(--text-secondary) 
-                    hover:bg-(--bg-secondary)/80 transition-colors font-medium border border-(--border-primary) text-xs md:text-base"
-                                >
-                                    <Edit2 size={16} />
-                                    Revise
-                                </button>
+                                        >
+                                            {isReaffirming ? (
+                                                <Spinner size={16} color="var(--bg-primary)" />
+                                            ) : (
+                                                <CheckCircle size={16} />
+                                            )}
+                                            Reaffirm
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom">
+                                        <p>Confirm decision is still valid (+Confidence)</p>
+                                    </TooltipContent>
+                                </Tooltip>
 
-                                <button
-                                    onClick={() => setShowAddSignal(true)}
-                                    className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={() => setShowEditModal(true)}
+                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-(--bg-secondary) text-(--text-secondary) 
+                    hover:bg-(--bg-secondary)/80 transition-colors font-medium border border-(--border-primary) text-xs md:text-base"
+                                        >
+                                            <Edit2 size={16} />
+                                            Revise
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom">
+                                        <p>Edit statement or assumptions</p>
+                                    </TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={() => setShowAddSignal(true)}
+                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 
                     hover:bg-amber-500/20 transition-colors font-medium border border-amber-500/10 text-xs md:text-base"
-                                >
-                                    <AlertTriangle size={16} />
-                                    Signal
-                                </button>
+                                        >
+                                            <AlertTriangle size={16} />
+                                            Signal
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom">
+                                        <p>Report external change or risk</p>
+                                    </TooltipContent>
+                                </Tooltip>
                             </div>
                         </div>
                     </div>
@@ -699,7 +726,7 @@ function AddSignalModal({
                             placeholder="What changed or happened?…"
                             autoComplete="off"
                             className="w-full px-4 py-3 rounded-lg bg-(--bg-secondary) border border-transparent 
-                focus:border-(--accent) focus:outline-none resize-none"
+                focus:border-white/20 focus:outline-none resize-none"
                             rows={3}
                             required
                         />
@@ -753,7 +780,7 @@ function DeleteConfirmModal({
         .join(' ')
         .slice(0, 40)
 
-    const isConfirmed = confirmText.toLowerCase() === confirmKeyword.toLowerCase()
+    const isConfirmed = confirmText === confirmKeyword
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
@@ -799,7 +826,7 @@ function DeleteConfirmModal({
                             transition-colors disabled:cursor-not-allowed
                             enabled:bg-red-500 enabled:text-white enabled:hover:bg-red-600"
                     >
-                        {isDeleting ? 'Deleting…' : 'Delete this decision'}
+                        {isDeleting ? 'Deleting…' : 'Delete permanently'}
                     </button>
                 </div>
             </div>

@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -32,11 +33,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-screen`}>
-        <SiteHeader />
-        <div className="flex-1">
-          {children}
-        </div>
-        <SiteFooter />
+        <TooltipProvider delayDuration={200}>
+          <SiteHeader />
+          <div className="flex-1">
+            {children}
+          </div>
+          <SiteFooter />
+        </TooltipProvider>
       </body>
     </html>
   );

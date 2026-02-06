@@ -111,7 +111,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--text-muted);
   outline-offset: 2px;
 }
 
