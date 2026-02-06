@@ -31,7 +31,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }}>
+      <head>
+        <meta name="theme-color" content="#0a0a0a" />
+      </head>
       <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-screen`}>
         <TooltipProvider delayDuration={200}>
           <SiteHeader />

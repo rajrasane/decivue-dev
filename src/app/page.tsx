@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 
 import { Plus, RefreshCw } from 'lucide-react'
@@ -39,44 +39,37 @@ export default function Dashboard() {
     return () => document.body.classList.remove('modal-open')
   }, [showCreateForm])
 
-  const loadDecisions = async () => {
+  const loadDecisions = useCallback(async () => {
     setIsLoading(true)
 
-    // Get decisions
-    const { data: decisionsData } = await supabase
-      .from('decisions')
-      .select('*')
-      .order('created_at', { ascending: false })
+    // Fetch all data in parallel for better performance
+    const [decisionsResult, signalsResult, conflictsResult] = await Promise.all([
+      supabase.from('decisions').select('*').order('created_at', { ascending: false }),
+      supabase.from('decision_signals').select('decision_id'),
+      supabase.from('decision_conflicts').select('decision_a, decision_b'),
+    ])
 
-    if (decisionsData) {
-      setDecisions(decisionsData)
-
-      // Get signal counts
-      const { data: signals } = await supabase
-        .from('decision_signals')
-        .select('decision_id')
-
-      const signalsMap: Record<string, number> = {}
-      signals?.forEach(s => {
-        signalsMap[s.decision_id] = (signalsMap[s.decision_id] || 0) + 1
-      })
-      setSignalsCounts(signalsMap)
-
-      // Get conflict counts
-      const { data: conflicts } = await supabase
-        .from('decision_conflicts')
-        .select('decision_a, decision_b')
-
-      const conflictsMap: Record<string, number> = {}
-      conflicts?.forEach(c => {
-        conflictsMap[c.decision_a] = (conflictsMap[c.decision_a] || 0) + 1
-        conflictsMap[c.decision_b] = (conflictsMap[c.decision_b] || 0) + 1
-      })
-      setConflictsCounts(conflictsMap)
+    if (decisionsResult.data) {
+      setDecisions(decisionsResult.data)
     }
 
+    // Build signals count map
+    const signalsMap: Record<string, number> = {}
+    signalsResult.data?.forEach(s => {
+      signalsMap[s.decision_id] = (signalsMap[s.decision_id] || 0) + 1
+    })
+    setSignalsCounts(signalsMap)
+
+    // Build conflicts count map
+    const conflictsMap: Record<string, number> = {}
+    conflictsResult.data?.forEach(c => {
+      conflictsMap[c.decision_a] = (conflictsMap[c.decision_a] || 0) + 1
+      conflictsMap[c.decision_b] = (conflictsMap[c.decision_b] || 0) + 1
+    })
+    setConflictsCounts(conflictsMap)
+
     setIsLoading(false)
-  }
+  }, [supabase])
 
   useEffect(() => {
     loadDecisions()
@@ -144,6 +137,7 @@ export default function Dashboard() {
             </button>
             <button
               onClick={loadDecisions}
+              aria-label="Refresh decisions"
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
                 hover:bg-(--bg-secondary) transition-colors cursor-pointer"
             >

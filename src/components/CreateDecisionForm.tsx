@@ -97,16 +97,20 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
     }
 
     return (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-(--bg-card) rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-linear-to-b from-[#1a1a1a] to-[#141414] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto
+                border border-white/5 shadow-2xl shadow-black/50
                 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-(--bg-secondary)">
-                    <h2 className="text-xl font-semibold">New Decision</h2>
+                <div className="flex items-center justify-between p-6 border-b border-white/5">
+                    <div>
+                        <h2 className="text-xl font-semibold">New Decision</h2>
+                        <p className="text-sm text-(--text-muted) mt-0.5">Document a decision to track over time</p>
+                    </div>
                     <button
                         onClick={onClose}
                         aria-label="Close form"
-                        className="p-2 rounded-lg hover:bg-(--bg-secondary) transition-colors"
+                        className="p-2 rounded-lg hover:bg-white/5 text-(--text-muted) hover:text-white transition-colors"
                     >
                         <X size={20} />
                     </button>
@@ -220,8 +224,9 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
 
                     {/* Conflict warning */}
                     {conflictWarning && (
-                        <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm">
-                            ⚠️ {conflictWarning}
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm flex items-start gap-3">
+                            <span className="text-lg">⚠️</span>
+                            <span>{conflictWarning}</span>
                         </div>
                     )}
 
@@ -229,9 +234,9 @@ export function CreateDecisionForm({ onClose, onSuccess }: CreateDecisionFormPro
                     <button
                         type="submit"
                         disabled={isSubmitting || !statement.trim()}
-                        className="w-auto px-8 py-2 rounded-xl bg-white hover:bg-gray-200 block mx-auto
-              text-black font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed
-              flex items-center justify-center gap-2"
+                        className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10
+                            text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed
+                            flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? (
                             <>
