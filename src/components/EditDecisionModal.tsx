@@ -70,7 +70,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
         }
 
         const changeSummary = changes.length > 0
-            ? `Updated ${changes.join(', ')}`
+            ? `Updated: ${changes.join(', ')}`
             : 'Reviewed without changes'
 
         try {
@@ -253,7 +253,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                     <button
                         type="submit"
                         disabled={isSubmitting || !statement.trim() || !hasChanges}
-                        className="w-auto px-8 py-2 rounded-xl bg-white hover:bg-gray-200 block mx-auto
+                        className="w-auto px-8 py-2 rounded-xl bg-white hover:bg-gray-200 mx-auto
               text-black font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
                     >

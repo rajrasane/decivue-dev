@@ -57,7 +57,7 @@ export function determineLifecycleState(
     if (daysSinceReview <= 14 && currentConfidence >= 50) return 'stable'
 
     // At Risk - starting to age or confidence dropping
-    if (currentConfidence >= 30 && daysSinceReview <= 30) return 'at_risk'
+    if (currentConfidence >= 15 && daysSinceReview <= 60) return 'at_risk'
 
     // Stale - old or low confidence
     return 'stale'

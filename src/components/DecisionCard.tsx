@@ -10,6 +10,11 @@ import {
 } from '@/lib/decision-intelligence'
 import { differenceInDays, formatDistanceToNow } from 'date-fns'
 import { AlertTriangle, Clock, GitCompare, MessageSquare } from 'lucide-react'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface DecisionCardProps {
     decision: Decision
@@ -26,12 +31,20 @@ const stateLabels = {
     invalidated: 'Invalidated',
 }
 
+const stateDescriptions = {
+    fresh: 'Recently reviewed (<7 days) with high confidence (≥70%)',
+    stable: 'Reviewed within 14 days with good confidence (≥50%)',
+    at_risk: 'Confidence dropping (<50%) or review overdue (>14 days)',
+    stale: 'Low confidence or not reviewed in >30 days',
+    invalidated: 'Confidence is critically low (<15%)',
+}
+
 const stateColors = {
-    fresh: 'bg-green-500/10 text-green-400',
-    stable: 'bg-amber-500/10 text-amber-400',
-    at_risk: 'bg-red-500/10 text-red-400',
-    stale: 'bg-gray-500/10 text-gray-400',
-    invalidated: 'bg-gray-600/10 text-gray-300',
+    fresh: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
+    stable: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
+    at_risk: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
+    stale: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
+    invalidated: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
 }
 
 export function DecisionCard({
@@ -67,8 +80,21 @@ export function DecisionCard({
         >
             <div className="flex gap-4 sm:gap-6">
                 {/* Confidence Gauge */}
-                <div className="shrink-0">
+                <div className="shrink-0 flex flex-col items-center gap-8">
                     <ConfidenceGauge value={currentConfidence} size="md" />
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className={`
+                                sm:hidden px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider
+                                border ${stateColors[lifecycleState]} cursor-default
+                            `}>
+                                {stateLabels[lifecycleState]}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>{stateDescriptions[lifecycleState]}</p>
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
 
                 {/* Content */}
@@ -78,12 +104,19 @@ export function DecisionCard({
                         <h3 className="text-xl font-semibold text-foreground line-clamp-2">
                             {decision.statement}
                         </h3>
-                        <span className={`
-              px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider
-              border ${stateColors[lifecycleState]}
-            `}>
-                            {stateLabels[lifecycleState]}
-                        </span>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className={`
+                                    hidden sm:inline-block px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider
+                                    border ${stateColors[lifecycleState]} cursor-default
+                                `}>
+                                    {stateLabels[lifecycleState]}
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{stateDescriptions[lifecycleState]}</p>
+                            </TooltipContent>
+                        </Tooltip>
                     </div>
 
                     {/* Insight message */}
@@ -92,7 +125,7 @@ export function DecisionCard({
                     </p>
 
                     {/* Meta info */}
-                    <div className="flex items-center gap-4 text-xs text-(--text-muted)">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-(--text-muted)">
                         <div className="flex items-center gap-1.5">
                             <Clock size={14} />
                             <span>
@@ -123,7 +156,7 @@ export function DecisionCard({
                             {decision.logic.slice(0, 3).map((assumption, i) => (
                                 <span
                                     key={i}
-                                    className="px-2 py-0.5 rounded bg-(--bg-secondary) text-xs text-(--text-muted)"
+                                    className="px-2 py-0.5 rounded bg-(--bg-secondary) text-xs text-(--text-muted) truncate max-w-37.5 sm:max-w-50"
                                 >
                                     {assumption}
                                 </span>

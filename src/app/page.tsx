@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 
 import { Plus, RefreshCw } from 'lucide-react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { createClient } from '@/lib/supabase/client'
 import { Spinner } from '@/components/Spinner'
 import { Decision } from '@/types/decision'
@@ -107,13 +112,22 @@ export default function Dashboard() {
       {/* Main content */}
       <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
         {/* Stats bar */}
-        <div className="flex items-end justify-between mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-xl font-bold mb-1 text-foreground">Overview</h2>
-            <div className="flex items-center gap-4 text-sm text-(--text-muted)">
+            <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-4 text-sm text-(--text-muted)">
               <span>{decisions.length} Decision{decisions.length !== 1 ? 's' : ''}</span>
               {atRiskCount > 0 && (
-                <span className="text-red-400 font-medium">{atRiskCount} Action Needed</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-red-400 font-medium">
+                      {atRiskCount} Action Needed
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Decisions that are 'At Risk' or have active conflicts.</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
           </div>
@@ -134,7 +148,7 @@ export default function Dashboard() {
                 hover:bg-(--bg-secondary) transition-colors cursor-pointer"
             >
               <RefreshCw size={16} />
-              Refresh
+              <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
         </div>
@@ -180,7 +194,7 @@ export default function Dashboard() {
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4 md:gap-6">
             {sortedDecisions.map(decision => (
               <DecisionCard
                 key={decision.id}

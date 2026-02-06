@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
+import { cn } from "@/lib/utils"
 import { Decision, DecisionSignal, DecisionConflict, DecisionHistory } from '@/types/decision'
 import { ConfidenceGauge } from '@/components/ConfidenceGauge'
 import { HistoryTimeline } from '@/components/HistoryTimeline'
@@ -46,6 +47,14 @@ const stateLabels = {
     at_risk: 'At Risk',
     stale: 'Stale',
     invalidated: 'Invalidated',
+}
+
+const stateDescriptions = {
+    fresh: 'Recently reviewed (<7 days) with high confidence (≥70%)',
+    stable: 'Reviewed within 14 days with good confidence (≥50%)',
+    at_risk: 'Confidence dropping (<50%) or review overdue (>14 days)',
+    stale: 'Low confidence or not reviewed in >30 days',
+    invalidated: 'Confidence is critically low (<15%)',
 }
 
 const stateColors = {
@@ -152,26 +161,44 @@ export default function DecisionDetailPage() {
         // Reaffirming only updates the timestamp (freshness), verifying the current confidence is still valid.
         // It does NOT artificially boost the score anymore.
 
-        await supabase.from('decision_history').insert({
+        const timestamp = new Date().toISOString()
+
+        // Update history first
+        const { error: historyError } = await supabase.from('decision_history').insert({
             decision_id: decision.id,
-            action_type: 'reaffirm',
+            action_type: 'reaffirmed',
             previous_state: {
                 last_reviewed_at: decision.last_reviewed_at,
             },
             new_state: {
-                last_reviewed_at: new Date().toISOString(),
+                last_reviewed_at: timestamp,
             },
             change_summary: `Decision reaffirmed. Freshness confirmed.`,
         })
 
-        await supabase
+        if (historyError) {
+            console.error('Error adding history:', historyError)
+            setIsReaffirming(false)
+            return
+        }
+
+        // Update decision
+        const { error: updateError } = await supabase
             .from('decisions')
             .update({
-                last_reviewed_at: new Date().toISOString(),
+                last_reviewed_at: timestamp,
             })
             .eq('id', decision.id)
 
-        await loadDecision()
+        if (updateError) {
+            console.error('Error updating decision:', updateError)
+        } else {
+            // Update local decision state immediately to reflect change without waiting for network
+            // This ensures UI feels responsive even if loadDecision takes a moment
+            setDecision({ ...decision, last_reviewed_at: timestamp })
+            await loadDecision()
+        }
+
         setIsReaffirming(false)
     }
 
@@ -196,7 +223,7 @@ export default function DecisionDetailPage() {
             // Create history entry
             await supabase.from('decision_history').insert({
                 decision_id: decision.id,
-                action_type: 'signal_dismissed', // Changed from 'signal_added' to 'signal_dismissed' for accuracy
+                action_type: 'edited', // Changed from 'signal_dismissed' to match DB constraint
                 previous_state: { signal_type: signalToDismiss.signal_type, description: signalToDismiss.description },
                 new_state: null,
                 change_summary: `Dismissed signal: ${signalToDismiss.description}`,
@@ -268,13 +295,25 @@ export default function DecisionDetailPage() {
                         {/* Content */}
                         <div className="flex-1 text-center md:text-left">
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
-                                <span
-                                    className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider border ${stateColors[lifecycleState]}`}
-                                >
-                                    {stateLabels[lifecycleState]}
-                                </span>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span
+                                            className="px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider border bg-(--bg-secondary) text-(--text-secondary) border-white/5 cursor-default"
+                                        >
+                                            {stateLabels[lifecycleState]}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{stateDescriptions[lifecycleState]}</p>
+                                    </TooltipContent>
+                                </Tooltip>
                                 <span className="text-(--text-muted) text-sm">
-                                    Risk: {decision.perceived_risk}
+                                    Risk: <span className={
+                                        decision.perceived_risk === 'low' ? 'text-green-400' :
+                                            decision.perceived_risk === 'medium' ? 'text-amber-400' :
+                                                decision.perceived_risk === 'high' ? 'text-red-400' :
+                                                    'text-red-500'
+                                    }>{decision.perceived_risk}</span>
                                 </span>
                             </div>
 
@@ -282,12 +321,7 @@ export default function DecisionDetailPage() {
 
                             {/* Insight alert */}
                             <div
-                                className={`p-4 rounded-xl mb-4 ${lifecycleState === 'at_risk'
-                                    ? 'bg-red-500/10 border border-red-500/30 text-red-400'
-                                    : lifecycleState === 'stale'
-                                        ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400'
-                                        : 'bg-(--bg-secondary) text-(--text-secondary)'
-                                    }`}
+                                className="p-4 rounded-xl mb-4 bg-(--bg-secondary) text-(--text-secondary)"
                             >
                                 {insight}
                             </div>
@@ -298,7 +332,7 @@ export default function DecisionDetailPage() {
                                     <TooltipTrigger asChild>
                                         <button
                                             onClick={handleReaffirm}
-                                            disabled={isReaffirming || currentConfidence === 100}
+                                            disabled={isReaffirming || daysSinceReview === 0}
                                             className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-foreground text-background 
                     hover:bg-white/90 transition-colors disabled:opacity-50 font-medium text-xs md:text-base"
                                         >
@@ -311,7 +345,7 @@ export default function DecisionDetailPage() {
                                         </button>
                                     </TooltipTrigger>
                                     <TooltipContent side="bottom">
-                                        <p>Confirm decision is still valid (+Confidence)</p>
+                                        <p>Reset confidence decay by confirming this decision is still valid today.</p>
                                     </TooltipContent>
                                 </Tooltip>
 
@@ -400,47 +434,77 @@ export default function DecisionDetailPage() {
                     </div>
                 )}
 
-                {/* Sub-gauges row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge
-                            value={timeHealth}
-                            size="sm"
-                            showLabel={false}
-                            customColor={timeHealth >= 70 ? 'var(--text-muted)' : undefined}
-                        />
-                        <p className="text-sm font-medium mt-2">{timeHealth}%</p>
-                        <p className="text-xs text-(--text-muted)">Time Health</p>
+                {/* Signals section - Prominently displayed under conflicts */}
+                {signals.length > 0 && (
+                    <div className="mb-6 bg-amber-500/10 border border-amber-500/30 rounded-xl p-6">
+                        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-amber-400">
+                            <AlertTriangle size={18} />
+                            Signals ({signals.length})
+                        </h2>
+                        <div className="space-y-3">
+                            {signals.map((signal) => (
+                                <div
+                                    key={signal.id}
+                                    className="p-4 rounded-lg bg-(--bg-card) border border-amber-500/20 flex items-center justify-between gap-3 group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest leading-none mb-1">
+                                                {signal.signal_type.replace('_', ' ')}
+                                            </span>
+                                            <span className="text-sm text-(--text-secondary) leading-snug">
+                                                {signal.description}
+                                            </span>
+                                        </div>
+                                        <span className="text-[10px] text-(--text-muted) whitespace-nowrap pt-3">
+                                            {format(new Date(signal.created_at), 'MMM d')}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => setSignalToDismiss(signal)}
+                                        className="p-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-500/60 hover:text-amber-500 transition-all shrink-0"
+                                        aria-label="Dismiss signal"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge
-                            value={assumptionHealth}
-                            size="sm"
-                            showLabel={false}
-                            customColor={assumptionHealth >= 70 ? 'var(--text-muted)' : undefined}
-                        />
-                        <p className="text-sm font-medium mt-2">{assumptionHealth}%</p>
-                        <p className="text-xs text-(--text-muted)">Assumptions</p>
+                )}
+
+                {/* Sub-gauges row - Redesigned as Info Cards */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                    {/* Time Health */}
+                    <div className="bg-(--bg-card) border border-(--bg-secondary) p-5 rounded-xl flex flex-col justify-between h-24 relative overflow-hidden transition-colors">
+                        <div className="flex justify-between items-start">
+                            <span className="text-xs font-medium text-(--text-muted) uppercase tracking-wider">Review</span>
+                            <Clock size={16} className={cn("transition-colors", daysSinceReview > 30 ? "text-red-400" : daysSinceReview > 14 ? "text-amber-400" : "text-(--text-muted)")} />
+                        </div>
+                        <div className="flex items-end gap-2">
+                            <span className={cn("text-2xl font-bold tracking-tight", daysSinceReview > 30 ? "text-red-400" : daysSinceReview > 14 ? "text-amber-400" : "text-foreground")}>
+                                {daysSinceReview === 0 ? 'Today' : `${daysSinceReview}d`}
+                            </span>
+                            {daysSinceReview > 0 && <span className="text-xs text-(--text-muted) mb-1">ago</span>}
+                        </div>
                     </div>
-                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge
-                            value={conflictRisk}
-                            size="sm"
-                            showLabel={false}
-                            customColor={conflictRisk >= 70 ? 'var(--text-muted)' : undefined}
-                        />
-                        <p className="text-sm font-medium mt-2">{conflictRisk}%</p>
-                        <p className="text-xs text-(--text-muted)">Conflict Health</p>
-                    </div>
-                    <div className="bg-(--bg-card) rounded-xl p-4 text-center">
-                        <ConfidenceGauge
-                            value={decision.initial_confidence}
-                            size="sm"
-                            showLabel={false}
-                            customColor={decision.initial_confidence >= 70 ? 'var(--text-muted)' : undefined}
-                        />
-                        <p className="text-sm font-medium mt-2">{decision.initial_confidence}%</p>
-                        <p className="text-xs text-(--text-muted)">Initial Conf.</p>
+
+
+
+
+
+                    {/* Initial Confidence */}
+                    <div className="bg-(--bg-card) border border-(--bg-secondary) p-5 rounded-xl flex flex-col justify-between h-24 relative overflow-hidden transition-colors">
+                        <div className="flex justify-between items-start">
+                            <span className="text-xs font-medium text-(--text-muted) uppercase tracking-wider">Baseline</span>
+                            <div className="text-(--text-muted)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 0 0 1-4 10 15.3 0 0 1-4-10 15.3 0 0 1 4-10z"></path></svg>
+                            </div>
+                        </div>
+                        <div className="flex items-end gap-2">
+                            <span className="text-2xl font-bold text-foreground tracking-tight">{decision.initial_confidence}%</span>
+                            <span className="text-xs text-(--text-muted) mb-1">start</span>
+                        </div>
                     </div>
                 </div>
 
@@ -474,61 +538,24 @@ export default function DecisionDetailPage() {
                                 <Clock size={16} className="text-(--text-muted)" />
                                 <span className="text-(--text-muted)">Created:</span>
                                 <span>{format(new Date(decision.created_at), 'MMM d, yyyy')}</span>
-                                <span className="text-(--text-muted)">
+                                {/* <span className="text-(--text-muted)">
                                     {daysSinceCreated === 0 ? '(Today)' : daysSinceCreated === 1 ? '(Yesterday)' : `(${daysSinceCreated} days ago)`}
-                                </span>
+                                </span> */}
                             </div>
                             <div className="flex items-center gap-3 text-sm">
                                 <RefreshCw size={16} className="text-(--text-muted)" />
                                 <span className="text-(--text-muted)">Last reviewed:</span>
                                 <span>{format(new Date(decision.last_reviewed_at), 'MMM d, yyyy')}</span>
-                                <span className="text-(--text-muted)">
+                                {/* <span className="text-(--text-muted)">
                                     {daysSinceReview === 0 ? '(Today)' : daysSinceReview === 1 ? '(Yesterday)' : `(${daysSinceReview} days ago)`}
-                                </span>
+                                </span> */}
                             </div>
                         </div>
                     </div>
                 </div>
 
 
-                {/* Signals section */}
-                {signals.length > 0 && (
-                    <div className="mt-6 bg-(--bg-card) rounded-xl p-6">
-                        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <AlertTriangle size={18} className="text-amber-400" />
-                            Signals ({signals.length})
-                        </h2>
-                        <div className="space-y-3">
-                            {signals.map((signal) => (
-                                <div
-                                    key={signal.id}
-                                    className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-3 group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest leading-none mb-1">
-                                                {signal.signal_type.replace('_', ' ')}
-                                            </span>
-                                            <span className="text-sm text-(--text-secondary) leading-snug">
-                                                {signal.description}
-                                            </span>
-                                        </div>
-                                        <span className="text-[10px] text-(--text-muted) whitespace-nowrap pt-3">
-                                            {format(new Date(signal.created_at), 'MMM d')}
-                                        </span>
-                                    </div>
-                                    <button
-                                        onClick={() => setSignalToDismiss(signal)}
-                                        className="p-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-500/60 hover:text-amber-500 transition-all shrink-0"
-                                        aria-label="Dismiss signal"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
+
 
                 {/* Decision History Timeline */}
                 <div className="mt-6 bg-(--bg-card) rounded-xl p-6">
@@ -672,13 +699,13 @@ function AddSignalModal({
         })
 
         // Create history entry for the signal
-        const typeLabel = signalType.replace(/_/g, ' ')
+        const typeLabel = signalType.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
         await supabase.from('decision_history').insert({
             decision_id: decisionId,
             action_type: 'signal_added',
             previous_state: null,
             new_state: { signal_type: signalType, description: description.trim() },
-            change_summary: `${typeLabel}: ${description.trim()}`,
+            change_summary: `Signal added: ${typeLabel} - ${description.trim()}`,
         })
 
         onSuccess()
@@ -773,12 +800,8 @@ function DeleteConfirmModal({
         return () => window.removeEventListener('keydown', handleEsc)
     }, [onClose])
 
-    // Get first few words of decision as confirmation text (max 5 words, max 40 chars)
-    const confirmKeyword = decisionStatement
-        .split(' ')
-        .slice(0, 5)
-        .join(' ')
-        .slice(0, 40)
+    // Use "delete" as the confirmation keyword
+    const confirmKeyword = "yes I agree to delete"
 
     const isConfirmed = confirmText === confirmKeyword
 
