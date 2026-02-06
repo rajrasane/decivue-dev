@@ -48,6 +48,8 @@ export function HistoryTimeline({ history }: HistoryTimelineProps) {
                 {hasMore && isExpanded && (
                     <button
                         onClick={() => setIsExpanded(false)}
+                        aria-label="Show fewer history entries"
+                        aria-expanded="true"
                         className="pt-2 text-xs text-(--text-muted) hover:text-foreground transition-colors flex items-center gap-1"
                     >
                         Show less
@@ -58,6 +60,8 @@ export function HistoryTimeline({ history }: HistoryTimelineProps) {
             {hasMore && !isExpanded && (
                 <button
                     onClick={() => setIsExpanded(true)}
+                    aria-label={`Show ${history.length - MAX_ITEMS} more history entries`}
+                    aria-expanded="false"
                     className="mt-4 text-xs text-(--text-muted) hover:text-foreground transition-colors flex items-center gap-1"
                 >
                     Show {history.length - MAX_ITEMS} more changes

@@ -10,7 +10,7 @@ import {
     generateInsight
 } from '@/lib/decision-intelligence'
 import { differenceInDays } from 'date-fns'
-import { AlertTriangle, Clock, GitCompare, MessageSquare } from 'lucide-react'
+import { AlertTriangle, Clock, GitCompare } from 'lucide-react'
 import {
     Tooltip,
     TooltipContent,
@@ -65,11 +65,22 @@ export function DecisionCard({
         router.push(`/decision/${decision.id}`)
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleClick()
+        }
+    }
+
     return (
-        <div
+        <article
             onClick={handleClick}
+            onKeyDown={handleKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-label={`View decision: ${decision.statement}`}
             className={cn(
-                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) transition-all duration-300 p-4 sm:p-6 mb-4 sm:mb-0",
+                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) transition-all duration-300 p-4 sm:p-6 mb-4 sm:mb-0 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2",
                 (lifecycleState === 'at_risk' || lifecycleState === 'invalidated')
                     ? "border-red-500/40 shadow-[0_0_15px_-5px_rgba(239,68,68,0.2)]"
                     : "border-(--bg-secondary)"
@@ -174,6 +185,6 @@ export function DecisionCard({
                     )}
                 </div>
             </div>
-        </div>
+        </article>
     )
 }

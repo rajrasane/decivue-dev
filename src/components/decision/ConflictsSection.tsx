@@ -38,7 +38,7 @@ export function ConflictsSection({ conflicts, onDismiss }: ConflictsSectionProps
                             </button>
                             {conflict.other_decision && (
                                 <button
-                                    onClick={() => window.open(`/decision/${conflict.other_decision!.id}`, '_blank')}
+                                    onClick={() => window.open(`/decision/${conflict.other_decision!.id}`, '_blank', 'noopener,noreferrer')}
                                     className="px-3 py-1.5 text-xs rounded-lg border border-(--text-muted) text-(--text-secondary) hover:bg-(--bg-secondary) transition-colors"
                                 >
                                     View Other Decision

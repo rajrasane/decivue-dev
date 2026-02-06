@@ -73,35 +73,37 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadDecisions()
-  }, [])
+  }, [loadDecisions])
 
-  // Sort decisions by risk (at_risk first, then by confidence)
-  const sortedDecisions = [...decisions].sort((a, b) => {
-    const confA = calculateCurrentConfidence(a)
-    const confB = calculateCurrentConfidence(b)
-    const daysA = Math.floor((Date.now() - new Date(a.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-    const daysB = Math.floor((Date.now() - new Date(b.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-    const stateA = determineLifecycleState(confA, daysA)
-    const stateB = determineLifecycleState(confB, daysB)
+  // Memoized sorted decisions - avoids recomputation on every render
+  const sortedDecisions = useMemo(() => {
+    return [...decisions].sort((a, b) => {
+      const confA = calculateCurrentConfidence(a)
+      const confB = calculateCurrentConfidence(b)
+      const daysA = Math.floor((Date.now() - new Date(a.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
+      const daysB = Math.floor((Date.now() - new Date(b.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
+      const stateA = determineLifecycleState(confA, daysA)
+      const stateB = determineLifecycleState(confB, daysB)
 
-    const priority = { at_risk: 0, stale: 1, stable: 2, fresh: 3, invalidated: 4 }
-    if (priority[stateA] !== priority[stateB]) {
-      return priority[stateA] - priority[stateB]
-    }
-    return confA - confB
-  })
+      const priority = { at_risk: 0, stale: 1, stable: 2, fresh: 3, invalidated: 4 }
+      if (priority[stateA] !== priority[stateB]) {
+        return priority[stateA] - priority[stateB]
+      }
+      return confA - confB
+    })
+  }, [decisions])
 
-  // Stats
-  const atRiskCount = decisions.filter(d => {
-    const conf = calculateCurrentConfidence(d)
-    const days = Math.floor((Date.now() - new Date(d.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-    return determineLifecycleState(conf, days) === 'at_risk'
-  }).length
+  // Memoized at-risk count
+  const atRiskCount = useMemo(() => {
+    return decisions.filter(d => {
+      const conf = calculateCurrentConfidence(d)
+      const days = Math.floor((Date.now() - new Date(d.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
+      return determineLifecycleState(conf, days) === 'at_risk'
+    }).length
+  }, [decisions])
 
   return (
     <div className="bg-background">
-
-
       {/* Main content */}
       <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
         {/* Stats bar */}
@@ -141,7 +143,7 @@ export default function Dashboard() {
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
                 hover:bg-(--bg-secondary) transition-colors cursor-pointer"
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
