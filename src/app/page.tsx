@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useMemo, useCallback, useDeferredValue } from 'react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 
-import { Plus, RefreshCw, Search } from 'lucide-react'
+import { Plus, RefreshCw, Search, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
@@ -15,13 +16,101 @@ import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
 import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
 import { LifecycleState, stateLabels } from '@/lib/decision-constants'
+import type { User } from '@supabase/supabase-js'
 
 const CreateDecisionModal = dynamic(
   () => import('@/components/CreateDecisionModal').then(m => ({ default: m.CreateDecisionModal })),
   { loading: () => null }
 )
 
-export default function Dashboard() {
+/* ──────────────────────────────────────────── */
+/*  Landing page (unauthenticated)              */
+/* ──────────────────────────────────────────── */
+
+function LandingPage() {
+  return (
+    <div className="flex flex-col">
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        {/* Subtle gradient orb */}
+        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-white/[0.02] blur-[120px]" />
+
+        <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28 text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+            <Zap size={12} className="text-[var(--accent)]" />
+            Decision Intelligence Platform
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
+            Track decisions.
+            <br />
+            <span className="text-[var(--text-secondary)]">Detect drift.</span>
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-lg text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
+            Maintain awareness over your team&apos;s decisions. Know when confidence decays,
+            signals conflict, or a decision needs revisiting.
+          </p>
+
+          <div className="mt-8 flex items-center justify-center gap-3 sm:gap-4">
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold text-black transition-all hover:bg-white/90 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)]"
+            >
+              Get started
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/[0.04] hover:text-white"
+            >
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="border-t border-white/[0.06] bg-[var(--bg-secondary)]/30">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 py-16 sm:py-20">
+          <div className="grid gap-6 sm:grid-cols-3 sm:gap-8">
+            {[
+              {
+                icon: <BarChart3 size={20} />,
+                title: 'Confidence Tracking',
+                desc: 'Monitor how decision confidence evolves over time with real-time signal analysis.',
+              },
+              {
+                icon: <Shield size={20} />,
+                title: 'Conflict Detection',
+                desc: 'Automatically surface when decisions contradict each other across your organization.',
+              },
+              {
+                icon: <Zap size={20} />,
+                title: 'Lifecycle States',
+                desc: 'Decisions flow through Fresh → Stable → At Risk → Stale, keeping your team aware.',
+              },
+            ].map((f, i) => (
+              <div key={i} className="rounded-2xl border border-white/[0.06] bg-[var(--bg-card)] p-5 sm:p-6">
+                <div className="mb-3 inline-flex rounded-lg bg-white/[0.06] p-2.5 text-[var(--text-secondary)]">
+                  {f.icon}
+                </div>
+                <h3 className="mb-1.5 text-sm font-semibold text-white">{f.title}</h3>
+                <p className="text-xs sm:text-sm leading-relaxed text-[var(--text-muted)]">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+/* ──────────────────────────────────────────── */
+/*  Dashboard (authenticated)                   */
+/* ──────────────────────────────────────────── */
+
+function Dashboard() {
   const [decisions, setDecisions] = useState<Decision[]>([])
   const [signalsCounts, setSignalsCounts] = useState<Record<string, number>>({})
   const [conflictsCounts, setConflictsCounts] = useState<Record<string, number>>({})
@@ -119,7 +208,6 @@ export default function Dashboard() {
 
   return (
     <div className="bg-background">
-      {/* Main content */}
       <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
         {/* Stats bar */}
         <div className="flex items-center justify-between mb-4 sm:mb-8">
@@ -135,7 +223,7 @@ export default function Dashboard() {
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Decisions that are 'At Risk' or have active conflicts.</p>
+                    <p>Decisions that are &apos;At Risk&apos; or have active conflicts.</p>
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -167,7 +255,6 @@ export default function Dashboard() {
         {/* Search & Filter */}
         {decisions.length > 0 && (
           <div className="mb-4 sm:mb-6 space-y-3">
-            {/* Search bar */}
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
               <input
@@ -180,7 +267,6 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* State filter pills — scrollable on mobile, wraps on sm+ */}
             <div className="relative">
               <div className="pill-scroll pb-1 pr-2">
                 {(['all', 'fresh', 'stable', 'at_risk', 'stale', 'invalidated'] as const).map(state => (
@@ -197,7 +283,6 @@ export default function Dashboard() {
                   </button>
                 ))}
               </div>
-              {/* Fade hint for scroll on mobile */}
               <div className="absolute right-0 top-0 bottom-1 w-4 bg-gradient-to-l from-(--bg-primary) to-transparent pointer-events-none sm:hidden" />
             </div>
           </div>
@@ -209,39 +294,40 @@ export default function Dashboard() {
             <Spinner size={32} />
           </div>
         ) : decisions.length === 0 ? (
-          <div className="text-center py-20">
-            {/* Logo in empty state */}
-            <svg viewBox="0 0 40 40" className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="emptyLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="var(--text-muted)" />
-                  <stop offset="100%" stopColor="var(--text-muted)" />
-                </linearGradient>
-              </defs>
-              <circle cx="20" cy="20" r="18" stroke="url(#emptyLogoGradient)" strokeWidth="2" fill="none" />
-              <path
-                d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28"
-                stroke="var(--text-muted)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="22" cy="12" r="3" fill="var(--text-muted)" />
-              <circle cx="22" cy="28" r="3" fill="var(--text-muted)" />
-              <circle cx="14" cy="20" r="2.5" fill="var(--text-muted)" />
-            </svg>
-            <h2 className="text-xl font-semibold mb-2">No decisions yet</h2>
-            <p className="text-(--text-muted) mb-6">
-              Start tracking your team&apos;s decisions to maintain awareness over time.
-            </p>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-(--accent) 
-                hover:bg-(--accent-hover) text-white font-medium transition-colors"
-            >
-              <Plus size={18} />
-              Create First Decision
-            </button>
+          <div className="flex flex-1 items-center justify-center py-16">
+            <div className="flex flex-col items-center text-center max-w-sm">
+              {/* Subtle animated ring */}
+              <div className="relative mb-6">
+                <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-white/[0.04] to-white/[0.01] blur-xl" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03]">
+                  <svg viewBox="0 0 40 40" className="w-8 h-8 text-white/30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="22" cy="12" r="2.5" fill="currentColor" />
+                    <circle cx="22" cy="28" r="2.5" fill="currentColor" />
+                    <circle cx="14" cy="20" r="2" fill="currentColor" />
+                  </svg>
+                </div>
+              </div>
+
+              <h2 className="text-lg font-semibold text-white/90 tracking-tight">No decisions yet</h2>
+              <p className="mt-1.5 text-sm text-[var(--text-muted)] leading-relaxed">
+                Start tracking your team&apos;s decisions to maintain<br className="hidden sm:inline" /> awareness over time.
+              </p>
+
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.05] px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:bg-white/[0.1] hover:text-white active:scale-[0.97]"
+              >
+                <Plus size={16} />
+                Create your first decision
+              </button>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-4 md:gap-6">
@@ -296,4 +382,33 @@ export default function Dashboard() {
       )}
     </div>
   )
+}
+
+/* ──────────────────────────────────────────── */
+/*  Smart root — landing or dashboard           */
+/* ──────────────────────────────────────────── */
+
+export default function Home() {
+  const [user, setUser] = useState<User | null>(null)
+  const [checking, setChecking] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const check = async () => {
+      const { data } = await supabase.auth.getUser()
+      setUser(data.user)
+      setChecking(false)
+    }
+    check()
+  }, [supabase.auth])
+
+  if (checking) {
+    return (
+      <div className="flex flex-1 items-center justify-center h-[calc(100dvh-10rem)]">
+        <Spinner size={32} />
+      </div>
+    )
+  }
+
+  return user ? <Dashboard /> : <LandingPage />
 }

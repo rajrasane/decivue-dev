@@ -36,11 +36,11 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#0a0a0a" />
       </head>
-      <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-screen`}>
+      <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-dvh`}>
         <TooltipProvider delayDuration={200}>
           <SiteHeader />
           <ErrorBoundary>
-            <div className="flex-1">
+            <div className="flex flex-1 flex-col">
               {children}
             </div>
           </ErrorBoundary>

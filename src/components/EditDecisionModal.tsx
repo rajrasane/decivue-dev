@@ -189,7 +189,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                     {/* Scroll container */}
                     <div className="flex-1 min-h-0 relative">
                         <div className="absolute inset-0 overflow-y-auto scrollbar-thin px-5 sm:px-6 py-5">
-                            <form id="edit-decision-form" onSubmit={handleSubmit} className="space-y-5">
+                            <form id="edit-decision-form" onSubmit={handleSubmit} className="space-y-0">
                                 {/* Statement */}
                                 <div>
                                     <label htmlFor="edit-statement" className="block text-sm font-medium text-(--text-secondary) mb-2">
@@ -209,12 +209,18 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                                     />
                                 </div>
 
+                                <div className="border-t border-white/[0.05] my-5 -mx-5 sm:-mx-6" />
+
                                 {/* Confidence slider */}
-                                <ConfidenceSlider
-                                    id="edit-confidence"
-                                    value={confidence}
-                                    onChange={setConfidence}
-                                />
+                                <div>
+                                    <ConfidenceSlider
+                                        id="edit-confidence"
+                                        value={confidence}
+                                        onChange={setConfidence}
+                                    />
+                                </div>
+
+                                <div className="border-t border-white/[0.05] my-5 -mx-5 sm:-mx-6" />
 
                                 {/* Risk level */}
                                 <div>
@@ -244,6 +250,8 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                                         ))}
                                     </div>
                                 </div>
+
+                                <div className="border-t border-white/[0.05] my-5 -mx-5 sm:-mx-6" />
 
                                 {/* Assumptions */}
                                 <div>
@@ -275,9 +283,9 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
                                         <button
                                             type="button"
                                             onClick={addAssumption}
-                                            className="flex items-center gap-2 text-sm text-white hover:underline"
+                                            className="flex items-center gap-1.5 rounded-lg border border-dashed border-white/[0.1] px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] transition-colors hover:border-white/20 hover:text-white cursor-pointer"
                                         >
-                                            <Plus size={16} /> Add assumption
+                                            <Plus size={14} /> Add assumption
                                         </button>
                                     </div>
                                 </div>
