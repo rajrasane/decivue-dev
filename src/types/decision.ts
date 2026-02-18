@@ -36,7 +36,7 @@ export type DecisionWithMetrics = Decision & {
 export type DecisionHistory = {
     id: string
     decision_id: string
-    action_type: 'created' | 'reaffirmed' | 'edited' | 'state_changed' | 'signal_added' | 'signal_dismissed'
+    action_type: 'created' | 'reaffirmed' | 'edited' | 'state_changed' | 'signal_added' | 'signal_dismissed' | 'conflict_resolved'
     previous_state: Partial<Decision> | null
     new_state: Partial<Decision> | null
     change_summary: string

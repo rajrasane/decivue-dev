@@ -16,28 +16,13 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { stateLabels, stateDescriptions } from '@/lib/decision-constants'
 
 interface DecisionCardProps {
     decision: Decision
     signalsCount?: number
     conflictsCount?: number
     onClick?: () => void
-}
-
-const stateLabels = {
-    fresh: 'Fresh',
-    stable: 'Stable',
-    at_risk: 'At Risk',
-    stale: 'Stale',
-    invalidated: 'Invalidated',
-}
-
-const stateDescriptions = {
-    fresh: 'Recently reviewed (<7 days) with high confidence (≥70%)',
-    stable: 'Reviewed within 14 days with good confidence (≥50%)',
-    at_risk: 'Confidence dropping (<50%) or review overdue (>14 days)',
-    stale: 'Low confidence or not reviewed in >30 days',
-    invalidated: 'Confidence is critically low (<15%)',
 }
 
 const stateColors = {

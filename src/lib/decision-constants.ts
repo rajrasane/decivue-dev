@@ -11,10 +11,10 @@ export const stateLabels: Record<LifecycleState, string> = {
 }
 
 export const stateDescriptions: Record<LifecycleState, string> = {
-    fresh: 'Recently reviewed (<7 days) with high confidence (≥70%)',
-    stable: 'Reviewed within 14 days with good confidence (≥50%)',
-    at_risk: 'Confidence dropping (<50%) or review overdue (>14 days)',
-    stale: 'Low confidence or not reviewed in >30 days',
+    fresh: 'Recently reviewed (≤7 days) with high confidence (≥80%) and no issues',
+    stable: 'Good confidence (≥60%) reviewed within 30 days',
+    at_risk: 'Multiple issues (3+ score) or confidence declining',
+    stale: 'Low confidence (<40%) or not reviewed in >60 days',
     invalidated: 'Confidence is critically low (<15%)',
 }
 

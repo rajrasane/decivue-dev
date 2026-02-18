@@ -70,7 +70,7 @@ cd decivue
 ### 2. Install dependencies
 
 ```bash
-pnpm install
+npm install
 ```
 
 ### 3. Environment variables
@@ -94,7 +94,7 @@ Run [`docs/schema.sql`](docs/schema.sql) in Supabase SQL Editor to create the ta
 ### 5. Run
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Open http://localhost:3000
@@ -165,7 +165,7 @@ return 'at_risk'
 
 ## Notes
 
-- **No authentication** — The problem statement explicitly states enterprise-grade authentication is not required, so we focused on core decision intelligence features instead.
+- **No authentication** — By design, Decivue focuses on core decision intelligence rather than access control. Authentication can be added later as needed.
 - **Minimal UI** — The target users are non-technical teams (managers, leads, planners). The interface is intentionally clean and jargon-free so anyone can understand decision health at a glance.
 - **Fully responsive** — Works on desktop, tablet, and mobile. Decision-makers can check on their decisions from anywhere.
 
@@ -174,6 +174,3 @@ return 'at_risk'
 
 ![Dashboard](docs/screenshots/dashboard.png)  
 ![Detail](docs/screenshots/detail.png)
----
-
-Built for Alphabyte 3.0 Hackathon | Problem Statement 6

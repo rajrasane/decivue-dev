@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo, useCallback, useDeferredValue } from 'react'
 import dynamic from 'next/dynamic'
 
-import { Plus, RefreshCw } from 'lucide-react'
+import { Plus, RefreshCw, Search } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
@@ -14,6 +14,7 @@ import { Spinner } from '@/components/Spinner'
 import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
 import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
+import { LifecycleState, stateLabels } from '@/lib/decision-constants'
 
 const CreateDecisionModal = dynamic(
   () => import('@/components/CreateDecisionModal').then(m => ({ default: m.CreateDecisionModal })),
@@ -26,6 +27,9 @@ export default function Dashboard() {
   const [conflictsCounts, setConflictsCounts] = useState<Record<string, number>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const deferredSearch = useDeferredValue(searchQuery)
+  const [stateFilter, setStateFilter] = useState<LifecycleState | 'all'>('all')
 
   const supabase = createClient()
 
@@ -55,47 +59,52 @@ export default function Dashboard() {
 
     // Build signals count map
     const signalsMap: Record<string, number> = {}
-    signalsResult.data?.forEach(s => {
+    signalsResult.data?.forEach((s: { decision_id: string }) => {
       signalsMap[s.decision_id] = (signalsMap[s.decision_id] || 0) + 1
     })
     setSignalsCounts(signalsMap)
 
     // Build conflicts count map
     const conflictsMap: Record<string, number> = {}
-    conflictsResult.data?.forEach(c => {
+    conflictsResult.data?.forEach((c: { decision_a: string; decision_b: string }) => {
       conflictsMap[c.decision_a] = (conflictsMap[c.decision_a] || 0) + 1
       conflictsMap[c.decision_b] = (conflictsMap[c.decision_b] || 0) + 1
     })
     setConflictsCounts(conflictsMap)
 
     setIsLoading(false)
-  }, [supabase])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     loadDecisions()
   }, [loadDecisions])
 
-  // Memoized sorted decisions - avoids recomputation on every render
+  // Memoized sorted and filtered decisions
   const sortedDecisions = useMemo(() => {
-    return [...decisions].sort((a, b) => {
-      const signalsA = signalsCounts[a.id] || 0
-      const signalsB = signalsCounts[b.id] || 0
-      const conflictsA = conflictsCounts[a.id] || 0
-      const conflictsB = conflictsCounts[b.id] || 0
-      const confA = calculateCurrentConfidence(a, signalsA, conflictsA)
-      const confB = calculateCurrentConfidence(b, signalsB, conflictsB)
-      const daysA = Math.floor((Date.now() - new Date(a.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-      const daysB = Math.floor((Date.now() - new Date(b.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
-      const stateA = determineLifecycleState(confA, daysA, signalsA, conflictsA)
-      const stateB = determineLifecycleState(confB, daysB, signalsB, conflictsB)
-
-      const priority = { at_risk: 0, stale: 1, stable: 2, fresh: 3, invalidated: 4 }
-      if (priority[stateA] !== priority[stateB]) {
-        return priority[stateA] - priority[stateB]
-      }
-      return confA - confB
-    })
-  }, [decisions, signalsCounts, conflictsCounts])
+    return [...decisions]
+      .map(d => {
+        const signals = signalsCounts[d.id] || 0
+        const conflicts = conflictsCounts[d.id] || 0
+        const conf = calculateCurrentConfidence(d, signals, conflicts)
+        const days = Math.floor((Date.now() - new Date(d.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
+        const state = determineLifecycleState(conf, days, signals, conflicts)
+        return { decision: d, confidence: conf, state }
+      })
+      .filter(({ decision, state }) => {
+        if (deferredSearch && !decision.statement.toLowerCase().includes(deferredSearch.toLowerCase())) return false
+        if (stateFilter !== 'all' && state !== stateFilter) return false
+        return true
+      })
+      .sort((a, b) => {
+        const priority = { at_risk: 0, stale: 1, stable: 2, fresh: 3, invalidated: 4 } as const
+        if (priority[a.state] !== priority[b.state]) {
+          return priority[a.state] - priority[b.state]
+        }
+        return a.confidence - b.confidence
+      })
+      .map(({ decision }) => decision)
+  }, [decisions, signalsCounts, conflictsCounts, deferredSearch, stateFilter])
 
   // Memoized at-risk count
   const atRiskCount = useMemo(() => {
@@ -113,10 +122,10 @@ export default function Dashboard() {
       {/* Main content */}
       <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
         {/* Stats bar */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4 sm:mb-8">
           <div>
-            <h2 className="text-xl font-bold mb-1 text-foreground">Overview</h2>
-            <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-4 text-sm text-(--text-muted)">
+            <h2 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1 text-foreground">Overview</h2>
+            <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-(--text-muted)">
               <span>{decisions.length} Decision{decisions.length !== 1 ? 's' : ''}</span>
               {atRiskCount > 0 && (
                 <Tooltip>
@@ -136,10 +145,10 @@ export default function Dashboard() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-foreground text-background hover:bg-white/90 
-                font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-background hover:bg-white/90 
+                text-sm sm:text-base font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
             >
-              <Plus size={18} />
+              <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
               <span className="inline sm:hidden">New</span>
               <span className="hidden sm:inline">New Decision</span>
             </button>
@@ -154,6 +163,45 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
+
+        {/* Search & Filter */}
+        {decisions.length > 0 && (
+          <div className="mb-4 sm:mb-6 space-y-3">
+            {/* Search bar */}
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
+              <input
+                type="text"
+                placeholder="Search decisions…"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-(--bg-secondary) border border-transparent text-sm text-foreground 
+                  placeholder:text-(--text-muted) focus:outline-none"
+              />
+            </div>
+
+            {/* State filter pills — scrollable on mobile, wraps on sm+ */}
+            <div className="relative">
+              <div className="pill-scroll pb-1 pr-2">
+                {(['all', 'fresh', 'stable', 'at_risk', 'stale', 'invalidated'] as const).map(state => (
+                  <button
+                    key={state}
+                    onClick={() => setStateFilter(state)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:shrink
+                      ${stateFilter === state
+                        ? 'bg-foreground text-background'
+                        : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover) border border-white/5'
+                      }`}
+                  >
+                    {state === 'all' ? 'All' : stateLabels[state]}
+                  </button>
+                ))}
+              </div>
+              {/* Fade hint for scroll on mobile */}
+              <div className="absolute right-0 top-0 bottom-1 w-4 bg-gradient-to-l from-(--bg-primary) to-transparent pointer-events-none sm:hidden" />
+            </div>
+          </div>
+        )}
 
         {/* Decisions grid */}
         {isLoading ? (
@@ -197,14 +245,41 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="flex flex-col gap-4 md:gap-6">
-            {sortedDecisions.map(decision => (
-              <DecisionCard
-                key={decision.id}
-                decision={decision}
-                signalsCount={signalsCounts[decision.id] || 0}
-                conflictsCount={conflictsCounts[decision.id] || 0}
-              />
-            ))}
+            {sortedDecisions.length > 0 ? (
+              sortedDecisions.map(decision => (
+                <DecisionCard
+                  key={decision.id}
+                  decision={decision}
+                  signalsCount={signalsCounts[decision.id] || 0}
+                  conflictsCount={conflictsCounts[decision.id] || 0}
+                />
+              ))
+            ) : (
+              <div className="py-14 sm:py-20 flex flex-col items-center">
+                <svg viewBox="0 0 40 40" className="w-12 h-12 sm:w-14 sm:h-14 mb-5 opacity-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="20" cy="20" r="18" stroke="var(--text-muted)" strokeWidth="1.5" fill="none" />
+                  <path d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="22" cy="12" r="3" fill="var(--text-muted)" />
+                  <circle cx="22" cy="28" r="3" fill="var(--text-muted)" />
+                  <circle cx="14" cy="20" r="2.5" fill="var(--text-muted)" />
+                </svg>
+                <h3 className="text-base sm:text-lg font-semibold text-(--text-secondary) mb-1.5">No matching decisions</h3>
+                <p className="text-(--text-muted) text-sm sm:text-base text-center max-w-xs leading-relaxed">
+                  {stateFilter !== 'all' && deferredSearch
+                    ? `No ${stateLabels[stateFilter]} decisions matching "${deferredSearch}"`
+                    : stateFilter !== 'all'
+                      ? `No decisions in the ${stateLabels[stateFilter]} state right now`
+                      : `No decisions matching "${deferredSearch}"`
+                  }
+                </p>
+                <button
+                  onClick={() => { setStateFilter('all'); setSearchQuery('') }}
+                  className="mt-6 text-sm text-(--text-muted) hover:text-white border border-white/10 px-5 py-2 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Clear filters
+                </button>
+              </div>
+            )}
           </div>
         )}
       </main>

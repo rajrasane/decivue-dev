@@ -34,11 +34,11 @@ export function useDecision(id: string) {
             setHistory(historyResult.data || [])
 
             if (conflictsResult.data && conflictsResult.data.length > 0) {
-                const otherIds = conflictsResult.data.map(c => c.decision_a === id ? c.decision_b : c.decision_a)
+                const otherIds = conflictsResult.data.map((c: { decision_a: string; decision_b: string }) => c.decision_a === id ? c.decision_b : c.decision_a)
                 const { data: otherDecisions } = await supabase.from('decisions').select('*').in('id', otherIds)
 
-                const decisionsMap = new Map(otherDecisions?.map(d => [d.id, d]) || [])
-                setConflicts(conflictsResult.data.map(conflict => ({
+                const decisionsMap = new Map(otherDecisions?.map((d: Decision) => [d.id, d]) || [])
+                setConflicts(conflictsResult.data.map((conflict: { decision_a: string; decision_b: string;[key: string]: unknown }) => ({
                     ...conflict,
                     other_decision: decisionsMap.get(conflict.decision_a === id ? conflict.decision_b : conflict.decision_a)
                 })))
@@ -109,7 +109,7 @@ export function useDecision(id: string) {
         try {
             await supabase.from('decision_history').insert({
                 decision_id: decision.id,
-                action_type: 'edited',
+                action_type: 'signal_dismissed',
                 previous_state: { signal_type: signal.signal_type, description: signal.description },
                 new_state: null,
                 change_summary: `Dismissed signal: ${signal.description}`,
@@ -122,9 +122,19 @@ export function useDecision(id: string) {
     }, [decision, isDismissing, loadDecision])
 
     const dismissConflict = useCallback(async (conflictId: string) => {
+        const conflict = conflicts.find(c => c.id === conflictId)
+        if (decision && conflict) {
+            await supabase.from('decision_history').insert({
+                decision_id: decision.id,
+                action_type: 'conflict_resolved',
+                previous_state: { conflict_explanation: conflict.conflict_explanation },
+                new_state: null,
+                change_summary: `Resolved conflict: ${conflict.conflict_explanation?.slice(0, 80) ?? 'Unknown conflict'}`,
+            })
+        }
         await supabase.from('decision_conflicts').delete().eq('id', conflictId)
         loadDecision()
-    }, [loadDecision])
+    }, [decision, conflicts, loadDecision])
 
     return {
         decision, signals, conflicts, history,

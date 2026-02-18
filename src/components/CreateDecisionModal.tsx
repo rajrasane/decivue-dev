@@ -182,7 +182,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                     </label>
                                     <div className="space-y-2">
                                         {assumptions.map((assumption, index) => (
-                                            <div key={index} className="flex gap-2">
+                                            <div key={index} className="flex gap-2 group/assumption">
                                                 <input
                                                     type="text"
                                                     value={assumption}
@@ -196,9 +196,9 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                                     type="button"
                                                     onClick={() => removeAssumption(index)}
                                                     aria-label={`Remove assumption ${index + 1}`}
-                                                    className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"
+                                                    className="p-1.5 rounded-md text-(--text-muted) hover:text-white hover:bg-white/10 transition-colors"
                                                 >
-                                                    <X size={18} />
+                                                    <X size={14} />
                                                 </button>
                                             </div>
                                         ))}

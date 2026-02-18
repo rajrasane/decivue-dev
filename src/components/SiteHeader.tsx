@@ -6,8 +6,8 @@ export function SiteHeader() {
             <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
                     {/* Custom Decivue Logo */}
-                    <div className="relative w-11 h-11 flex items-center justify-center">
-                        <svg viewBox="0 0 40 40" className="w-11 h-11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className="relative w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center">
+                        <svg viewBox="0 0 40 40" className="w-9 h-9 sm:w-11 sm:h-11" fill="none" xmlns="http://www.w3.org/2000/svg">
                             {/* Outer ring with gradient */}
                             <defs>
                                 <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -30,14 +30,14 @@ export function SiteHeader() {
                             <circle cx="14" cy="20" r="2.5" fill="white" />
                         </svg>
                     </div>
-                    <div className="flex flex-col justify-center h-11">
+                    <div className="flex flex-col justify-center h-9 sm:h-11">
                         <h1
-                            className="text-2xl font-semibold tracking-tight text-white/90 leading-tight"
+                            className="text-xl sm:text-2xl font-semibold tracking-tight text-white/90 leading-tight"
                             style={{ fontFamily: 'var(--font-space)' }}
                         >
                             Decivue
                         </h1>
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-(--text-muted) font-medium">
+                        <span className="text-[8px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-(--text-muted) font-medium">
                             Decision Intelligence
                         </span>
                     </div>
