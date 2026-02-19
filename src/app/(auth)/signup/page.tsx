@@ -102,16 +102,16 @@ export default function SignupPage() {
         return (
             <div className="flex flex-1 items-center justify-center px-4 py-6">
                 <div className="w-full max-w-[380px] text-center">
-                    <div className="rounded-2xl border border-white/[0.06] bg-[var(--bg-secondary)] p-6 shadow-2xl">
+                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 shadow-2xl">
                         <div className="mb-3 text-3xl">✉️</div>
-                        <h2 className="text-lg font-bold text-white">Check your email</h2>
+                        <h2 className="text-lg font-bold text-foreground">Check your email</h2>
                         <p className="mt-2 text-sm text-[var(--text-muted)]">
-                            We&apos;ve sent a confirmation link to <span className="font-medium text-white">{email}</span>
+                            We&apos;ve sent a confirmation link to <span className="font-medium text-foreground">{email}</span>
                         </p>
                     </div>
                     <p className="mt-5 text-sm text-[var(--text-muted)]">
                         Already confirmed?{' '}
-                        <Link href="/login" className="font-medium text-white underline-offset-4 hover:underline">Sign in</Link>
+                        <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">Sign in</Link>
                     </p>
                 </div>
             </div>
@@ -124,19 +124,19 @@ export default function SignupPage() {
 
                 {/* Heading */}
                 <div className="mb-5 text-center">
-                    <h1 className="text-xl font-bold tracking-tight text-white sm:text-2xl">Create your account</h1>
+                    <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Create your account</h1>
                     <p className="mt-1.5 text-[13px] text-[var(--text-muted)]">Start making better decisions today</p>
                 </div>
 
                 {/* Card */}
-                <div className="rounded-2xl border border-white/[0.06] bg-[var(--bg-secondary)] p-5 shadow-2xl sm:p-6">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 shadow-2xl sm:p-6">
 
                     {/* OAuth buttons */}
                     <div className="flex flex-col gap-2.5">
                         <button
                             onClick={handleGoogleSignup}
                             disabled={loading}
-                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm font-medium text-white transition-colors hover:bg-white/[0.08] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--bg-card-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
@@ -168,7 +168,7 @@ export default function SignupPage() {
                         <button
                             onClick={handleMicrosoftSignup}
                             disabled={loading}
-                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm font-medium text-white transition-colors hover:bg-white/[0.08] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--bg-card-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg className="h-[18px] w-[18px]" viewBox="0 0 21 21">
                                 <rect x="1" y="1" width="9" height="9" fill="#F25022" />
@@ -182,7 +182,7 @@ export default function SignupPage() {
 
                     {/* Divider */}
                     <div className="relative my-4">
-                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/[0.06]" /></div>
+                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--border)]" /></div>
                         <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
                             <span className="bg-[var(--bg-secondary)] px-3 text-[var(--text-muted)]">or</span>
                         </div>
@@ -195,7 +195,7 @@ export default function SignupPage() {
                             <input
                                 id="fullName" type="text" autoComplete="name" placeholder="e.g Rahul Kumar"
                                 value={fullName} onChange={e => setFullName(e.target.value)} required
-                                className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
+                                className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-sm text-foreground placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--text-muted)] focus:outline-none"
                             />
                         </div>
                         <div>
@@ -203,7 +203,7 @@ export default function SignupPage() {
                             <input
                                 id="email" type="email" autoComplete="email" placeholder="you@example.com"
                                 value={email} onChange={e => setEmail(e.target.value)} required
-                                className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
+                                className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-sm text-foreground placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--text-muted)] focus:outline-none"
                             />
                         </div>
 
@@ -217,12 +217,12 @@ export default function SignupPage() {
                                     <input
                                         id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" placeholder="••••••••"
                                         value={password} onChange={e => setPassword(e.target.value)} required minLength={6}
-                                        className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 pr-9 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
+                                        className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 pr-9 text-sm text-foreground placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--text-muted)] focus:outline-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-foreground transition-colors"
                                         tabIndex={-1}
                                     >
                                         {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -235,12 +235,12 @@ export default function SignupPage() {
                                     <input
                                         id="confirmPassword" type={showConfirm ? 'text' : 'password'} autoComplete="new-password" placeholder="••••••••"
                                         value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6}
-                                        className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 pr-9 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
+                                        className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 pr-9 text-sm text-foreground placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--text-muted)] focus:outline-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirm(!showConfirm)}
-                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-foreground transition-colors"
                                         tabIndex={-1}
                                     >
                                         {showConfirm ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -255,7 +255,7 @@ export default function SignupPage() {
 
                         <button
                             type="submit" disabled={loading}
-                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-foreground text-sm font-semibold text-background transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {loading && <Spinner size={16} color="black" />}
                             Create account
@@ -266,7 +266,7 @@ export default function SignupPage() {
                 {/* Switch */}
                 <p className="mt-5 text-center text-sm text-[var(--text-muted)]">
                     Already have an account?{' '}
-                    <Link href="/login" className="font-medium text-white underline-offset-4 hover:underline">Sign in</Link>
+                    <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">Sign in</Link>
                 </p>
             </div>
         </div>

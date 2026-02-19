@@ -1,6 +1,41 @@
 @import "tailwindcss";
 
+/* ─── Light Theme (default) ─── */
 :root {
+  --bg-primary: #fafafa;
+  --bg-secondary: #f0f0f0;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f5f5;
+
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a5a;
+  --text-muted: #8a8a9a;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --overlay: rgba(0, 0, 0, 0.5);
+
+  /* State colors — shared across themes */
+  --fresh: #16a34a;
+  --stable: #d97706;
+  --at-risk: #dc2626;
+  --stale: #6b7280;
+  --invalidated: #374151;
+
+  /* Accent */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+
+  /* Gauge gradients */
+  --gauge-high: #16a34a;
+  --gauge-medium: #d97706;
+  --gauge-low: #dc2626;
+
+  /* Shadows */
+  --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Dark Theme ─── */
+.dark {
   --bg-primary: #0a0a0a;
   --bg-secondary: #141414;
   --bg-card: #1a1a1a;
@@ -9,6 +44,9 @@
   --text-primary: #ffffff;
   --text-secondary: #a1a1a1;
   --text-muted: #6b6b6b;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --overlay: rgba(0, 0, 0, 0.8);
 
   /* State colors */
   --fresh: #22c55e;
@@ -25,6 +63,9 @@
   --gauge-high: #22c55e;
   --gauge-medium: #f59e0b;
   --gauge-low: #ef4444;
+
+  /* Shadows */
+  --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
@@ -41,7 +82,7 @@ body {
   min-height: 100vh;
 }
 
-/* Custom scrollbar for dark theme */
+/* Custom scrollbar — theme aware */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -155,34 +196,88 @@ body.modal-open {
 
 /* ─── Landing page animations ─── */
 @keyframes gradient-shift {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
-  33% { transform: translate(30px, -20px) scale(1.1); opacity: 0.6; }
-  66% { transform: translate(-20px, 15px) scale(0.95); opacity: 0.35; }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+
+  33% {
+    transform: translate(30px, -20px) scale(1.1);
+    opacity: 0.6;
+  }
+
+  66% {
+    transform: translate(-20px, 15px) scale(0.95);
+    opacity: 0.35;
+  }
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); }
-  50% { box-shadow: 0 0 40px rgba(255,255,255,0.1); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px var(--shadow-color);
+  }
+
+  50% {
+    box-shadow: 0 0 40px var(--shadow-color);
+  }
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.7s ease-out both;
 }
 
-.animation-delay-100 { animation-delay: 100ms; }
-.animation-delay-200 { animation-delay: 200ms; }
-.animation-delay-300 { animation-delay: 300ms; }
-.animation-delay-400 { animation-delay: 400ms; }
-.animation-delay-500 { animation-delay: 500ms; }
-.animation-delay-600 { animation-delay: 600ms; }
-.animation-delay-700 { animation-delay: 700ms; }
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animation-delay-700 {
+  animation-delay: 700ms;
+}

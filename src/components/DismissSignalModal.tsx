@@ -14,9 +14,9 @@ export function DismissSignalModal({
     onConfirm,
 }: DismissSignalModalProps) {
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-linear-to-b from-[#1a1a1a] to-[#141414] rounded-2xl w-full max-w-sm p-6
-                border border-white/5 shadow-2xl shadow-black/50">
+        <div className="fixed inset-0 bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-sm p-6
+                border border-[var(--border)] shadow-2xl">
                 <h2 className="text-lg font-semibold mb-1">Dismiss Signal?</h2>
                 <p className="text-sm text-(--text-muted) mb-6">
                     This will remove the signal from this decision.
@@ -24,7 +24,7 @@ export function DismissSignalModal({
                 <div className="flex gap-3">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-foreground font-medium transition-all"
+                        className="flex-1 py-2.5 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border)] text-foreground font-medium transition-all"
                     >
                         Cancel
                     </button>

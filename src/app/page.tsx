@@ -59,7 +59,7 @@ function LandingPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 md:px-6 text-center">
           {/* Badge */}
-          <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-5 py-2 text-xs font-medium text-[var(--text-secondary)] backdrop-blur-sm">
+          <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/50 px-5 py-2 text-xs font-medium text-[var(--text-secondary)] backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
@@ -68,11 +68,11 @@ function LandingPage() {
           </div>
 
           {/* Headline — staggered */}
-          <h1 className="animate-fade-in-up animation-delay-100 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08]">
+          <h1 className="animate-fade-in-up animation-delay-100 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.08]">
             Track decisions.
           </h1>
           <h1 className="animate-fade-in-up animation-delay-200 mt-1 sm:mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08]">
-            <span className="bg-gradient-to-r from-white/60 via-white/40 to-white/20 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-foreground/60 via-foreground/40 to-foreground/20 bg-clip-text text-transparent">
               Detect drift.
             </span>
           </h1>
@@ -87,14 +87,14 @@ function LandingPage() {
           <div className="animate-fade-in-up animation-delay-400 mt-10 flex items-center justify-center gap-4">
             <Link
               href="/signup"
-              className="group relative inline-flex items-center gap-2.5 rounded-xl bg-white px-6 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-black transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+              className="group relative inline-flex items-center gap-2.5 rounded-xl bg-foreground px-6 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-background transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
             >
               Get started free
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.03] px-6 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-medium text-[var(--text-secondary)] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:text-white hover:border-white/[0.15]"
+              className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 px-6 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-medium text-[var(--text-secondary)] backdrop-blur-sm transition-all hover:bg-[var(--bg-card-hover)] hover:text-foreground hover:border-[var(--text-muted)]"
             >
               Sign in
             </Link>
@@ -106,14 +106,14 @@ function LandingPage() {
       </section>
 
       {/* ═══════════════════════ SOCIAL PROOF ═══════════════════════ */}
-      <section className="relative border-t border-white/[0.04] py-10 sm:py-12">
+      <section className="relative border-t border-[var(--border)] py-10 sm:py-12">
         <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
           <p className="text-xs sm:text-sm font-medium uppercase tracking-[0.2em] text-[var(--text-muted)]">
             Built for teams who make critical decisions
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 gap-y-3 text-xs sm:text-sm text-white/25 font-medium">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 gap-y-3 text-xs sm:text-sm text-[var(--text-muted)] font-medium">
             {['Engineering', 'Product', 'Strategy', 'Operations', 'Leadership'].map((word) => (
-              <span key={word} className="transition-colors hover:text-white/50">{word}</span>
+              <span key={word} className="transition-colors hover:text-[var(--text-secondary)]">{word}</span>
             ))}
           </div>
         </div>
@@ -126,7 +126,7 @@ function LandingPage() {
 
         <div className="relative max-w-5xl mx-auto px-4 md:px-6">
           <div className="mb-12 sm:mb-16 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
               Everything you need to stay aware
             </h2>
             <p className="mt-3 text-sm sm:text-base text-[var(--text-muted)] max-w-lg mx-auto">
@@ -160,14 +160,14 @@ function LandingPage() {
             ].map((f, i) => (
               <div
                 key={i}
-                className={`group relative rounded-2xl border border-white/[0.06] bg-[var(--bg-card)]/80 backdrop-blur-sm p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 ${f.borderHover}`}
+                className={`group relative rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]/80 backdrop-blur-sm p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 ${f.borderHover}`}
                 style={{ animation: `pulse-glow 4s ease-in-out infinite ${i * 1.5}s` }}
               >
                 {/* Icon with gradient bg */}
-                <div className={`mb-4 inline-flex rounded-xl bg-gradient-to-br ${f.color} p-3 text-white/80`}>
+                <div className={`mb-4 inline-flex rounded-xl bg-gradient-to-br ${f.color} p-3 text-white`}>
                   {f.icon}
                 </div>
-                <h3 className="mb-2 text-base font-semibold text-white">{f.title}</h3>
+                <h3 className="mb-2 text-base font-semibold text-foreground">{f.title}</h3>
                 <p className="text-sm leading-relaxed text-[var(--text-muted)]">{f.desc}</p>
               </div>
             ))}
@@ -176,10 +176,10 @@ function LandingPage() {
       </section>
 
       {/* ═══════════════════════ HOW IT WORKS ═══════════════════════ */}
-      <section className="relative border-t border-white/[0.04] py-20 sm:py-28 bg-[var(--bg-secondary)]/20">
+      <section className="relative border-t border-[var(--border)] py-20 sm:py-28 bg-[var(--bg-secondary)]/20">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <div className="mb-12 sm:mb-16 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
               Three steps to clarity
             </h2>
             <p className="mt-3 text-sm sm:text-base text-[var(--text-muted)]">
@@ -190,7 +190,7 @@ function LandingPage() {
           <div className="relative grid gap-8 sm:grid-cols-3 sm:gap-6">
             {/* Connector line (desktop only) */}
             <div className="pointer-events-none absolute top-[52px] left-[16.7%] right-[16.7%] hidden sm:block">
-              <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
+              <div className="h-px bg-gradient-to-r from-transparent via-foreground/[0.12] to-transparent" />
             </div>
 
             {[
@@ -200,12 +200,12 @@ function LandingPage() {
             ].map((s, i) => (
               <div key={i} className="relative text-center sm:text-left">
                 {/* Step number */}
-                <div className="mx-auto sm:mx-0 mb-5 flex h-[64px] w-[64px] items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.03] text-lg font-bold text-white/40 backdrop-blur-sm"
+                <div className="mx-auto sm:mx-0 mb-5 flex h-[64px] w-[64px] items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 text-lg font-bold text-[var(--text-muted)] backdrop-blur-sm"
                   style={{ animation: 'float 6s ease-in-out infinite', animationDelay: `${i * 0.8}s` }}
                 >
                   {s.step}
                 </div>
-                <h3 className="mb-2 text-base font-semibold text-white">{s.title}</h3>
+                <h3 className="mb-2 text-base font-semibold text-foreground">{s.title}</h3>
                 <p className="text-sm leading-relaxed text-[var(--text-muted)] max-w-[280px] mx-auto sm:mx-0">{s.desc}</p>
               </div>
             ))}
@@ -216,7 +216,7 @@ function LandingPage() {
       {/* ═══════════════════════ CTA ═══════════════════════ */}
       <section className="relative py-20 sm:py-28">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.02] px-6 py-14 sm:px-12 sm:py-16 text-center backdrop-blur-sm">
+          <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)]/30 px-6 py-14 sm:px-12 sm:py-16 text-center backdrop-blur-sm">
             {/* Background glow */}
             <div className="pointer-events-none absolute inset-0">
               <div className="absolute top-[-50%] left-[20%] h-[300px] w-[300px] rounded-full bg-blue-500/[0.06] blur-[80px]" />
@@ -224,7 +224,7 @@ function LandingPage() {
             </div>
 
             <div className="relative">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
                 Ready to make better decisions?
               </h2>
               <p className="mt-4 text-sm sm:text-base text-[var(--text-muted)] max-w-md mx-auto">
@@ -233,7 +233,7 @@ function LandingPage() {
               <div className="mt-8">
                 <Link
                   href="/signup"
-                  className="group inline-flex items-center gap-2.5 rounded-xl bg-white px-7 py-3.5 text-sm sm:text-base font-semibold text-black transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="group inline-flex items-center gap-2.5 rounded-xl bg-foreground px-7 py-3.5 text-sm sm:text-base font-semibold text-background transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get started free
                   <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
@@ -374,7 +374,7 @@ function Dashboard() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-background hover:bg-white/90 
+              className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-background hover:opacity-90 
                 text-sm sm:text-base font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
             >
               <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
@@ -417,7 +417,7 @@ function Dashboard() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:shrink
                       ${stateFilter === state
                         ? 'bg-foreground text-background'
-                        : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover) border border-white/5'
+                        : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover) border border-[var(--border)]'
                       }`}
                   >
                     {state === 'all' ? 'All' : stateLabels[state]}
@@ -439,9 +439,9 @@ function Dashboard() {
             <div className="flex flex-col items-center text-center max-w-sm">
               {/* Subtle animated ring */}
               <div className="relative mb-6">
-                <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-white/[0.04] to-white/[0.01] blur-xl" />
-                <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03]">
-                  <svg viewBox="0 0 40 40" className="w-8 h-8 text-white/30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-foreground/[0.04] to-foreground/[0.01] blur-xl" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/50">
+                  <svg viewBox="0 0 40 40" className="w-8 h-8 text-[var(--text-muted)]" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28"
                       stroke="currentColor"
@@ -456,14 +456,14 @@ function Dashboard() {
                 </div>
               </div>
 
-              <h2 className="text-lg font-semibold text-white/90 tracking-tight">No decisions yet</h2>
+              <h2 className="text-lg font-semibold text-foreground/90 tracking-tight">No decisions yet</h2>
               <p className="mt-1.5 text-sm text-[var(--text-muted)] leading-relaxed">
                 Start tracking your team&apos;s decisions to maintain<br className="hidden sm:inline" /> awareness over time.
               </p>
 
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.05] px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:bg-white/[0.1] hover:text-white active:scale-[0.97]"
+                className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all hover:bg-[var(--bg-card-hover)] hover:text-foreground active:scale-[0.97]"
               >
                 <Plus size={16} />
                 Create your first decision
@@ -501,7 +501,7 @@ function Dashboard() {
                 </p>
                 <button
                   onClick={() => { setStateFilter('all'); setSearchQuery('') }}
-                  className="mt-6 text-sm text-(--text-muted) hover:text-white border border-white/10 px-5 py-2 rounded-xl hover:bg-white/5 transition-colors"
+                  className="mt-6 text-sm text-(--text-muted) hover:text-foreground border border-[var(--border)] px-5 py-2 rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   Clear filters
                 </button>

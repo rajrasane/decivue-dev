@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -32,20 +33,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }}>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#0a0a0a" />
+        <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
       </head>
       <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-dvh`}>
-        <TooltipProvider delayDuration={200}>
-          <SiteHeader />
-          <ErrorBoundary>
-            <div className="flex flex-1 flex-col">
-              {children}
-            </div>
-          </ErrorBoundary>
-          <SiteFooter />
-        </TooltipProvider>
+        <ThemeProvider>
+          <TooltipProvider delayDuration={200}>
+            <SiteHeader />
+            <ErrorBoundary>
+              <div className="flex flex-1 flex-col">
+                {children}
+              </div>
+            </ErrorBoundary>
+            <SiteFooter />
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

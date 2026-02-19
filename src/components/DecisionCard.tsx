@@ -26,11 +26,11 @@ interface DecisionCardProps {
 }
 
 const stateColors = {
-    fresh: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
-    stable: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
-    at_risk: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
-    stale: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
-    invalidated: 'bg-(--bg-secondary) text-(--text-secondary) border-white/5',
+    fresh: 'bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)]',
+    stable: 'bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)]',
+    at_risk: 'bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)]',
+    stale: 'bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)]',
+    invalidated: 'bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)]',
 }
 
 export function DecisionCard({

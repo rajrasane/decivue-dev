@@ -94,19 +94,19 @@ export default function LoginPage() {
 
                 {/* Heading */}
                 <div className="mb-6 text-center">
-                    <h1 className="text-xl font-bold tracking-tight text-white sm:text-2xl">Welcome back</h1>
+                    <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Welcome back</h1>
                     <p className="mt-1.5 text-[13px] text-[var(--text-muted)]">Sign in to continue to your decisions</p>
                 </div>
 
                 {/* Card */}
-                <div className="rounded-2xl border border-white/[0.06] bg-[var(--bg-secondary)] p-5 shadow-2xl sm:p-6">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 shadow-2xl sm:p-6">
 
                     {/* OAuth buttons */}
                     <div className="flex flex-col gap-2.5">
                         <button
                             onClick={handleGoogleLogin}
                             disabled={loading}
-                            className="flex h-10 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm font-medium text-white transition-colors hover:bg-white/[0.08] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex h-10 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--bg-card-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
@@ -138,7 +138,7 @@ export default function LoginPage() {
                         <button
                             onClick={handleMicrosoftLogin}
                             disabled={loading}
-                            className="flex h-10 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm font-medium text-white transition-colors hover:bg-white/[0.08] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex h-10 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--bg-card-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg className="h-[18px] w-[18px]" viewBox="0 0 21 21">
                                 <rect x="1" y="1" width="9" height="9" fill="#F25022" />
@@ -152,7 +152,7 @@ export default function LoginPage() {
 
                     {/* Divider */}
                     <div className="relative my-5">
-                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/[0.06]" /></div>
+                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--border)]" /></div>
                         <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
                             <span className="bg-[var(--bg-secondary)] px-3 text-[var(--text-muted)]">or</span>
                         </div>
@@ -165,7 +165,7 @@ export default function LoginPage() {
                             <input
                                 id="email" type="email" autoComplete="email" placeholder="you@example.com"
                                 value={email} onChange={e => setEmail(e.target.value)} required
-                                className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
+                                className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-sm text-foreground placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--text-muted)] focus:outline-none"
                             />
                         </div>
                         <div>
@@ -174,12 +174,12 @@ export default function LoginPage() {
                                 <input
                                     id="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" placeholder="••••••••"
                                     value={password} onChange={e => setPassword(e.target.value)} required minLength={6}
-                                    className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 pr-9 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
+                                    className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 pr-9 text-sm text-foreground placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--text-muted)] focus:outline-none"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-foreground transition-colors"
                                     tabIndex={-1}
                                 >
                                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -193,7 +193,7 @@ export default function LoginPage() {
 
                         <button
                             type="submit" disabled={loading}
-                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-foreground text-sm font-semibold text-background transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {loading && <Spinner size={16} color="black" />}
                             Sign in
@@ -204,7 +204,7 @@ export default function LoginPage() {
                 {/* Switch */}
                 <p className="mt-5 text-center text-sm text-[var(--text-muted)]">
                     Don&apos;t have an account?{' '}
-                    <Link href="/signup" className="font-medium text-white underline-offset-4 hover:underline">Sign up</Link>
+                    <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">Sign up</Link>
                 </p>
             </div>
         </div>

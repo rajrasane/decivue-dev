@@ -95,13 +95,13 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
     }
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-linear-to-b from-[#1a1a1a] to-[#141414] rounded-2xl w-full max-w-lg
+        <div className="fixed inset-0 bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-lg
                 h-[82vh] sm:h-[85vh] lg:h-[90vh] flex flex-col overflow-hidden
-                border border-white/5 shadow-2xl shadow-black/50">
+                border border-[var(--border)] shadow-2xl">
 
                 {/* Fixed Header */}
-                <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/5 shrink-0">
+                <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-[var(--border)] shrink-0">
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold">New Decision</h2>
                         <p className="text-xs sm:text-sm text-(--text-muted) mt-0.5">Document a decision to track over time</p>
@@ -109,7 +109,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                     <button
                         onClick={onClose}
                         aria-label="Close form"
-                        className="p-2 rounded-lg hover:bg-white/5 text-(--text-muted) hover:text-white transition-colors"
+                        className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] text-(--text-muted) hover:text-[var(--text-primary)] transition-colors"
                     >
                         <X size={20} />
                     </button>
@@ -133,14 +133,14 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                         placeholder="What decision was made?…"
                                         autoComplete="off"
                                         className="w-full px-4 py-3 rounded-xl bg-(--bg-secondary) border border-transparent 
-                                            focus:border-white focus:outline-none focus:ring-0 resize-none text-foreground
+                                            focus:border-[var(--text-muted)] focus:outline-none focus:ring-0 resize-none text-foreground
                                             placeholder:text-(--text-muted)"
                                         rows={3}
                                         required
                                     />
                                 </div>
 
-                                <div className="border-t border-white/[0.05] my-5 -mx-5 sm:-mx-6" />
+                                <div className="border-t border-[var(--border)] my-5 -mx-5 sm:-mx-6" />
 
                                 {/* Confidence slider */}
                                 <div>
@@ -151,7 +151,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                     />
                                 </div>
 
-                                <div className="border-t border-white/[0.05] my-5 -mx-5 sm:-mx-6" />
+                                <div className="border-t border-[var(--border)] my-5 -mx-5 sm:-mx-6" />
 
                                 {/* Risk level */}
                                 <div>
@@ -172,7 +172,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                                             : level === 'medium' ? 'bg-amber-500/90 text-white'
                                                                 : level === 'high' ? 'bg-orange-500/90 text-white'
                                                                     : 'bg-red-500/90 text-white'
-                                                        : 'bg-white/[0.06] text-(--text-secondary) hover:bg-white/[0.1]'
+                                                        : 'bg-[var(--bg-secondary)] text-(--text-secondary) hover:bg-[var(--bg-card-hover)]'
                                                     }
                                                 `}
                                             >
@@ -182,7 +182,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                     </div>
                                 </div>
 
-                                <div className="border-t border-white/[0.05] my-5 -mx-5 sm:-mx-6" />
+                                <div className="border-t border-[var(--border)] my-5 -mx-5 sm:-mx-6" />
 
                                 {/* Assumptions */}
                                 <div>
@@ -198,14 +198,14 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                                     onChange={(e) => updateAssumption(index, e.target.value)}
                                                     placeholder={`Assumption ${index + 1}`}
                                                     className="flex-1 px-4 py-2 rounded-lg bg-(--bg-secondary) border border-transparent 
-                                                        focus:border-white focus:outline-none text-foreground
+                                                        focus:border-[var(--text-muted)] focus:outline-none text-foreground
                                                         placeholder:text-(--text-muted)"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => removeAssumption(index)}
                                                     aria-label={`Remove assumption ${index + 1}`}
-                                                    className="p-1.5 rounded-md text-(--text-muted) hover:text-white hover:bg-white/10 transition-colors"
+                                                    className="p-1.5 rounded-md text-(--text-muted) hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-colors"
                                                 >
                                                     <X size={14} />
                                                 </button>
@@ -214,7 +214,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                                         <button
                                             type="button"
                                             onClick={addAssumption}
-                                            className="flex items-center gap-1.5 rounded-lg border border-dashed border-white/[0.1] px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] transition-colors hover:border-white/20 hover:text-white cursor-pointer"
+                                            className="flex items-center gap-1.5 rounded-lg border border-dashed border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
                                         >
                                             <Plus size={14} /> Add assumption
                                         </button>
@@ -233,12 +233,12 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                     </div>
 
                     {/* Fixed Footer */}
-                    <div className="border-t border-white/5 shrink-0 px-5 sm:px-6 py-4">
+                    <div className="border-t border-[var(--border)] shrink-0 px-5 sm:px-6 py-4">
                         <button
                             type="submit"
                             form="create-decision-form"
                             disabled={isSubmitting || !statement.trim()}
-                            className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10
+                            className="w-full py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] border border-[var(--border)]
                                 text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed
                                 flex items-center justify-center gap-2"
                         >

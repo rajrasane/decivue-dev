@@ -99,7 +99,7 @@ export default function DecisionDetailPage() {
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <span className="px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider border bg-(--bg-secondary) text-(--text-secondary) border-white/5 cursor-default">
+                                        <span className="px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider border bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)] cursor-default">
                                             {stateLabels[lifecycleState]}
                                         </span>
                                     </TooltipTrigger>
@@ -126,7 +126,7 @@ export default function DecisionDetailPage() {
                                             onClick={reaffirm}
                                             disabled={isReaffirming || daysSinceReview === 0}
                                             aria-label="Reaffirm decision"
-                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-foreground text-background hover:bg-white/90 transition-colors disabled:opacity-50 font-medium text-xs md:text-base"
+                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-foreground text-background hover:opacity-90 transition-colors disabled:opacity-50 font-medium text-xs md:text-base"
                                         >
                                             {isReaffirming ? <Spinner size={16} color="var(--bg-primary)" /> : <CheckCircle size={16} aria-hidden="true" />}
                                             Reaffirm
