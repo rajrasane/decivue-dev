@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAuth } from '@/components/AuthProvider'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function SiteHeader() {
     const { user, isLoading } = useAuth()
-    const loaded = !isLoading
     const supabase = createClient()
     const pathname = usePathname()
 
@@ -82,53 +82,51 @@ export function SiteHeader() {
                 <div className="flex items-center gap-2 sm:gap-3">
                     <ThemeToggle />
 
-                    {loaded && (
+                    {isLoading ? (
+                        <Skeleton className="h-8 w-8 sm:h-9 sm:w-9 rounded-full" />
+                    ) : user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="relative flex items-center rounded-full outline-none! focus-visible:ring-0 cursor-pointer">
+                                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border border-[var(--border)] transition-all hover:border-[var(--text-muted)]">
+                                        <AvatarImage src={avatarUrl} alt={displayName} referrerPolicy="no-referrer" />
+                                        <AvatarFallback className="text-[11px] sm:text-xs">{initials}</AvatarFallback>
+                                    </Avatar>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel className="font-normal">
+                                    <div className="flex flex-col gap-0.5">
+                                        <p className="text-sm font-medium text-[var(--text-primary)]/90">{displayName}</p>
+                                        <p className="text-xs text-[var(--text-muted)] truncate">{email}</p>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={handleSignOut}
+                                    className="text-[var(--danger)] focus:text-[var(--danger)] focus:bg-red-500/10"
+                                >
+                                    <LogOut size={14} />
+                                    Sign out
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : !isAuthPage ? (
                         <>
-                            {user ? (
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <button className="relative flex items-center rounded-full outline-none! focus-visible:ring-0 cursor-pointer">
-                                            <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border border-[var(--border)] transition-all hover:border-[var(--text-muted)]">
-                                                <AvatarImage src={avatarUrl} alt={displayName} referrerPolicy="no-referrer" />
-                                                <AvatarFallback className="text-[11px] sm:text-xs">{initials}</AvatarFallback>
-                                            </Avatar>
-                                        </button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-56">
-                                        <DropdownMenuLabel className="font-normal">
-                                            <div className="flex flex-col gap-0.5">
-                                                <p className="text-sm font-medium text-[var(--text-primary)]/90">{displayName}</p>
-                                                <p className="text-xs text-[var(--text-muted)] truncate">{email}</p>
-                                            </div>
-                                        </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem
-                                            onClick={handleSignOut}
-                                            className="text-[var(--danger)] focus:text-[var(--danger)] focus:bg-red-500/10"
-                                        >
-                                            <LogOut size={14} />
-                                            Sign out
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            ) : !isAuthPage ? (
-                                <>
-                                    <Link
-                                        href="/login"
-                                        className="px-3 py-1.5 text-xs sm:text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
-                                    >
-                                        Sign in
-                                    </Link>
-                                    <Link
-                                        href="/signup"
-                                        className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-xs sm:text-sm font-semibold text-background transition-colors hover:opacity-90"
-                                    >
-                                        Sign up
-                                    </Link>
-                                </>
-                            ) : null}
+                            <Link
+                                href="/login"
+                                className="px-3 py-1.5 text-xs sm:text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+                            >
+                                Sign in
+                            </Link>
+                            <Link
+                                href="/signup"
+                                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-xs sm:text-sm font-semibold text-background transition-colors hover:opacity-90"
+                            >
+                                Sign up
+                            </Link>
                         </>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </header>

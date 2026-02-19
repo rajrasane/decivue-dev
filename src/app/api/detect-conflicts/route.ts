@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimit } from '@/lib/rate-limit'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+
+// ─── Input Validation Schema ───────────────────────────────
+const conflictDetectionSchema = z.object({
+    newDecisionStatement: z.string().trim().min(1, 'Decision statement is required').max(2000, 'Decision statement too long'),
+    newDecisionLogic: z.array(z.string()).optional().default([]),
+})
 
 export async function POST(request: NextRequest) {
     try {
@@ -29,16 +36,12 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        const body = await request.json()
-        const { newDecisionStatement, newDecisionLogic } = body
-
-        // Input validation
-        if (typeof newDecisionStatement !== 'string' || newDecisionStatement.trim().length === 0) {
-            return NextResponse.json({ error: 'Invalid decision statement' }, { status: 400 })
+        // Validate input with Zod
+        const parseResult = conflictDetectionSchema.safeParse(await request.json())
+        if (!parseResult.success) {
+            return NextResponse.json({ error: parseResult.error.issues[0]?.message ?? 'Invalid input' }, { status: 400 })
         }
-        if (newDecisionStatement.length > 2000) {
-            return NextResponse.json({ error: 'Decision statement too long' }, { status: 400 })
-        }
+        const { newDecisionStatement, newDecisionLogic } = parseResult.data
 
         if (!process.env.GEMINI_API_KEY) {
             console.warn('GEMINI_API_KEY not set, skipping conflict detection')
@@ -69,7 +72,7 @@ export async function POST(request: NextRequest) {
 
 NEW DECISION:
 Statement: "${newDecisionStatement}"
-Assumptions: ${Array.isArray(newDecisionLogic) ? newDecisionLogic.join(', ') : 'none'}
+Assumptions: ${newDecisionLogic.length > 0 ? newDecisionLogic.join(', ') : 'none'}
 
 EXISTING DECISIONS:
 ${existingDecisionsText}
