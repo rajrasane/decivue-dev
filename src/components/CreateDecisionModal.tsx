@@ -239,7 +239,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                             form="create-decision-form"
                             disabled={isSubmitting || !statement.trim()}
                             className="w-full py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] border border-[var(--border)]
-                                text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed
+                                text-background font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed
                                 flex items-center justify-center gap-2"
                         >
                             {isSubmitting ? (
