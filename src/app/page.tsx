@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, useMemo, useCallback, useDeferredValue } from 'react'
+import { useEffect, useState, useMemo, useDeferredValue } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { Plus, RefreshCw, Search, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
 import {
@@ -10,13 +11,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { createClient } from '@/lib/supabase/client'
 import { Spinner } from '@/components/Spinner'
 import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
 import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
 import { LifecycleState, stateLabels } from '@/lib/decision-constants'
-import type { User } from '@supabase/supabase-js'
+import { useAuth } from '@/components/AuthProvider'
+import { useDashboard } from '@/hooks/useDashboard'
+import { decisionKeys } from '@/hooks/useDecision'
 
 const CreateDecisionModal = dynamic(
   () => import('@/components/CreateDecisionModal').then(m => ({ default: m.CreateDecisionModal })),
@@ -252,16 +254,16 @@ function LandingPage() {
 /* ──────────────────────────────────────────── */
 
 function Dashboard() {
-  const [decisions, setDecisions] = useState<Decision[]>([])
-  const [signalsCounts, setSignalsCounts] = useState<Record<string, number>>({})
-  const [conflictsCounts, setConflictsCounts] = useState<Record<string, number>>({})
-  const [isLoading, setIsLoading] = useState(true)
+  const { data, isLoading } = useDashboard()
+  const decisions = data?.decisions ?? []
+  const signalsCounts = data?.signalsCounts ?? {}
+  const conflictsCounts = data?.conflictsCounts ?? {}
+  const queryClient = useQueryClient()
+
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const deferredSearch = useDeferredValue(searchQuery)
   const [stateFilter, setStateFilter] = useState<LifecycleState | 'all'>('all')
-
-  const supabase = createClient()
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -272,43 +274,6 @@ function Dashboard() {
     }
     return () => document.body.classList.remove('modal-open')
   }, [showCreateForm])
-
-  const loadDecisions = useCallback(async () => {
-    setIsLoading(true)
-
-    // Fetch all data in parallel for better performance
-    const [decisionsResult, signalsResult, conflictsResult] = await Promise.all([
-      supabase.from('decisions').select('*').order('created_at', { ascending: false }),
-      supabase.from('decision_signals').select('decision_id'),
-      supabase.from('decision_conflicts').select('decision_a, decision_b'),
-    ])
-
-    if (decisionsResult.data) {
-      setDecisions(decisionsResult.data)
-    }
-
-    // Build signals count map
-    const signalsMap: Record<string, number> = {}
-    signalsResult.data?.forEach((s: { decision_id: string }) => {
-      signalsMap[s.decision_id] = (signalsMap[s.decision_id] || 0) + 1
-    })
-    setSignalsCounts(signalsMap)
-
-    // Build conflicts count map
-    const conflictsMap: Record<string, number> = {}
-    conflictsResult.data?.forEach((c: { decision_a: string; decision_b: string }) => {
-      conflictsMap[c.decision_a] = (conflictsMap[c.decision_a] || 0) + 1
-      conflictsMap[c.decision_b] = (conflictsMap[c.decision_b] || 0) + 1
-    })
-    setConflictsCounts(conflictsMap)
-
-    setIsLoading(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    loadDecisions()
-  }, [loadDecisions])
 
   // Memoized sorted and filtered decisions
   const sortedDecisions = useMemo(() => {
@@ -387,7 +352,7 @@ function Dashboard() {
                 <span className="hidden sm:inline">New Decision</span>
               </button>
               <button
-                onClick={loadDecisions}
+                onClick={() => queryClient.invalidateQueries({ queryKey: decisionKeys.all })}
                 aria-label="Refresh decisions"
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
                 hover:bg-(--bg-secondary) transition-colors cursor-pointer"
@@ -518,7 +483,7 @@ function Dashboard() {
           onClose={() => setShowCreateForm(false)}
           onSuccess={() => {
             setShowCreateForm(false)
-            loadDecisions()
+            queryClient.invalidateQueries({ queryKey: decisionKeys.all })
           }}
         />
       )}
@@ -531,18 +496,7 @@ function Dashboard() {
 /* ──────────────────────────────────────────── */
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null)
-  const [checking, setChecking] = useState(true)
-  const supabase = createClient()
-
-  useEffect(() => {
-    const check = async () => {
-      const { data } = await supabase.auth.getUser()
-      setUser(data.user)
-      setChecking(false)
-    }
-    check()
-  }, [supabase.auth])
+  const { user, isLoading: checking } = useAuth()
 
   if (checking) {
     return (

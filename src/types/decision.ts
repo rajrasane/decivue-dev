@@ -37,8 +37,8 @@ export type DecisionHistory = {
     id: string
     decision_id: string
     action_type: 'created' | 'reaffirmed' | 'edited' | 'state_changed' | 'signal_added' | 'signal_dismissed' | 'conflict_resolved'
-    previous_state: Partial<Decision> | null
-    new_state: Partial<Decision> | null
+    previous_state: Partial<Decision> | Record<string, unknown> | null
+    new_state: Partial<Decision> | Record<string, unknown> | null
     change_summary: string
     created_at: string
 }

@@ -1,11 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { LogOut } from 'lucide-react'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
     DropdownMenu,
@@ -16,21 +14,13 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { useAuth } from '@/components/AuthProvider'
 
 export function SiteHeader() {
-    const [user, setUser] = useState<SupabaseUser | null>(null)
-    const [loaded, setLoaded] = useState(false)
+    const { user, isLoading } = useAuth()
+    const loaded = !isLoading
     const supabase = createClient()
     const pathname = usePathname()
-
-    useEffect(() => {
-        const load = async () => {
-            const { data } = await supabase.auth.getUser()
-            setUser(data.user)
-            setLoaded(true)
-        }
-        load()
-    }, [supabase.auth])
 
     const handleSignOut = async () => {
         await supabase.auth.signOut()

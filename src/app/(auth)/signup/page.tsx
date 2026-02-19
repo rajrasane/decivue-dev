@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { Spinner } from '@/components/Spinner'
 import Link from 'next/link'
+import { useAuth } from '@/components/AuthProvider'
 
 export default function SignupPage() {
     const [fullName, setFullName] = useState('')
@@ -17,22 +18,16 @@ export default function SignupPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
-    const [checking, setChecking] = useState(true)
+    const { user, isLoading: checking } = useAuth()
     const router = useRouter()
     const supabase = createClient()
 
     // Redirect if already logged in
     useEffect(() => {
-        const check = async () => {
-            const { data } = await supabase.auth.getSession()
-            if (data.session) {
-                router.replace('/')
-            } else {
-                setChecking(false)
-            }
+        if (!checking && user) {
+            router.replace('/')
         }
-        check()
-    }, [supabase, router])
+    }, [checking, user, router])
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault()

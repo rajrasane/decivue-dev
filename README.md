@@ -54,9 +54,10 @@ These penalties persist even after reaffirming — you must dismiss signals or r
 
 - Next.js 16 (App Router)
 - TypeScript
-- Supabase (PostgreSQL)
+- Supabase (PostgreSQL + Auth)
+- TanStack React Query (async state management)
 - Tailwind CSS
-- Google Gemini AI (for conflict detection)
+- Google Gemini AI (conflict detection)
 
 ## Setup
 
@@ -104,35 +105,32 @@ Open http://localhost:3000
 ```
 src/
 ├── app/
-│   ├── page.tsx                    # Dashboard
+│   ├── page.tsx                    # Landing + Dashboard
 │   ├── decision/[id]/page.tsx      # Decision detail
-│   └── api/detect-conflicts/       # Gemini AI endpoint
+│   ├── (auth)/login/page.tsx       # Login page
+│   ├── (auth)/signup/page.tsx      # Signup page
+│   ├── auth/callback/route.ts      # OAuth callback
+│   └── api/detect-conflicts/       # Gemini AI endpoint (rate-limited)
 ├── components/
 │   ├── decision/                   # Detail page components
-│   │   ├── ConflictsSection.tsx
-│   │   ├── DangerZone.tsx
-│   │   ├── DecisionDetails.tsx
-│   │   ├── InfoCards.tsx
-│   │   └── SignalsSection.tsx
-│   ├── ui/tooltip.tsx              # UI primitives
-│   ├── AddSignalModal.tsx
-│   ├── ConfidenceGauge.tsx
-│   ├── CreateDecisionForm.tsx
+│   ├── ui/                         # UI primitives (tooltip, avatar, etc.)
+│   ├── AuthProvider.tsx            # Shared auth context (single getUser call)
+│   ├── QueryProvider.tsx           # React Query provider + config
+│   ├── ThemeProvider.tsx           # Dark/light theme
+│   ├── CreateDecisionModal.tsx
 │   ├── DecisionCard.tsx
-│   ├── DeleteConfirmModal.tsx
-│   ├── DismissSignalModal.tsx
-│   ├── EditDecisionModal.tsx
 │   ├── ErrorBoundary.tsx
-│   ├── HistoryTimeline.tsx
-│   ├── SiteFooter.tsx
-│   └── SiteHeader.tsx
+│   ├── SiteHeader.tsx
+│   └── SiteFooter.tsx
 ├── hooks/
-│   └── useDecision.ts              # Data fetching
+│   ├── useDashboard.ts             # Dashboard data (React Query)
+│   └── useDecision.ts              # Decision detail data + mutations
 ├── lib/
 │   ├── decision-intelligence.ts    # Core algorithms
+│   ├── rate-limit.ts               # API rate limiter
 │   └── supabase/                   # DB clients
 └── types/
-    └── decision.ts                 # TypeScript
+    └── decision.ts                 # TypeScript types
 ```
 
 ## How It Works
@@ -165,9 +163,10 @@ return 'at_risk'
 
 ## Notes
 
-- **No authentication** — By design, Decivue focuses on core decision intelligence rather than access control. Authentication can be added later as needed.
-- **Minimal UI** — The target users are non-technical teams (managers, leads, planners). The interface is intentionally clean and jargon-free so anyone can understand decision health at a glance.
-- **Fully responsive** — Works on desktop, tablet, and mobile. Decision-makers can check on their decisions from anywhere.
+- **Supabase Auth** — Email/password and Google OAuth, with middleware-based session refresh and shared auth context.
+- **React Query** — All data fetching uses TanStack Query for automatic deduplication, caching, and optimistic mutations.
+- **Rate-limited AI** — The Gemini conflict detection endpoint is rate-limited (10 requests/min/user) to control costs.
+- **Fully responsive** — Works on desktop, tablet, and mobile.
 
 ## Screenshots
 

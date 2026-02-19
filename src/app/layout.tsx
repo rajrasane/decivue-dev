@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/components/AuthProvider";
+import { QueryProvider } from "@/components/QueryProvider";
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -40,15 +42,19 @@ export default function RootLayout({
       </head>
       <body className={`${sans.variable} ${mono.variable} ${spaceGrotesk.variable} antialiased flex flex-col min-h-dvh`}>
         <ThemeProvider>
-          <TooltipProvider delayDuration={200}>
-            <SiteHeader />
-            <ErrorBoundary>
-              <div className="flex flex-1 flex-col">
-                {children}
-              </div>
-            </ErrorBoundary>
-            <SiteFooter />
-          </TooltipProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <TooltipProvider delayDuration={200}>
+                <SiteHeader />
+                <ErrorBoundary>
+                  <div className="flex flex-1 flex-col">
+                    {children}
+                  </div>
+                </ErrorBoundary>
+                <SiteFooter />
+              </TooltipProvider>
+            </AuthProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

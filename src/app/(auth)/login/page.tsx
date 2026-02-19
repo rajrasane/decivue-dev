@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { Spinner } from '@/components/Spinner'
 import Link from 'next/link'
+import { useAuth } from '@/components/AuthProvider'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -13,22 +14,16 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [checking, setChecking] = useState(true)
+    const { user, isLoading: checking } = useAuth()
     const router = useRouter()
     const supabase = createClient()
 
     // Redirect if already logged in
     useEffect(() => {
-        const check = async () => {
-            const { data } = await supabase.auth.getSession()
-            if (data.session) {
-                router.replace('/')
-            } else {
-                setChecking(false)
-            }
+        if (!checking && user) {
+            router.replace('/')
         }
-        check()
-    }, [supabase, router])
+    }, [checking, user, router])
 
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault()
