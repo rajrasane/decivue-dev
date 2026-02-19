@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { Plus, RefreshCw, Search, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
+import { Plus, RefreshCw, Search, X, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
@@ -254,7 +254,7 @@ function LandingPage() {
 /* ──────────────────────────────────────────── */
 
 function Dashboard() {
-  const { data, isLoading } = useDashboard()
+  const { data, isLoading, refetch, isFetching } = useDashboard()
   const decisions = data?.decisions ?? []
   const signalsCounts = data?.signalsCounts ?? {}
   const conflictsCounts = data?.conflictsCounts ?? {}
@@ -352,12 +352,12 @@ function Dashboard() {
                 <span className="hidden sm:inline">New Decision</span>
               </button>
               <button
-                onClick={() => queryClient.invalidateQueries({ queryKey: decisionKeys.all })}
+                onClick={() => refetch()}
                 aria-label="Refresh decisions"
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
                 hover:bg-(--bg-secondary) transition-colors cursor-pointer"
               >
-                <RefreshCw size={16} />
+                <RefreshCw size={16} className={isFetching ? 'animate-spin' : ''} />
                 <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
@@ -373,9 +373,18 @@ function Dashboard() {
                   placeholder="Search decisions…"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-(--bg-secondary) border border-transparent text-sm text-foreground 
-                  placeholder:text-(--text-muted) focus:outline-none"
+                  className={`w-full pl-10 ${searchQuery ? 'pr-10' : 'pr-4'} py-2.5 rounded-xl bg-(--bg-secondary) border border-transparent text-sm text-foreground 
+                  placeholder:text-(--text-muted) focus:outline-none`}
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    aria-label="Clear search"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
               </div>
 
               <div className="relative">
