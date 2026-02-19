@@ -15,8 +15,8 @@
   --overlay: rgba(0, 0, 0, 0.5);
 
   /* State colors — lighter pastels for light backgrounds */
-  --fresh: #4ade80;
-  --stable: #fbbf24;
+  --fresh: #17e864;
+  --stable: #f6cd67;
   --at-risk: #f87171;
   --stale: #9ca3af;
   --invalidated: #6b7280;
@@ -25,9 +25,9 @@
   --signal: #d97706;
   --danger: #dc2626;
 
-  /* Accent */
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
+  /* Accent — dark on light to match the site's monochrome aesthetic */
+  --accent: #1a1a2e;
+  --accent-hover: #2d2d44;
 
   /* Gauge gradients */
   --gauge-high: #4ade80;
