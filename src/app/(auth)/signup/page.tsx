@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Eye, EyeOff } from 'lucide-react'
+import { Spinner } from '@/components/Spinner'
 import Link from 'next/link'
 
 export default function SignupPage() {
@@ -15,7 +17,22 @@ export default function SignupPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
+    const [checking, setChecking] = useState(true)
+    const router = useRouter()
     const supabase = createClient()
+
+    // Redirect if already logged in
+    useEffect(() => {
+        const check = async () => {
+            const { data } = await supabase.auth.getSession()
+            if (data.session) {
+                router.replace('/')
+            } else {
+                setChecking(false)
+            }
+        }
+        check()
+    }, [supabase, router])
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -71,6 +88,14 @@ export default function SignupPage() {
             setError(err instanceof Error ? err.message : 'An unexpected error occurred')
             setLoading(false)
         }
+    }
+
+    if (checking) {
+        return (
+            <div className="flex flex-1 items-center justify-center">
+                <Spinner size={28} color="rgba(255,255,255,0.4)" />
+            </div>
+        )
     }
 
     if (success) {
@@ -168,7 +193,7 @@ export default function SignupPage() {
                         <div>
                             <label htmlFor="fullName" className="mb-1 block text-xs font-medium text-[var(--text-secondary)]">Full name</label>
                             <input
-                                id="fullName" type="text" autoComplete="name" placeholder="Raj Rasane"
+                                id="fullName" type="text" autoComplete="name" placeholder="e.g Rahul Kumar"
                                 value={fullName} onChange={e => setFullName(e.target.value)} required
                                 className="h-9 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm text-white placeholder:text-white/20 transition-colors focus:border-white/20 focus:outline-none"
                             />
@@ -232,7 +257,7 @@ export default function SignupPage() {
                             type="submit" disabled={loading}
                             className="flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                            {loading && <Spinner size={16} color="black" />}
                             Create account
                         </button>
                     </form>

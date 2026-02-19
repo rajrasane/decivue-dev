@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
+import { Spinner } from '@/components/Spinner'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -12,8 +13,22 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [checking, setChecking] = useState(true)
     const router = useRouter()
     const supabase = createClient()
+
+    // Redirect if already logged in
+    useEffect(() => {
+        const check = async () => {
+            const { data } = await supabase.auth.getSession()
+            if (data.session) {
+                router.replace('/')
+            } else {
+                setChecking(false)
+            }
+        }
+        check()
+    }, [supabase, router])
 
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -63,6 +78,14 @@ export default function LoginPage() {
             setError(err instanceof Error ? err.message : 'An unexpected error occurred')
             setLoading(false)
         }
+    }
+
+    if (checking) {
+        return (
+            <div className="flex flex-1 items-center justify-center">
+                <Spinner size={28} color="rgba(255,255,255,0.4)" />
+            </div>
+        )
     }
 
     return (
@@ -172,7 +195,7 @@ export default function LoginPage() {
                             type="submit" disabled={loading}
                             className="flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                            {loading && <Spinner size={16} color="black" />}
                             Sign in
                         </button>
                     </form>

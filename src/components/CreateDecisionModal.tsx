@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Plus, Loader2 } from 'lucide-react'
+import { X, Plus } from 'lucide-react'
+import { Spinner } from '@/components/Spinner'
 import { createClient } from '@/lib/supabase/client'
 import { ConfidenceSlider } from '@/components/ConfidenceSlider'
 
@@ -243,7 +244,7 @@ export function CreateDecisionModal({ onClose, onSuccess }: CreateDecisionModalP
                         >
                             {isSubmitting ? (
                                 <>
-                                    <Loader2 size={18} className="animate-spin" />
+                                    <Spinner size={18} color="black" />
                                     Checking for conflicts…
                                 </>
                             ) : (

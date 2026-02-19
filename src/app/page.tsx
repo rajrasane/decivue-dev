@@ -30,75 +30,216 @@ const CreateDecisionModal = dynamic(
 function LandingPage() {
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Subtle gradient orb */}
-        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-white/[0.02] blur-[120px]" />
+      {/* ═══════════════════════ HERO ═══════════════════════ */}
+      <section className="relative overflow-hidden min-h-[85vh] flex items-center justify-center">
+        {/* Animated gradient mesh orbs */}
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className="absolute top-[-10%] left-[15%] h-[500px] w-[500px] rounded-full bg-blue-500/[0.07] blur-[100px]"
+            style={{ animation: 'gradient-shift 12s ease-in-out infinite' }}
+          />
+          <div
+            className="absolute bottom-[-5%] right-[10%] h-[400px] w-[400px] rounded-full bg-purple-500/[0.05] blur-[120px]"
+            style={{ animation: 'gradient-shift 15s ease-in-out infinite reverse' }}
+          />
+          <div
+            className="absolute top-[30%] right-[30%] h-[300px] w-[300px] rounded-full bg-cyan-400/[0.04] blur-[100px]"
+            style={{ animation: 'gradient-shift 10s ease-in-out infinite 3s' }}
+          />
+        </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-            <Zap size={12} className="text-[var(--accent)]" />
+        {/* Subtle grid pattern overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        <div className="relative max-w-4xl mx-auto px-4 md:px-6 text-center">
+          {/* Badge */}
+          <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-5 py-2 text-xs font-medium text-[var(--text-secondary)] backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+            </span>
             Decision Intelligence Platform
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
+          {/* Headline — staggered */}
+          <h1 className="animate-fade-in-up animation-delay-100 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08]">
             Track decisions.
-            <br />
-            <span className="text-[var(--text-secondary)]">Detect drift.</span>
+          </h1>
+          <h1 className="animate-fade-in-up animation-delay-200 mt-1 sm:mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08]">
+            <span className="bg-gradient-to-r from-white/60 via-white/40 to-white/20 bg-clip-text text-transparent">
+              Detect drift.
+            </span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-lg text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
-            Maintain awareness over your team&apos;s decisions. Know when confidence decays,
-            signals conflict, or a decision needs revisiting.
+          {/* Subtitle */}
+          <p className="animate-fade-in-up animation-delay-300 mx-auto mt-6 sm:mt-8 max-w-xl text-base sm:text-lg text-[var(--text-muted)] leading-relaxed">
+            Maintain awareness over your team&apos;s decisions. Know when confidence
+            decays, signals conflict, or a decision needs revisiting.
           </p>
 
-          <div className="mt-8 flex items-center justify-center gap-3 sm:gap-4">
+          {/* CTA buttons */}
+          <div className="animate-fade-in-up animation-delay-400 mt-10 flex items-center justify-center gap-4">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold text-black transition-all hover:bg-white/90 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)]"
+              className="group relative inline-flex items-center gap-2.5 rounded-xl bg-white px-6 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-black transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02] active:scale-[0.98]"
             >
-              Get started
-              <ArrowRight size={16} />
+              Get started free
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/[0.04] hover:text-white"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.03] px-6 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-medium text-[var(--text-secondary)] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:text-white hover:border-white/[0.15]"
             >
               Sign in
             </Link>
           </div>
         </div>
+
+        {/* Bottom fade to next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--bg-primary)] to-transparent" />
       </section>
 
-      {/* Features */}
-      <section className="border-t border-white/[0.06] bg-[var(--bg-secondary)]/30">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 py-16 sm:py-20">
-          <div className="grid gap-6 sm:grid-cols-3 sm:gap-8">
+      {/* ═══════════════════════ SOCIAL PROOF ═══════════════════════ */}
+      <section className="relative border-t border-white/[0.04] py-10 sm:py-12">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
+          <p className="text-xs sm:text-sm font-medium uppercase tracking-[0.2em] text-[var(--text-muted)]">
+            Built for teams who make critical decisions
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 gap-y-3 text-xs sm:text-sm text-white/25 font-medium">
+            {['Engineering', 'Product', 'Strategy', 'Operations', 'Leadership'].map((word) => (
+              <span key={word} className="transition-colors hover:text-white/50">{word}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════ FEATURES ═══════════════════════ */}
+      <section className="relative py-20 sm:py-28">
+        {/* Background accent */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-blue-500/[0.03] blur-[150px]" />
+
+        <div className="relative max-w-5xl mx-auto px-4 md:px-6">
+          <div className="mb-12 sm:mb-16 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+              Everything you need to stay aware
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-[var(--text-muted)] max-w-lg mx-auto">
+              A complete system to track, monitor, and manage decisions across your team.
+            </p>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
             {[
               {
-                icon: <BarChart3 size={20} />,
+                icon: <BarChart3 size={22} />,
                 title: 'Confidence Tracking',
-                desc: 'Monitor how decision confidence evolves over time with real-time signal analysis.',
+                desc: 'Monitor how decision confidence evolves over time with real-time signal analysis and decay alerts.',
+                color: 'from-emerald-500/20 to-emerald-500/5',
+                borderHover: 'hover:border-emerald-500/20',
               },
               {
-                icon: <Shield size={20} />,
+                icon: <Shield size={22} />,
                 title: 'Conflict Detection',
-                desc: 'Automatically surface when decisions contradict each other across your organization.',
+                desc: 'AI-powered detection surfaces when decisions contradict each other across your organization.',
+                color: 'from-blue-500/20 to-blue-500/5',
+                borderHover: 'hover:border-blue-500/20',
               },
               {
-                icon: <Zap size={20} />,
+                icon: <Zap size={22} />,
                 title: 'Lifecycle States',
-                desc: 'Decisions flow through Fresh → Stable → At Risk → Stale, keeping your team aware.',
+                desc: 'Decisions flow through Fresh → Stable → At Risk → Stale → Invalidated, keeping everyone aware.',
+                color: 'from-amber-500/20 to-amber-500/5',
+                borderHover: 'hover:border-amber-500/20',
               },
             ].map((f, i) => (
-              <div key={i} className="rounded-2xl border border-white/[0.06] bg-[var(--bg-card)] p-5 sm:p-6">
-                <div className="mb-3 inline-flex rounded-lg bg-white/[0.06] p-2.5 text-[var(--text-secondary)]">
+              <div
+                key={i}
+                className={`group relative rounded-2xl border border-white/[0.06] bg-[var(--bg-card)]/80 backdrop-blur-sm p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 ${f.borderHover}`}
+                style={{ animation: `pulse-glow 4s ease-in-out infinite ${i * 1.5}s` }}
+              >
+                {/* Icon with gradient bg */}
+                <div className={`mb-4 inline-flex rounded-xl bg-gradient-to-br ${f.color} p-3 text-white/80`}>
                   {f.icon}
                 </div>
-                <h3 className="mb-1.5 text-sm font-semibold text-white">{f.title}</h3>
-                <p className="text-xs sm:text-sm leading-relaxed text-[var(--text-muted)]">{f.desc}</p>
+                <h3 className="mb-2 text-base font-semibold text-white">{f.title}</h3>
+                <p className="text-sm leading-relaxed text-[var(--text-muted)]">{f.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════ HOW IT WORKS ═══════════════════════ */}
+      <section className="relative border-t border-white/[0.04] py-20 sm:py-28 bg-[var(--bg-secondary)]/20">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="mb-12 sm:mb-16 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+              Three steps to clarity
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-[var(--text-muted)]">
+              From logging to insight — in seconds.
+            </p>
+          </div>
+
+          <div className="relative grid gap-8 sm:grid-cols-3 sm:gap-6">
+            {/* Connector line (desktop only) */}
+            <div className="pointer-events-none absolute top-[52px] left-[16.7%] right-[16.7%] hidden sm:block">
+              <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
+            </div>
+
+            {[
+              { step: '01', title: 'Log a decision', desc: 'Document your decision with confidence level, perceived risk, and key assumptions.' },
+              { step: '02', title: 'Track signals', desc: 'Add supporting or contradicting signals over time. Watch confidence shift in real-time.' },
+              { step: '03', title: 'Stay aware', desc: 'Get notified when decisions drift, conflict with each other, or need revisiting.' },
+            ].map((s, i) => (
+              <div key={i} className="relative text-center sm:text-left">
+                {/* Step number */}
+                <div className="mx-auto sm:mx-0 mb-5 flex h-[64px] w-[64px] items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.03] text-lg font-bold text-white/40 backdrop-blur-sm"
+                  style={{ animation: 'float 6s ease-in-out infinite', animationDelay: `${i * 0.8}s` }}
+                >
+                  {s.step}
+                </div>
+                <h3 className="mb-2 text-base font-semibold text-white">{s.title}</h3>
+                <p className="text-sm leading-relaxed text-[var(--text-muted)] max-w-[280px] mx-auto sm:mx-0">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════ CTA ═══════════════════════ */}
+      <section className="relative py-20 sm:py-28">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
+          <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.02] px-6 py-14 sm:px-12 sm:py-16 text-center backdrop-blur-sm">
+            {/* Background glow */}
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute top-[-50%] left-[20%] h-[300px] w-[300px] rounded-full bg-blue-500/[0.06] blur-[80px]" />
+              <div className="absolute bottom-[-30%] right-[15%] h-[250px] w-[250px] rounded-full bg-purple-500/[0.04] blur-[80px]" />
+            </div>
+
+            <div className="relative">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                Ready to make better decisions?
+              </h2>
+              <p className="mt-4 text-sm sm:text-base text-[var(--text-muted)] max-w-md mx-auto">
+                Start tracking your team&apos;s decisions today. Free to get started, no credit card required.
+              </p>
+              <div className="mt-8">
+                <Link
+                  href="/signup"
+                  className="group inline-flex items-center gap-2.5 rounded-xl bg-white px-7 py-3.5 text-sm sm:text-base font-semibold text-black transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Get started free
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
