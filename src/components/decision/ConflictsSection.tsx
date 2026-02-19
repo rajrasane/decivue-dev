@@ -13,7 +13,7 @@ export function ConflictsSection({ conflicts, onDismiss }: ConflictsSectionProps
 
     return (
         <section className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 sm:p-6" aria-labelledby="conflicts-heading">
-            <h2 id="conflicts-heading" className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2 text-red-400">
+            <h2 id="conflicts-heading" className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2 text-[var(--danger)]">
                 <GitCompare size={18} aria-hidden="true" />
                 Conflicts ({conflicts.length})
             </h2>

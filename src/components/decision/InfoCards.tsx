@@ -9,8 +9,8 @@ interface InfoCardsProps {
 }
 
 export function InfoCards({ daysSinceReview, initialConfidence }: InfoCardsProps) {
-    const reviewColor = daysSinceReview > 30 ? 'text-red-400' : daysSinceReview > 14 ? 'text-amber-400' : 'text-foreground'
-    const iconColor = daysSinceReview > 30 ? 'text-red-400' : daysSinceReview > 14 ? 'text-amber-400' : 'text-(--text-muted)'
+    const reviewColor = daysSinceReview > 30 ? 'text-[var(--danger)]' : daysSinceReview > 14 ? 'text-[var(--signal)]' : 'text-foreground'
+    const iconColor = daysSinceReview > 30 ? 'text-[var(--danger)]' : daysSinceReview > 14 ? 'text-[var(--signal)]' : 'text-(--text-muted)'
 
     return (
         <div className="grid grid-cols-2 gap-4 mb-6">

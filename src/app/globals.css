@@ -14,21 +14,25 @@
   --border: rgba(0, 0, 0, 0.08);
   --overlay: rgba(0, 0, 0, 0.5);
 
-  /* State colors — shared across themes */
-  --fresh: #16a34a;
-  --stable: #d97706;
-  --at-risk: #dc2626;
+  /* State colors — softer for light backgrounds */
+  --fresh: #15803d;
+  --stable: #b45309;
+  --at-risk: #b91c1c;
   --stale: #6b7280;
   --invalidated: #374151;
+
+  /* Signal / warning / danger (metric labels) */
+  --signal: #92400e;
+  --danger: #991b1b;
 
   /* Accent */
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
 
   /* Gauge gradients */
-  --gauge-high: #16a34a;
-  --gauge-medium: #d97706;
-  --gauge-low: #dc2626;
+  --gauge-high: #15803d;
+  --gauge-medium: #b45309;
+  --gauge-low: #b91c1c;
 
   /* Shadows */
   --shadow-color: rgba(0, 0, 0, 0.08);
@@ -48,12 +52,16 @@
   --border: rgba(255, 255, 255, 0.08);
   --overlay: rgba(0, 0, 0, 0.8);
 
-  /* State colors */
+  /* State colors — vibrant for dark backgrounds */
   --fresh: #22c55e;
   --stable: #f59e0b;
   --at-risk: #ef4444;
   --stale: #6b7280;
   --invalidated: #374151;
+
+  /* Signal / warning / danger (metric labels) */
+  --signal: #fbbf24;
+  --danger: #f87171;
 
   /* Accent */
   --accent: #3b82f6;

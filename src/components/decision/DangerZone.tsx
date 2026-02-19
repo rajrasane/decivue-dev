@@ -8,7 +8,7 @@ interface DangerZoneProps {
 export function DangerZone({ isDeleting, onDelete }: DangerZoneProps) {
     return (
         <section className="mt-8" aria-labelledby="danger-heading">
-            <h2 id="danger-heading" className="text-lg font-semibold text-red-400 mb-4">Danger Zone</h2>
+            <h2 id="danger-heading" className="text-lg font-semibold text-[var(--danger)] mb-4">Danger Zone</h2>
             <div className="border border-red-500/30 rounded-xl overflow-hidden">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-(--bg-card) gap-4 sm:gap-0">
                     <div>
@@ -20,7 +20,7 @@ export function DangerZone({ isDeleting, onDelete }: DangerZoneProps) {
                     <button
                         onClick={onDelete}
                         disabled={isDeleting}
-                        className="w-full sm:w-auto px-4 py-2 rounded-lg border border-red-500/50 text-red-400 
+                        className="w-full sm:w-auto px-4 py-2 rounded-lg border border-red-500/50 text-[var(--danger)] 
                             hover:bg-red-500/20 transition-colors text-sm font-medium disabled:opacity-50"
                     >
                         {isDeleting ? 'Deleting…' : 'Delete'}

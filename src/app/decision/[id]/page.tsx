@@ -158,7 +158,7 @@ export default function DecisionDetailPage() {
                                         <button
                                             onClick={() => setShowAddSignal(true)}
                                             aria-label="Add signal"
-                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors font-medium border border-amber-500/10 text-xs md:text-base"
+                                            className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-4 py-2 rounded-xl bg-amber-500/10 text-[var(--signal)] hover:bg-amber-500/20 transition-colors font-medium border border-amber-500/10 text-xs md:text-base"
                                         >
                                             <AlertTriangle size={16} aria-hidden="true" />
                                             Signal

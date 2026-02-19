@@ -14,7 +14,7 @@ export function SignalsSection({ signals, onDismiss }: SignalsSectionProps) {
 
     return (
         <section className="mb-6 bg-amber-500/10 border border-amber-500/30 rounded-xl p-6" aria-labelledby="signals-heading">
-            <h2 id="signals-heading" className="text-lg font-semibold mb-4 flex items-center gap-2 text-amber-400">
+            <h2 id="signals-heading" className="text-lg font-semibold mb-4 flex items-center gap-2 text-[var(--signal)]">
                 <AlertTriangle size={18} aria-hidden="true" />
                 Signals ({signals.length})
             </h2>

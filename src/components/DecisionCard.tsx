@@ -136,7 +136,7 @@ export function DecisionCard({
                         {signalsCount > 0 && (
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <div className="flex items-center gap-1 shrink-0 text-amber-400">
+                                    <div className="flex items-center gap-1 shrink-0 text-[var(--signal)]">
                                         <AlertTriangle size={14} />
                                         {/* On mobile: hide text if conflicts also exist, show otherwise */}
                                         <span className={conflictsCount > 0 ? 'hidden sm:inline' : ''}>
@@ -151,7 +151,7 @@ export function DecisionCard({
                         )}
 
                         {conflictsCount > 0 && (
-                            <div className="flex items-center gap-1 shrink-0 text-red-400">
+                            <div className="flex items-center gap-1 shrink-0 text-[var(--danger)]">
                                 <GitCompare size={14} />
                                 <span>{conflictsCount} conflict{conflictsCount > 1 ? 's' : ''}</span>
                             </div>

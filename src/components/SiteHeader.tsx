@@ -114,7 +114,7 @@ export function SiteHeader() {
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             onClick={handleSignOut}
-                                            className="text-red-400 focus:text-red-300 focus:bg-red-500/10"
+                                            className="text-[var(--danger)] focus:text-[var(--danger)] focus:bg-red-500/10"
                                         >
                                             <LogOut size={14} />
                                             Sign out
