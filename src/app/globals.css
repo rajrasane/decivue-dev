@@ -14,25 +14,25 @@
   --border: rgba(0, 0, 0, 0.08);
   --overlay: rgba(0, 0, 0, 0.5);
 
-  /* State colors — softer for light backgrounds */
-  --fresh: #15803d;
-  --stable: #b45309;
-  --at-risk: #b91c1c;
-  --stale: #6b7280;
-  --invalidated: #374151;
+  /* State colors — lighter pastels for light backgrounds */
+  --fresh: #4ade80;
+  --stable: #fbbf24;
+  --at-risk: #f87171;
+  --stale: #9ca3af;
+  --invalidated: #6b7280;
 
   /* Signal / warning / danger (metric labels) */
-  --signal: #92400e;
-  --danger: #991b1b;
+  --signal: #d97706;
+  --danger: #dc2626;
 
   /* Accent */
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
 
   /* Gauge gradients */
-  --gauge-high: #15803d;
-  --gauge-medium: #b45309;
-  --gauge-low: #b91c1c;
+  --gauge-high: #4ade80;
+  --gauge-medium: #fbbf24;
+  --gauge-low: #f87171;
 
   /* Shadows */
   --shadow-color: rgba(0, 0, 0, 0.08);
