@@ -8,9 +8,7 @@ import { stateLabels, stateDescriptions, getRiskColor } from '@/lib/decision-con
 import { DecisionSignal } from '@/types/decision'
 import { ConfidenceGauge } from '@/components/ConfidenceGauge'
 import { HistoryTimeline } from '@/components/HistoryTimeline'
-import { AddSignalModal } from '@/components/AddSignalModal'
-import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
-import { DismissSignalModal } from '@/components/DismissSignalModal'
+
 import { ConflictsSection, SignalsSection, InfoCards, DecisionDetails, DangerZone } from '@/components/decision'
 import { Spinner } from '@/components/Spinner'
 import { ArrowLeft, CheckCircle, Edit2, AlertTriangle, History } from 'lucide-react'
@@ -18,6 +16,21 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 const EditDecisionModal = dynamic(
     () => import('@/components/EditDecisionModal').then(m => ({ default: m.EditDecisionModal })),
+    { loading: () => null }
+)
+
+const AddSignalModal = dynamic(
+    () => import('@/components/AddSignalModal').then(m => ({ default: m.AddSignalModal })),
+    { loading: () => null }
+)
+
+const DeleteConfirmModal = dynamic(
+    () => import('@/components/DeleteConfirmModal').then(m => ({ default: m.DeleteConfirmModal })),
+    { loading: () => null }
+)
+
+const DismissSignalModal = dynamic(
+    () => import('@/components/DismissSignalModal').then(m => ({ default: m.DismissSignalModal })),
     { loading: () => null }
 )
 

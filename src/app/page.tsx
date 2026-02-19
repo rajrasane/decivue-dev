@@ -29,21 +29,21 @@ const CreateDecisionModal = dynamic(
 
 function LandingPage() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-hidden">
       {/* ═══════════════════════ HERO ═══════════════════════ */}
       <section className="relative overflow-hidden min-h-[85vh] flex items-center justify-center">
         {/* Animated gradient mesh orbs */}
         <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute top-[-10%] left-[15%] h-[500px] w-[500px] rounded-full bg-blue-500/[0.07] blur-[100px]"
+            className="absolute top-[-10%] left-[15%] h-[250px] w-[250px] sm:h-[500px] sm:w-[500px] rounded-full bg-blue-500/[0.07] blur-[100px]"
             style={{ animation: 'gradient-shift 12s ease-in-out infinite' }}
           />
           <div
-            className="absolute bottom-[-5%] right-[10%] h-[400px] w-[400px] rounded-full bg-purple-500/[0.05] blur-[120px]"
+            className="absolute bottom-[-5%] right-[10%] h-[200px] w-[200px] sm:h-[400px] sm:w-[400px] rounded-full bg-purple-500/[0.05] blur-[120px]"
             style={{ animation: 'gradient-shift 15s ease-in-out infinite reverse' }}
           />
           <div
-            className="absolute top-[30%] right-[30%] h-[300px] w-[300px] rounded-full bg-cyan-400/[0.04] blur-[100px]"
+            className="absolute top-[30%] right-[30%] h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] rounded-full bg-cyan-400/[0.04] blur-[100px]"
             style={{ animation: 'gradient-shift 10s ease-in-out infinite 3s' }}
           />
         </div>
@@ -122,7 +122,7 @@ function LandingPage() {
       {/* ═══════════════════════ FEATURES ═══════════════════════ */}
       <section className="relative py-20 sm:py-28">
         {/* Background accent */}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-blue-500/[0.03] blur-[150px]" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-full max-w-[800px] rounded-full bg-blue-500/[0.03] blur-[150px]" />
 
         <div className="relative max-w-5xl mx-auto px-4 md:px-6">
           <div className="mb-12 sm:mb-16 text-center">
@@ -349,167 +349,168 @@ function Dashboard() {
 
   return (
     <div className="bg-background">
-      <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
-        {/* Stats bar */}
-        <div className="flex items-center justify-between mb-4 sm:mb-8">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1 text-foreground">Overview</h2>
-            <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-(--text-muted)">
-              <span>{decisions.length} Decision{decisions.length !== 1 ? 's' : ''}</span>
-              {atRiskCount > 0 && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-red-400 font-medium">
-                      {atRiskCount} Action Needed
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Decisions that are &apos;At Risk&apos; or have active conflicts.</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-background hover:opacity-90 
-                text-sm sm:text-base font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
-            >
-              <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-              <span className="inline sm:hidden">New</span>
-              <span className="hidden sm:inline">New Decision</span>
-            </button>
-            <button
-              onClick={loadDecisions}
-              aria-label="Refresh decisions"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
-                hover:bg-(--bg-secondary) transition-colors cursor-pointer"
-            >
-              <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
-          </div>
+      {isLoading ? (
+        <div className="fixed inset-0 flex items-center justify-center z-10">
+          <Spinner size={32} />
         </div>
-
-        {/* Search & Filter */}
-        {decisions.length > 0 && (
-          <div className="mb-4 sm:mb-6 space-y-3">
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
-              <input
-                type="text"
-                placeholder="Search decisions…"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-(--bg-secondary) border border-transparent text-sm text-foreground 
-                  placeholder:text-(--text-muted) focus:outline-none"
-              />
+      ) : (
+        <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
+          {/* Stats bar */}
+          <div className="flex items-center justify-between mb-4 sm:mb-8">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1 text-foreground">Overview</h2>
+              <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-(--text-muted)">
+                <span>{decisions.length} Decision{decisions.length !== 1 ? 's' : ''}</span>
+                {atRiskCount > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-red-400 font-medium">
+                        {atRiskCount} Action Needed
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Decisions that are &apos;At Risk&apos; or have active conflicts.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
             </div>
 
-            <div className="relative">
-              <div className="pill-scroll pb-1 pr-2">
-                {(['all', 'fresh', 'stable', 'at_risk', 'stale', 'invalidated'] as const).map(state => (
-                  <button
-                    key={state}
-                    onClick={() => setStateFilter(state)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:shrink
-                      ${stateFilter === state
-                        ? 'bg-foreground text-background'
-                        : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover) border border-[var(--border)]'
-                      }`}
-                  >
-                    {state === 'all' ? 'All' : stateLabels[state]}
-                  </button>
-                ))}
-              </div>
-              <div className="absolute right-0 top-0 bottom-1 w-4 bg-gradient-to-l from-(--bg-primary) to-transparent pointer-events-none sm:hidden" />
-            </div>
-          </div>
-        )}
-
-        {/* Decisions grid */}
-        {isLoading ? (
-          <div className="h-[calc(100dvh-16rem)] flex items-center justify-center">
-            <Spinner size={32} />
-          </div>
-        ) : decisions.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center py-16">
-            <div className="flex flex-col items-center text-center max-w-sm">
-              {/* Subtle animated ring */}
-              <div className="relative mb-6">
-                <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-foreground/[0.04] to-foreground/[0.01] blur-xl" />
-                <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/50">
-                  <svg viewBox="0 0 40 40" className="w-8 h-8 text-[var(--text-muted)]" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <circle cx="22" cy="12" r="2.5" fill="currentColor" />
-                    <circle cx="22" cy="28" r="2.5" fill="currentColor" />
-                    <circle cx="14" cy="20" r="2" fill="currentColor" />
-                  </svg>
-                </div>
-              </div>
-
-              <h2 className="text-lg font-semibold text-foreground/90 tracking-tight">No decisions yet</h2>
-              <p className="mt-1.5 text-sm text-[var(--text-muted)] leading-relaxed">
-                Start tracking your team&apos;s decisions to maintain<br className="hidden sm:inline" /> awareness over time.
-              </p>
-
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all hover:bg-[var(--bg-card-hover)] hover:text-foreground active:scale-[0.97]"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-foreground text-background hover:opacity-90 
+                text-sm sm:text-base font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
               >
-                <Plus size={16} />
-                Create your first decision
+                <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span className="inline sm:hidden">New</span>
+                <span className="hidden sm:inline">New Decision</span>
+              </button>
+              <button
+                onClick={loadDecisions}
+                aria-label="Refresh decisions"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
+                hover:bg-(--bg-secondary) transition-colors cursor-pointer"
+              >
+                <RefreshCw size={16} />
+                <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col gap-4 md:gap-6">
-            {sortedDecisions.length > 0 ? (
-              sortedDecisions.map(decision => (
-                <DecisionCard
-                  key={`${decision.id}-${stateFilter}`}
-                  decision={decision}
-                  signalsCount={signalsCounts[decision.id] || 0}
-                  conflictsCount={conflictsCounts[decision.id] || 0}
+
+          {/* Search & Filter */}
+          {decisions.length > 0 && (
+            <div className="mb-4 sm:mb-6 space-y-3">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
+                <input
+                  type="text"
+                  placeholder="Search decisions…"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-(--bg-secondary) border border-transparent text-sm text-foreground 
+                  placeholder:text-(--text-muted) focus:outline-none"
                 />
-              ))
-            ) : (
-              <div className="py-14 sm:py-20 flex flex-col items-center">
-                <svg viewBox="0 0 40 40" className="w-12 h-12 sm:w-14 sm:h-14 mb-5 opacity-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="20" cy="20" r="18" stroke="var(--text-muted)" strokeWidth="1.5" fill="none" />
-                  <path d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  <circle cx="22" cy="12" r="3" fill="var(--text-muted)" />
-                  <circle cx="22" cy="28" r="3" fill="var(--text-muted)" />
-                  <circle cx="14" cy="20" r="2.5" fill="var(--text-muted)" />
-                </svg>
-                <h3 className="text-base sm:text-lg font-semibold text-(--text-secondary) mb-1.5">No matching decisions</h3>
-                <p className="text-(--text-muted) text-sm sm:text-base text-center max-w-xs leading-relaxed">
-                  {stateFilter !== 'all' && deferredSearch
-                    ? `No ${stateLabels[stateFilter]} decisions matching "${deferredSearch}"`
-                    : stateFilter !== 'all'
-                      ? `No decisions in the ${stateLabels[stateFilter]} state right now`
-                      : `No decisions matching "${deferredSearch}"`
-                  }
+              </div>
+
+              <div className="relative">
+                <div className="pill-scroll pb-1 pr-2">
+                  {(['all', 'fresh', 'stable', 'at_risk', 'stale', 'invalidated'] as const).map(state => (
+                    <button
+                      key={state}
+                      onClick={() => setStateFilter(state)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:shrink
+                      ${stateFilter === state
+                          ? 'bg-foreground text-background'
+                          : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-card-hover) border border-[var(--border)]'
+                        }`}
+                    >
+                      {state === 'all' ? 'All' : stateLabels[state]}
+                    </button>
+                  ))}
+                </div>
+                <div className="absolute right-0 top-0 bottom-1 w-4 bg-gradient-to-l from-(--bg-primary) to-transparent pointer-events-none sm:hidden" />
+              </div>
+            </div>
+          )}
+
+          {decisions.length === 0 ? (
+            <div className="flex flex-1 items-center justify-center py-16">
+              <div className="flex flex-col items-center text-center max-w-sm">
+                {/* Subtle animated ring */}
+                <div className="relative mb-6">
+                  <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-foreground/[0.04] to-foreground/[0.01] blur-xl" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/50">
+                    <svg viewBox="0 0 40 40" className="w-8 h-8 text-[var(--text-muted)]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <circle cx="22" cy="12" r="2.5" fill="currentColor" />
+                      <circle cx="22" cy="28" r="2.5" fill="currentColor" />
+                      <circle cx="14" cy="20" r="2" fill="currentColor" />
+                    </svg>
+                  </div>
+                </div>
+
+                <h2 className="text-lg font-semibold text-foreground/90 tracking-tight">No decisions yet</h2>
+                <p className="mt-1.5 text-sm text-[var(--text-muted)] leading-relaxed">
+                  Start tracking your team&apos;s decisions to maintain<br className="hidden sm:inline" /> awareness over time.
                 </p>
+
                 <button
-                  onClick={() => { setStateFilter('all'); setSearchQuery('') }}
-                  className="mt-6 text-sm text-(--text-muted) hover:text-foreground border border-[var(--border)] px-5 py-2 rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors"
+                  onClick={() => setShowCreateForm(true)}
+                  className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all hover:bg-[var(--bg-card-hover)] hover:text-foreground active:scale-[0.97]"
                 >
-                  Clear filters
+                  <Plus size={16} />
+                  Create your first decision
                 </button>
               </div>
-            )}
-          </div>
-        )}
-      </main>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 md:gap-6">
+              {sortedDecisions.length > 0 ? (
+                sortedDecisions.map(decision => (
+                  <DecisionCard
+                    key={`${decision.id}-${stateFilter}`}
+                    decision={decision}
+                    signalsCount={signalsCounts[decision.id] || 0}
+                    conflictsCount={conflictsCounts[decision.id] || 0}
+                  />
+                ))
+              ) : (
+                <div className="py-14 sm:py-20 flex flex-col items-center">
+                  <svg viewBox="0 0 40 40" className="w-12 h-12 sm:w-14 sm:h-14 mb-5 opacity-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="var(--text-muted)" strokeWidth="1.5" fill="none" />
+                    <path d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="22" cy="12" r="3" fill="var(--text-muted)" />
+                    <circle cx="22" cy="28" r="3" fill="var(--text-muted)" />
+                    <circle cx="14" cy="20" r="2.5" fill="var(--text-muted)" />
+                  </svg>
+                  <h3 className="text-base sm:text-lg font-semibold text-(--text-secondary) mb-1.5">No matching decisions</h3>
+                  <p className="text-(--text-muted) text-sm sm:text-base text-center max-w-xs leading-relaxed">
+                    {stateFilter !== 'all' && deferredSearch
+                      ? `No ${stateLabels[stateFilter]} decisions matching "${deferredSearch}"`
+                      : stateFilter !== 'all'
+                        ? `No decisions in the ${stateLabels[stateFilter]} state right now`
+                        : `No decisions matching "${deferredSearch}"`
+                    }
+                  </p>
+                  <button
+                    onClick={() => { setStateFilter('all'); setSearchQuery('') }}
+                    className="mt-6 text-sm text-(--text-muted) hover:text-foreground border border-[var(--border)] px-5 py-2 rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+      )}
 
       {/* Create decision modal */}
       {showCreateForm && (
@@ -545,7 +546,7 @@ export default function Home() {
 
   if (checking) {
     return (
-      <div className="flex flex-1 items-center justify-center h-[calc(100dvh-10rem)]">
+      <div className="fixed inset-0 flex items-center justify-center z-10">
         <Spinner size={32} />
       </div>
     )

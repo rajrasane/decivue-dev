@@ -135,6 +135,11 @@ body {
     animation: none;
   }
 
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+
   * {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;

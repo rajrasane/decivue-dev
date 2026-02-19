@@ -6,14 +6,28 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export async function POST(request: NextRequest) {
     try {
-        const { newDecisionStatement, newDecisionLogic } = await request.json()
+        // Auth check — reject unauthenticated requests
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const body = await request.json()
+        const { newDecisionStatement, newDecisionLogic } = body
+
+        // Input validation
+        if (typeof newDecisionStatement !== 'string' || newDecisionStatement.trim().length === 0) {
+            return NextResponse.json({ error: 'Invalid decision statement' }, { status: 400 })
+        }
+        if (newDecisionStatement.length > 2000) {
+            return NextResponse.json({ error: 'Decision statement too long' }, { status: 400 })
+        }
 
         if (!process.env.GEMINI_API_KEY) {
             console.warn('GEMINI_API_KEY not set, skipping conflict detection')
             return NextResponse.json({ conflicts: [] })
         }
-
-        const supabase = await createClient()
 
         // Get all existing decisions
         const { data: existingDecisions, error } = await supabase
@@ -70,9 +84,9 @@ IMPORTANT: Only respond with the JSON array, nothing else.`
         const conflicts = jsonMatch ? JSON.parse(jsonMatch[0]) : []
 
         return NextResponse.json({ conflicts })
-    } catch (error) {
-        console.error('Conflict detection error:', error)
-        // Return empty conflicts on error to not block decision creation
+    } catch (err) {
+        console.error('Conflict detection error:', err)
+        // Return empty conflicts on error — generic message, no internal details
         return NextResponse.json({ conflicts: [] })
     }
 }
