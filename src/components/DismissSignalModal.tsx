@@ -14,7 +14,7 @@ export function DismissSignalModal({
     onConfirm,
 }: DismissSignalModalProps) {
     return (
-        <div className="fixed inset-0 bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-[var(--overlay)] flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-sm p-6
                 border border-[var(--border)] shadow-2xl">
                 <h2 className="text-lg font-semibold mb-1">Dismiss Signal?</h2>

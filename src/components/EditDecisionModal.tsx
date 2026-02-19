@@ -165,7 +165,7 @@ export function EditDecisionModal({ decision, onClose, onSuccess }: EditDecision
     })()
 
     return (
-        <div className="fixed inset-0 bg-[var(--overlay)] backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-[var(--overlay)] flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-lg
                 h-[82vh] sm:h-[85vh] lg:h-[90vh] flex flex-col overflow-hidden
                 border border-[var(--border)] shadow-2xl">
