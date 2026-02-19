@@ -3,12 +3,9 @@ export function SiteFooter() {
     return (
         <footer className="mt-auto">
             <div className="max-w-6xl mx-auto px-6">
-                <div className="border-t border-[var(--border)] py-6 flex items-center justify-between text-xs text-(--text-muted)">
-                    <p>&copy; {year} Decivue. All rights reserved.</p>
-                    <div className="flex items-center gap-4">
-                        <span>v1.0.0-beta</span>
-                    </div>
-                </div>
+                <div className="border-t border-[var(--border)] py-5 flex items-center justify-center text-xs text-(--text-muted) tracking-wide">
+                    <p>&copy; {year} All rights reserved &middot; Decivue</p>
+                </div>  
             </div>
         </footer>
     )

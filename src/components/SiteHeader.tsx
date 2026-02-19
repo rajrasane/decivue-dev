@@ -51,7 +51,7 @@ export function SiteHeader() {
 
     return (
         <header className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--bg-primary)]/80 backdrop-blur-xl">
-            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 h-14 sm:h-16 lg:h-18 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-3 sm:gap-4 hover:opacity-80 transition-opacity">
                     {/* Logo */}
                     <div className="relative w-8 h-8 sm:w-9 sm:h-9 md:w-11 md:h-11 flex items-center justify-center">

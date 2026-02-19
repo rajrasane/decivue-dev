@@ -475,7 +475,7 @@ function Dashboard() {
             {sortedDecisions.length > 0 ? (
               sortedDecisions.map(decision => (
                 <DecisionCard
-                  key={decision.id}
+                  key={`${decision.id}-${stateFilter}`}
                   decision={decision}
                   signalsCount={signalsCounts[decision.id] || 0}
                   conflictsCount={conflictsCounts[decision.id] || 0}
