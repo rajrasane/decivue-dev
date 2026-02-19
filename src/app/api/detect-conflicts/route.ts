@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rate-limit'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
@@ -11,6 +12,21 @@ export async function POST(request: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        // Rate limit — 10 requests per minute per user (protects Gemini API costs)
+        const limiter = rateLimit(user.id)
+        if (!limiter.allowed) {
+            return NextResponse.json(
+                { error: 'Too many requests, please try again later' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': String(limiter.retryAfter || 60),
+                        'X-RateLimit-Remaining': '0',
+                    }
+                }
+            )
         }
 
         const body = await request.json()
