@@ -3,11 +3,14 @@ import React from 'react'
 export function Spinner({
     className = '',
     size = 32,
-    color = 'currentColor'
+    color = 'currentColor',
+    animated = true,
 }: {
     className?: string
     size?: number
     color?: string
+    /** When false, shows the same 12-bar shape without rotation/fade animation (e.g. for refresh overlay). */
+    animated?: boolean
 }) {
     return (
         <div
@@ -23,8 +26,12 @@ export function Spinner({
                     style={{
                         backgroundColor: color,
                         transform: `translateX(-50%) rotate(${i * 30}deg)`,
-                        animation: `spinner-fade 0.8s linear infinite`,
-                        animationDelay: `${-0.8 + (i * (0.8 / 12))}s`,
+                        ...(animated
+                            ? {
+                                animation: `spinner-fade 0.8s linear infinite`,
+                                animationDelay: `${-0.8 + (i * (0.8 / 12))}s`,
+                            }
+                            : { opacity: 0.4 }),
                     }}
                 />
             ))}

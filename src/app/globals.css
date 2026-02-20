@@ -110,7 +110,7 @@ body {
   background: var(--text-secondary);
 }
 
-/* Confidence gauge animation */
+/* Confidence gauge — short fill animation, same on all tabs, minimal cost */
 @keyframes gauge-fill {
   from {
     stroke-dashoffset: 314;
@@ -118,7 +118,7 @@ body {
 }
 
 .gauge-circle {
-  animation: gauge-fill 1s ease-out forwards;
+  animation: gauge-fill 0.65s ease-out forwards;
 }
 
 /* Card glow effects remove - Clean styling applied via utility classes if needed */
@@ -194,6 +194,12 @@ body.modal-open {
   100% {
     opacity: 0.15;
   }
+}
+
+/* Dashboard list: allow browser to skip painting/layout for off-screen cards (smoother scroll) */
+.decision-list-item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 220px;
 }
 
 /* Pill filter — horizontal scroll on mobile, wrap on desktop */

@@ -56,7 +56,7 @@ export function ConfidenceGauge({
                     strokeLinecap="round"
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
-                    className="gauge-circle transition-all duration-1000"
+                    className="gauge-circle"
                 />
             </svg>
             {showLabel && (

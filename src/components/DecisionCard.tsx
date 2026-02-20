@@ -76,7 +76,7 @@ export const DecisionCard = memo(function DecisionCard({
             tabIndex={0}
             aria-label={`View decision: ${decision.statement}`}
             className={cn(
-                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) shadow-[var(--card-shadow)] transition-all duration-300 p-4 sm:p-6 mb-2 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2",
+                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) shadow-[var(--card-shadow)] transition-all duration-300 p-4 sm:p-6 mb-2 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2 [contain:layout]",
                 (lifecycleState === 'at_risk' || lifecycleState === 'invalidated')
                     ? "border-red-500/40 shadow-[0_0_15px_-5px_rgba(239,68,68,0.2)]"
                     : "border-(--bg-secondary)"
