@@ -352,10 +352,11 @@ function Dashboard() {
                 <span className="hidden sm:inline">New Decision</span>
               </button>
               <button
-                onClick={() => refetch()}
+                onClick={() => refetch({ cancelRefetch: false })}
+                disabled={isFetching}
                 aria-label="Refresh decisions"
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-(--text-secondary) 
-                hover:bg-(--bg-secondary) transition-colors cursor-pointer"
+                hover:bg-(--bg-secondary) transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw size={16} className={isFetching ? 'animate-spin' : ''} />
                 <span className="hidden sm:inline">Refresh</span>
