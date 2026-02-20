@@ -46,6 +46,9 @@ export default function DecisionDetailPage() {
         reaffirm, deleteDecision, dismissSignal, dismissConflict, reload,
     } = useDecision(id)
 
+    // Scroll to top when opening a decision — prevents dashboard scroll bleeding into this page
+    useEffect(() => { window.scrollTo(0, 0) }, [])
+
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [showAddSignal, setShowAddSignal] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)

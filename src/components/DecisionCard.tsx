@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from "@/lib/utils"
 import { Decision } from '@/types/decision'
@@ -23,6 +24,11 @@ interface DecisionCardProps {
     signalsCount?: number
     conflictsCount?: number
     onClick?: () => void
+    // Pre-computed values from parent — skip local computation when provided
+    confidence?: number
+    state?: ReturnType<typeof determineLifecycleState>
+    insight?: string
+    daysSinceReview?: number
 }
 
 const stateColors = {
@@ -33,17 +39,22 @@ const stateColors = {
     invalidated: 'bg-(--bg-secondary) text-(--text-secondary) border-[var(--border)]',
 }
 
-export function DecisionCard({
+export const DecisionCard = memo(function DecisionCard({
     decision,
     signalsCount = 0,
     conflictsCount = 0,
-    onClick
+    onClick,
+    confidence: confidenceProp,
+    state: stateProp,
+    insight: insightProp,
+    daysSinceReview: daysSinceReviewProp,
 }: DecisionCardProps) {
     const router = useRouter()
-    const currentConfidence = calculateCurrentConfidence(decision, signalsCount, conflictsCount)
-    const daysSinceReview = differenceInDays(new Date(), new Date(decision.last_reviewed_at))
-    const lifecycleState = determineLifecycleState(currentConfidence, daysSinceReview, signalsCount, conflictsCount)
-    const insight = generateInsight(decision, currentConfidence, signalsCount, conflictsCount)
+    // Use pre-computed values when supplied to avoid redundant calculation
+    const currentConfidence = confidenceProp ?? calculateCurrentConfidence(decision, signalsCount, conflictsCount)
+    const daysSinceReview = daysSinceReviewProp ?? differenceInDays(new Date(), new Date(decision.last_reviewed_at))
+    const lifecycleState = stateProp ?? determineLifecycleState(currentConfidence, daysSinceReview, signalsCount, conflictsCount)
+    const insight = insightProp ?? generateInsight(decision, currentConfidence, signalsCount, conflictsCount)
 
     const handleClick = () => {
         if (onClick) onClick()
@@ -187,4 +198,4 @@ export function DecisionCard({
             </div>
         </article>
     )
-}
+})

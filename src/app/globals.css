@@ -162,6 +162,12 @@ input#delete-confirm:focus-visible {
   outline: none;
 }
 
+/* Search input - suppress global outline; border-change handled via Tailwind */
+input[type='text'][placeholder='Search decisions…']:focus-visible,
+input[placeholder='Search decisions…']:focus-visible {
+  outline: none;
+}
+
 /* Disable body scroll when modal is open */
 body.modal-open {
   overflow: hidden;
@@ -262,6 +268,16 @@ body.modal-open {
 
   50% {
     box-shadow: 0 0 40px var(--shadow-color);
+  }
+}
+
+/* Refresh progress bar shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
   }
 }
 

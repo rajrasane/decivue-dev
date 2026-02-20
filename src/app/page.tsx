@@ -14,7 +14,7 @@ import {
 import { Spinner } from '@/components/Spinner'
 import { Decision } from '@/types/decision'
 import { DecisionCard } from '@/components/DecisionCard'
-import { calculateCurrentConfidence, determineLifecycleState } from '@/lib/decision-intelligence'
+import { calculateCurrentConfidence, determineLifecycleState, generateInsight } from '@/lib/decision-intelligence'
 import { LifecycleState, stateLabels } from '@/lib/decision-constants'
 import { useAuth } from '@/components/AuthProvider'
 import { useDashboard } from '@/hooks/useDashboard'
@@ -284,7 +284,7 @@ function Dashboard() {
         const conf = calculateCurrentConfidence(d, signals, conflicts)
         const days = Math.floor((Date.now() - new Date(d.last_reviewed_at).getTime()) / (1000 * 60 * 60 * 24))
         const state = determineLifecycleState(conf, days, signals, conflicts)
-        return { decision: d, confidence: conf, state }
+        return { decision: d, confidence: conf, state, daysSinceReview: days, insight: generateInsight(d, conf, signals, conflicts) }
       })
       .filter(({ decision, state }) => {
         if (deferredSearch && !decision.statement.toLowerCase().includes(deferredSearch.toLowerCase())) return false
@@ -298,7 +298,7 @@ function Dashboard() {
         }
         return a.confidence - b.confidence
       })
-      .map(({ decision }) => decision)
+    // Keep full computed shape — DecisionCard will consume these directly
   }, [decisions, signalsCounts, conflictsCounts, deferredSearch, stateFilter])
 
   // Memoized at-risk count
@@ -374,7 +374,7 @@ function Dashboard() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className={`w-full pl-10 ${searchQuery ? 'pr-10' : 'pr-4'} py-2.5 rounded-xl bg-(--bg-secondary) border border-transparent text-sm text-foreground 
-                  placeholder:text-(--text-muted) focus:outline-none`}
+                  placeholder:text-(--text-muted) focus:outline-none focus:border-[var(--text-muted)]/40 transition-colors`}
                 />
                 {searchQuery && (
                   <button
@@ -445,56 +445,68 @@ function Dashboard() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-4 md:gap-6">
-              {sortedDecisions.length > 0 ? (
-                sortedDecisions.map(decision => (
-                  <DecisionCard
-                    key={`${decision.id}-${stateFilter}`}
-                    decision={decision}
-                    signalsCount={signalsCounts[decision.id] || 0}
-                    conflictsCount={conflictsCounts[decision.id] || 0}
-                  />
-                ))
-              ) : (
-                <div className="py-14 sm:py-20 flex flex-col items-center">
-                  <svg viewBox="0 0 40 40" className="w-12 h-12 sm:w-14 sm:h-14 mb-5 opacity-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" stroke="var(--text-muted)" strokeWidth="1.5" fill="none" />
-                    <path d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="22" cy="12" r="3" fill="var(--text-muted)" />
-                    <circle cx="22" cy="28" r="3" fill="var(--text-muted)" />
-                    <circle cx="14" cy="20" r="2.5" fill="var(--text-muted)" />
-                  </svg>
-                  <h3 className="text-base sm:text-lg font-semibold text-(--text-secondary) mb-1.5">No matching decisions</h3>
-                  <p className="text-(--text-muted) text-sm sm:text-base text-center max-w-xs leading-relaxed">
-                    {stateFilter !== 'all' && deferredSearch
-                      ? `No ${stateLabels[stateFilter]} decisions matching "${deferredSearch}"`
-                      : stateFilter !== 'all'
-                        ? `No decisions in the ${stateLabels[stateFilter]} state right now`
-                        : `No decisions matching "${deferredSearch}"`
-                    }
-                  </p>
-                  <button
-                    onClick={() => { setStateFilter('all'); setSearchQuery('') }}
-                    className="mt-6 text-sm text-(--text-muted) hover:text-foreground border border-[var(--border)] px-5 py-2 rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors"
-                  >
-                    Clear filters
-                  </button>
+            <div className="relative">
+              {/* Spinner overlay — only during background refetch, not initial load */}
+              {isFetching && !isLoading && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl" style={{ minHeight: '200px' }}>
+                  <Spinner size={32} />
                 </div>
               )}
+              <div className={`flex flex-col gap-4 md:gap-6 transition-opacity duration-200 ${isFetching && !isLoading ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+                {sortedDecisions.length > 0 ? (
+                  sortedDecisions.map(({ decision, confidence, state, insight: cardInsight, daysSinceReview }) => (
+                    <DecisionCard
+                      key={`${decision.id}-${stateFilter}`}
+                      decision={decision}
+                      signalsCount={signalsCounts[decision.id] || 0}
+                      conflictsCount={conflictsCounts[decision.id] || 0}
+                      confidence={confidence}
+                      state={state}
+                      insight={cardInsight}
+                      daysSinceReview={daysSinceReview}
+                    />
+                  ))
+                ) : (
+                  <div className="py-14 sm:py-20 flex flex-col items-center">
+                    <svg viewBox="0 0 40 40" className="w-12 h-12 sm:w-14 sm:h-14 mb-5 opacity-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="20" cy="20" r="18" stroke="var(--text-muted)" strokeWidth="1.5" fill="none" />
+                      <path d="M14 12 L14 28 M14 20 L22 12 M14 20 L22 28" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="22" cy="12" r="3" fill="var(--text-muted)" />
+                      <circle cx="22" cy="28" r="3" fill="var(--text-muted)" />
+                      <circle cx="14" cy="20" r="2.5" fill="var(--text-muted)" />
+                    </svg>
+                    <h3 className="text-base sm:text-lg font-semibold text-(--text-secondary) mb-1.5">No matching decisions</h3>
+                    <p className="text-(--text-muted) text-sm sm:text-base text-center max-w-xs leading-relaxed">
+                      {stateFilter !== 'all' && deferredSearch
+                        ? `No ${stateLabels[stateFilter]} decisions matching "${deferredSearch}"`
+                        : stateFilter !== 'all'
+                          ? `No decisions in the ${stateLabels[stateFilter]} state right now`
+                          : `No decisions matching "${deferredSearch}"`
+                      }
+                    </p>
+                    <button
+                      onClick={() => { setStateFilter('all'); setSearchQuery('') }}
+                      className="mt-6 text-sm text-(--text-muted) hover:text-foreground border border-[var(--border)] px-5 py-2 rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors"
+                    >
+                      Clear filters
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </main>
-      )}
 
-      {/* Create decision modal */}
-      {showCreateForm && (
-        <CreateDecisionModal
-          onClose={() => setShowCreateForm(false)}
-          onSuccess={() => {
-            setShowCreateForm(false)
-            queryClient.invalidateQueries({ queryKey: decisionKeys.all })
-          }}
-        />
+          {/* Create decision modal */}
+          {showCreateForm && (
+            <CreateDecisionModal
+              onClose={() => setShowCreateForm(false)}
+              onSuccess={() => {
+                setShowCreateForm(false)
+                queryClient.invalidateQueries({ queryKey: decisionKeys.all })
+              }}
+            />
+          )}
+        </main>
       )}
     </div>
   )
