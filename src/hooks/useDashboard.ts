@@ -12,13 +12,17 @@ type DashboardData = {
 }
 
 async function fetchDashboardData(): Promise<DashboardData> {
-    const [decisionsResult, signalsResult, conflictsResult] = await Promise.all([
-        supabase.from('decisions').select('*').order('created_at', { ascending: false }),
+    const decisionsResult = await supabase.from('decisions').select('*').order('created_at', { ascending: false })
+    const decisions = decisionsResult.data ?? []
+
+    if (decisions.length === 0) {
+        return { decisions: [], signalsCounts: {}, conflictsCounts: {} }
+    }
+
+    const [signalsResult, conflictsResult] = await Promise.all([
         supabase.from('decision_signals').select('decision_id'),
         supabase.from('decision_conflicts').select('decision_a, decision_b'),
     ])
-
-    const decisions = decisionsResult.data ?? []
 
     // Build signals count map
     const signalsCounts: Record<string, number> = {}

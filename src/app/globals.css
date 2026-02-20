@@ -259,17 +259,7 @@ body.modal-open {
   }
 }
 
-@keyframes pulse-glow {
 
-  0%,
-  100% {
-    box-shadow: 0 0 20px var(--shadow-color);
-  }
-
-  50% {
-    box-shadow: 0 0 40px var(--shadow-color);
-  }
-}
 
 /* Refresh progress bar shimmer */
 @keyframes shimmer {

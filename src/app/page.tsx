@@ -37,15 +37,15 @@ function LandingPage() {
         {/* Animated gradient mesh orbs */}
         <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute top-[-10%] left-[15%] h-[250px] w-[250px] sm:h-[500px] sm:w-[500px] rounded-full bg-blue-500/[0.07] blur-[100px]"
+            className="absolute top-[-10%] left-[15%] h-[250px] w-[250px] sm:h-[500px] sm:w-[500px] rounded-full bg-blue-500/[0.07] blur-[80px] transform-gpu"
             style={{ animation: 'gradient-shift 12s ease-in-out infinite' }}
           />
           <div
-            className="absolute bottom-[-5%] right-[10%] h-[200px] w-[200px] sm:h-[400px] sm:w-[400px] rounded-full bg-purple-500/[0.05] blur-[120px]"
+            className="absolute bottom-[-5%] right-[10%] h-[200px] w-[200px] sm:h-[400px] sm:w-[400px] rounded-full bg-purple-500/[0.05] blur-[80px] transform-gpu"
             style={{ animation: 'gradient-shift 15s ease-in-out infinite reverse' }}
           />
           <div
-            className="absolute top-[30%] right-[30%] h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] rounded-full bg-cyan-400/[0.04] blur-[100px]"
+            className="absolute top-[30%] right-[30%] h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] rounded-full bg-cyan-400/[0.04] blur-[80px] transform-gpu"
             style={{ animation: 'gradient-shift 10s ease-in-out infinite 3s' }}
           />
         </div>
@@ -124,7 +124,7 @@ function LandingPage() {
       {/* ═══════════════════════ FEATURES ═══════════════════════ */}
       <section className="relative py-20 sm:py-28">
         {/* Background accent */}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-full max-w-[800px] rounded-full bg-blue-500/[0.03] blur-[150px]" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-full max-w-[800px] rounded-full bg-blue-500/[0.03] blur-[80px] transform-gpu" />
 
         <div className="relative max-w-5xl mx-auto px-4 md:px-6">
           <div className="mb-12 sm:mb-16 text-center">
@@ -162,8 +162,7 @@ function LandingPage() {
             ].map((f, i) => (
               <div
                 key={i}
-                className={`group relative rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]/80 backdrop-blur-sm p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 ${f.borderHover}`}
-                style={{ animation: `pulse-glow 4s ease-in-out infinite ${i * 1.5}s` }}
+                className={`group relative rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]/80 p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 ${f.borderHover}`}
               >
                 {/* Icon with gradient bg */}
                 <div className={`mb-4 inline-flex rounded-xl bg-gradient-to-br ${f.color} p-3 text-white`}>
@@ -202,7 +201,7 @@ function LandingPage() {
             ].map((s, i) => (
               <div key={i} className="relative text-center sm:text-left">
                 {/* Step number */}
-                <div className="mx-auto sm:mx-0 mb-5 flex h-[64px] w-[64px] items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 text-lg font-bold text-[var(--text-muted)] backdrop-blur-sm"
+                <div className="mx-auto sm:mx-0 mb-5 flex h-[64px] w-[64px] items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 text-lg font-bold text-[var(--text-muted)] transform-gpu"
                   style={{ animation: 'float 6s ease-in-out infinite', animationDelay: `${i * 0.8}s` }}
                 >
                   {s.step}
@@ -221,8 +220,8 @@ function LandingPage() {
           <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)]/30 px-6 py-14 sm:px-12 sm:py-16 text-center backdrop-blur-sm">
             {/* Background glow */}
             <div className="pointer-events-none absolute inset-0">
-              <div className="absolute top-[-50%] left-[20%] h-[300px] w-[300px] rounded-full bg-blue-500/[0.06] blur-[80px]" />
-              <div className="absolute bottom-[-30%] right-[15%] h-[250px] w-[250px] rounded-full bg-purple-500/[0.04] blur-[80px]" />
+              <div className="absolute top-[-50%] left-[20%] h-[300px] w-[300px] rounded-full bg-blue-500/[0.06] blur-[60px] transform-gpu" />
+              <div className="absolute bottom-[-30%] right-[15%] h-[250px] w-[250px] rounded-full bg-purple-500/[0.04] blur-[60px] transform-gpu" />
             </div>
 
             <div className="relative">
