@@ -89,7 +89,7 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Custom scrollbar — theme aware */
@@ -276,6 +276,7 @@ body.modal-open {
   0% {
     background-position: 200% center;
   }
+
   100% {
     background-position: -200% center;
   }

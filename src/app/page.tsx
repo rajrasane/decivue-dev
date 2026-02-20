@@ -392,7 +392,10 @@ function Dashboard() {
                   {(['all', 'fresh', 'stable', 'at_risk', 'stale', 'invalidated'] as const).map(state => (
                     <button
                       key={state}
-                      onClick={() => setStateFilter(state)}
+                      onClick={(e) => {
+                        setStateFilter(state)
+                        e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+                      }}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:shrink
                       ${stateFilter === state
                           ? 'bg-foreground text-background'
@@ -403,7 +406,8 @@ function Dashboard() {
                     </button>
                   ))}
                 </div>
-                <div className="absolute right-0 top-0 bottom-1 w-4 bg-gradient-to-l from-(--bg-primary) to-transparent pointer-events-none sm:hidden" />
+                {/* Scroll fade indicator for mobile */}
+                <div className="absolute right-0 top-0 bottom-1 w-2 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
               </div>
             </div>
           )}

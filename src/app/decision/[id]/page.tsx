@@ -90,7 +90,7 @@ export default function DecisionDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-dvh bg-background">
             <main className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
                 <button
                     onClick={() => router.push('/')}
