@@ -52,38 +52,38 @@ export default function SignupPage() {
         }
     }
 
-    const handleGoogleSignup = async () => {
-        setLoading(true)
-        setError(null)
-        try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: { redirectTo: `${location.origin}/auth/callback` },
-            })
-            if (error) throw error
-        } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : 'An unexpected error occurred')
-            setLoading(false)
-        }
-    }
+    // const handleGoogleSignup = async () => {
+    //     setLoading(true)
+    //     setError(null)
+    //     try {
+    //         const { error } = await supabase.auth.signInWithOAuth({
+    //             provider: 'google',
+    //             options: { redirectTo: `${location.origin}/auth/callback` },
+    //         })
+    //         if (error) throw error
+    //     } catch (err: unknown) {
+    //         setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    //         setLoading(false)
+    //     }
+    // }
 
-    const handleMicrosoftSignup = async () => {
-        setLoading(true)
-        setError(null)
-        try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'azure',
-                options: {
-                    redirectTo: `${location.origin}/auth/callback`,
-                    scopes: 'email profile openid',
-                },
-            })
-            if (error) throw error
-        } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : 'An unexpected error occurred')
-            setLoading(false)
-        }
-    }
+    // const handleMicrosoftSignup = async () => {
+    //     setLoading(true)
+    //     setError(null)
+    //     try {
+    //         const { error } = await supabase.auth.signInWithOAuth({
+    //             provider: 'azure',
+    //             options: {
+    //                 redirectTo: `${location.origin}/auth/callback`,
+    //                 scopes: 'email profile openid',
+    //             },
+    //         })
+    //         if (error) throw error
+    //     } catch (err: unknown) {
+    //         setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    //         setLoading(false)
+    //     }
+    // }
 
     if (checking) {
         return (
@@ -126,7 +126,8 @@ export default function SignupPage() {
                 {/* Card */}
                 <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 shadow-2xl sm:p-6">
 
-                    {/* OAuth buttons */}
+                    {/* OAuth buttons temporarily disabled until custom callback routing is ready */}
+                    {/*
                     <div className="flex flex-col gap-2.5">
                         <button
                             onClick={handleGoogleSignup}
@@ -157,13 +158,13 @@ export default function SignupPage() {
                         </button>
                     </div>
 
-                    {/* Divider */}
                     <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--border)]" /></div>
                         <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
                             <span className="bg-[var(--bg-secondary)] px-3 text-[var(--text-muted)]">or</span>
                         </div>
                     </div>
+                    */}
 
                     {/* Form */}
                     <form onSubmit={handleSignup} className="space-y-3">
