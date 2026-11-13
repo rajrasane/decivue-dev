@@ -1,0 +1,24 @@
+/* A focused server-render smoke check. Browser interactions still require QA. */
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { createRequire } from 'node:module';
+const requireModule = createRequire(import.meta.url);
+const source = fs.readFileSync('src/components/DecisionLanding.tsx', 'utf8');
+const compiled = ts.transpileModule(source, { compilerOptions: { jsx: ts.JsxEmit.ReactJSX, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
+const moduleBox = { exports: {} };
+const localRequire = (id) => id === 'next/link' ? { __esModule: true, default: ({children, ...props}) => React.createElement('a', props, children) } : requireModule(id);
+vm.runInNewContext(compiled, { exports: moduleBox.exports, module: moduleBox, require: localRequire });
+const html = renderToStaticMarkup(React.createElement(moduleBox.exports.DecisionLanding));
+assert.match(html, /Good decisions/);
+assert.equal((html.match(/aria-pressed=/g)||[]).length,3);
+assert.equal((html.match(/aria-pressed="true"/g)||[]).length,1);
+assert.match(html, /Illustrative data and scores/);
+assert.match(html, /not a probability of being right/);
+assert.match(html, /href="#decision-demo"/);
+assert.match(html, /href="\/signup"/);
+assert.match(html, /92<small>/);
+console.log('8 landing render assertions passed. Interaction/visual QA is separate.');

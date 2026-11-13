@@ -76,7 +76,7 @@ export const DecisionCard = memo(function DecisionCard({
             tabIndex={0}
             aria-label={`View decision: ${decision.statement}`}
             className={cn(
-                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) shadow-[var(--card-shadow)] transition-all duration-300 p-4 sm:p-6 mb-2 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2 [contain:layout]",
+                "relative rounded-2xl border cursor-pointer bg-(--bg-card) hover:bg-(--bg-card-hover) shadow-[var(--card-shadow)] transition-all duration-300 p-4 sm:p-6 mb-2 focus-visible:outline-2 focus-visible:outline-[var(--text-primary)] focus-visible:outline-offset-2 [contain:layout]",
                 (lifecycleState === 'at_risk' || lifecycleState === 'invalidated')
                     ? "border-red-500/40 shadow-[0_0_15px_-5px_rgba(239,68,68,0.2)]"
                     : "border-(--bg-secondary)"
@@ -85,7 +85,12 @@ export const DecisionCard = memo(function DecisionCard({
             <div className="flex gap-4 sm:gap-6">
                 {/* Confidence Gauge */}
                 <div className="shrink-0 flex flex-col items-center gap-8">
-                    <ConfidenceGauge value={currentConfidence} size="md" />
+                    <div className="sm:hidden [&_span:last-child]:text-[9px]">
+                        <ConfidenceGauge value={currentConfidence} size="sm" />
+                    </div>
+                    <div className="hidden sm:block">
+                        <ConfidenceGauge value={currentConfidence} size="md" />
+                    </div>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <span className={`
@@ -105,7 +110,7 @@ export const DecisionCard = memo(function DecisionCard({
                 <div className="flex-1 min-w-0">
                     {/* Header with state badge */}
                     <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className="text-xl font-semibold text-foreground line-clamp-2">
+                        <h3 className="text-lg sm:text-xl font-semibold leading-snug text-foreground line-clamp-2">
                             {decision.statement}
                         </h3>
                         <Tooltip>
@@ -124,12 +129,12 @@ export const DecisionCard = memo(function DecisionCard({
                     </div>
 
                     {/* Insight message */}
-                    <p className="text-sm text-(--text-secondary) mb-4 line-clamp-2">
+                    <p className="text-sm text-(--text-secondary) mb-4 leading-relaxed line-clamp-2">
                         {insight}
                     </p>
 
                     {/* Meta info */}
-                    <div className="flex items-center gap-x-3 sm:gap-x-4 text-xs text-(--text-muted)">
+                    <div className="flex flex-wrap items-center gap-y-2 gap-x-3 sm:gap-x-4 text-xs text-(--text-muted)">
                         <div className="flex items-center gap-1.5 shrink-0">
                             <Clock size={14} />
                             {daysSinceReview === 0

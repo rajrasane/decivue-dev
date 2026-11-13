@@ -35,10 +35,11 @@ const SIGNAL_TYPE_LABELS: Record<DecisionSignal['signal_type'], string> = {
 export function calculateCurrentConfidence(
     decision: Decision,
     signalsCount: number = 0,
-    conflictsCount: number = 0
+    conflictsCount: number = 0,
+    now: Date = new Date()
 ): number {
     const daysSinceReview = differenceInDays(
-        new Date(),
+        now,
         new Date(decision.last_reviewed_at)
     )
 
@@ -103,6 +104,7 @@ export function determineLifecycleState(
 export type InsightContext = {
     decision: Decision
     currentConfidence: number
+    now?: Date // Share a snapshot with confidence and review-age calculations.
     signals?: DecisionSignal[]
     conflicts?: DecisionConflict[]
     conflictingDecisionStatements?: string[] // Statements of decisions that conflict with this one
@@ -119,13 +121,15 @@ export function generateInsight(
     decision: Decision,
     currentConfidence: number,
     signalsCount: number,
-    conflictsCount: number
+    conflictsCount: number,
+    now?: Date
 ): string
 export function generateInsight(
     decisionOrContext: Decision | InsightContext,
     currentConfidence?: number,
     signalsCount?: number,
-    conflictsCount?: number
+    conflictsCount?: number,
+    now: Date = new Date()
 ): string {
     // Handle both old signature (backward compatibility) and new context-based signature
     const isContext = isInsightContext(decisionOrContext)
@@ -141,7 +145,7 @@ export function generateInsight(
     const effectiveConflictsCount = conflicts.length > 0 ? conflicts.length : (conflictsCount ?? 0)
 
     const daysSinceReview = differenceInDays(
-        new Date(),
+        isContext ? (decisionOrContext.now ?? now) : now,
         new Date(decision.last_reviewed_at)
     )
 
