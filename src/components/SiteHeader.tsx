@@ -87,7 +87,7 @@ export function SiteHeader() {
                     ) : user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="relative flex items-center rounded-full outline-none! focus-visible:ring-0 cursor-pointer">
+                                <button aria-label="Open account menu" className="relative flex items-center rounded-full cursor-pointer min-h-11 min-w-11 justify-center">
                                     <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border border-[var(--border)] transition-all hover:border-[var(--text-muted)]">
                                         <AvatarImage src={avatarUrl} alt={displayName} referrerPolicy="no-referrer" />
                                         <AvatarFallback className="text-[11px] sm:text-xs">{initials}</AvatarFallback>
